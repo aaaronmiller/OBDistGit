@@ -1,0 +1,48 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+
+# Office temp files
+~$*.docx
+~$*.pptx
+~$*.xlsx
+*.tmp
+
+# Adobe files
+*.ai~
+*.psd
+
+# Build/output directories
+/build/
+/dist/
+/output/
+
+# Personal notes (if you keep private notes)
+**/private/
+**/drafts/
+notes.md
+todo.md
+
+# Large media files (consider Git LFS instead)
+*.mov
+*.mp4
+*.avi

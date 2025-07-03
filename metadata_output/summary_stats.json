@@ -1,0 +1,17 @@
+{
+    "total_files":       34,
+    "total_size": "8.8M",
+    "file_types": {
+        "html":       29,
+        "markdown":        2,
+        "config":        1,
+        "other":        2
+    },
+    "generation_date": "Thu Jul  3 13:21:19 PDT 2025",
+    "repository_info": {
+        "current_branch": "main",
+        "total_commits": "5",
+        "last_commit": "8c8e3fa402fbfd4a5a513cfeb52d345fee998d4d",
+        "last_commit_date": "2025-07-03 12:10:23 -0700"
+    }
+}

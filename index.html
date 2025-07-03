@@ -47,24 +47,41 @@
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
     <style>
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .container {
+            background-color: #2d2d2d;
+        }
+        .file-card {
+            background-color: #2a1e3b;
+            border: 2px solid #00ddeb;
+            box-shadow: 0 0 8px #00ddeb, inset 0 0 4px #00ddeb;
+        }
+        .preview-card {
+            background-color: #1a1a1a;
+            border: 2px solid #00ddeb;
+        }
+        .gradient-btn {
+            background: linear-gradient(to right, #4b2e83, #00ddeb);
+            transition: all 0.3s ease;
+        }
+        .gradient-btn:hover {
+            background: linear-gradient(to right, #00ddeb, #4b2e83);
+            box-shadow: 0 0 12px #00ddeb;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        .slide-in { animation: slideIn 0.5s ease-out forwards; }
-        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        .preview-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .preview-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
-        .neon-glow { box-shadow: 0 0 10px rgba(74, 158, 255, 0.8), 0 0 20px rgba(74, 158, 255, 0.4); }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
-<body class="min-h-screen transition-colors duration-300" id="theme-body">
+<body class="min-h-screen transition-colors duration-300">
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -77,27 +94,36 @@
             const [theme, setTheme] = useState('dark');
             const [hoveredFile, setHoveredFile] = useState(null);
 
-            // Mock file_metadata.json data (replace with actual fetch in production)
-            const fileData = [
-                {
-                    "filename": "AI Compute Hardware- Deep Dive Comparison.html",
-                    "url": "https://yourusername.github.io/OBDistGit/AI Compute Hardware- Deep Dive Comparison.html",
-                    "category": "AI",
-                    "creation_time": "2025-07-03T07:45:51.259744",
-                    "modified_time": "2025-07-03T07:45:51.277145",
-                    "time_diff_hours": 0.0,
-                    "file_size": "AI Compute Hardware Deep Dive Comparison...",
-                    "summary": "Untitled 14 AI Compute Hardware Deep Dive Comparison...",
-                    "file_type": "html"
-                },
-                // Add other files here (omitted for brevity)
-            ];
+            useEffect(() => {
+                fetch('/file_metadata.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        setFiles(data);
+                        // GSAP animations for file cards
+                        gsap.from('.file-card', {
+                            y: 50,
+                            opacity: 0,
+                            duration: 0.8,
+                            stagger: 0.1,
+                            ease: 'power2.out'
+                        });
+                    })
+                    .catch(err => console.error('Error fetching metadata:', err));
+
+                // Theme animation
+                gsap.to('body', { duration: 0.5, backgroundColor: '#1a1a1a' });
+            }, []);
 
             useEffect(() => {
-                // In production, fetch file_metadata.json
-                // fetch('/file_metadata.json').then(res => res.json()).then(data => setFiles(data));
-                setFiles(fileData);
-            }, []);
+                // Animate buttons on filter/sort change
+                gsap.from('.gradient-btn', {
+                    scale: 0.9,
+                    opacity: 0.7,
+                    duration: 0.3,
+                    stagger: 0.05,
+                    ease: 'back.out(1.7)'
+                });
+            }, [filter, sortBy, sortOrder]);
 
             const getIcon = (file_type, category) => {
                 if (file_type === 'html') return '📄';
@@ -112,7 +138,7 @@
                 const order = sortOrder === 'Ascending' ? 1 : -1;
                 if (sortBy === 'Name') return order * a.filename.localeCompare(b.filename);
                 if (sortBy === 'Date') return order * (new Date(a.creation_time) - new Date(b.creation_time));
-                if (sortBy === 'Size') return order * (a.file_size.length - b.file_size.length);
+                if (sortBy === 'Size') return order * (a.file_size - b.file_size);
                 if (sortBy === 'Type') return order * a.file_type.localeCompare(b.file_type);
                 return 0;
             });
@@ -120,47 +146,92 @@
             const toggleTheme = () => {
                 const newTheme = theme === 'dark' ? 'light' : 'dark';
                 setTheme(newTheme);
-                document.getElementById('theme-body').className = `min-h-screen transition-colors duration-300 ${newTheme === 'dark' ? 'bg-gray-900 text-gray-300' : 'bg-gray-100 text-gray-900'}`;
+                gsap.to('body', {
+                    backgroundColor: newTheme === 'dark' ? '#1a1a1a' : '#e0e0e0',
+                    color: newTheme === 'dark' ? '#e0e0e0' : '#1a1a1a',
+                    duration: 0.5
+                });
+                gsap.to('.container', {
+                    backgroundColor: newTheme === 'dark' ? '#2d2d2d' : '#f5f5f5',
+                    duration: 0.5
+                });
+            };
+
+            const handleHover = (filename, isEntering) => {
+                setHoveredFile(isEntering ? filename : null);
+                const preview = document.querySelector(`#preview-${filename}`);
+                if (preview) {
+                    gsap.to(preview, {
+                        y: isEntering ? 0 : 20,
+                        opacity: isEntering ? 1 : 0,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                }
+                const icon = document.querySelector(`#icon-${filename}`);
+                if (icon) {
+                    gsap.to(icon, {
+                        rotation: isEntering ? 360 : 0,
+                        duration: 0.5,
+                        ease: 'elastic.out(1, 0.5)'
+                    });
+                }
             };
 
             return (
-                <div className={`container mx-auto p-6 ${theme === 'dark' ? 'bg-gray-900 text-gray-300' : 'bg-gray-100 text-gray-900'}`}>
+                <div className="container mx-auto p-6 rounded-lg shadow-lg">
                     {/* Header */}
                     <header className="text-center mb-12">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center space-x-2">
-                                {[...Array(6)].map((_, i) => <span key={i} className="text-2xl">🐾</span>)}
+                                {[...Array(6)].map((_, i) => (
+                                    <span
+                                        key={i}
+                                        className="text-2xl"
+                                        onMouseEnter={() => gsap.to(`#emoji-${i}`, { rotation: 360, duration: 0.5 })}
+                                        id={`emoji-${i}`}
+                                    >
+                                        🐾
+                                    </span>
+                                ))}
                             </div>
                             <div>
-                                <label className="mr-2">🌈 Theme</label>
-                                <select onChange={toggleTheme} value={theme} className="bg-gray-800 text-white rounded px-2 py-1">
+                                <label className="mr-2 text-lg">🌈 Theme</label>
+                                <select
+                                    onChange={toggleTheme}
+                                    value={theme}
+                                    className="gradient-btn text-white rounded px-3 py-1"
+                                >
                                     <option value="dark">Dark</option>
                                     <option value="light">Light</option>
                                 </select>
                             </div>
                         </div>
-                        <h1 className="text-5xl font-light mt-4 text-white neon-glow">🐕 ChetasVault 🐾</h1>
+                        <h1 className="text-5xl font-light mt-4 text-white" style={{ textShadow: '0 0 10px #00ddeb' }}>
+                            🐕 ChetasVault 🐾
+                        </h1>
                         <p className="text-xl italic opacity-80">Catahoula's Synthwave Content Portal</p>
                     </header>
 
                     {/* Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                        <div className="bg-gray-800 p-6 rounded-lg slide-in">
-                            <p className="text-3xl font-bold">{files.length}</p>
-                            <p>Total Files</p>
-                        </div>
-                        <div className="bg-gray-800 p-6 rounded-lg slide-in" style={{ animationDelay: '0.2s' }}>
-                            <p className="text-3xl font-bold">{(files.reduce((sum, file) => sum + file.file_size.length, 0) / 1024).toFixed(0)}KB</p>
-                            <p>Total Size</p>
-                        </div>
-                        <div className="bg-gray-800 p-6 rounded-lg slide-in" style={{ animationDelay: '0.4s' }}>
-                            <p className="text-3xl font-bold">Jul 3</p>
-                            <p>Last Updated</p>
-                        </div>
-                        <div className="bg-gray-800 p-6 rounded-lg slide-in" style={{ animationDelay: '0.6s' }}>
-                            <p className="text-3xl font-bold">18</p>
-                            <p>Avg Read Time</p>
-                        </div>
+                        {[
+                            { value: files.length, label: 'Total Files' },
+                            { value: `${(files.reduce((sum, file) => sum + parseInt(file.file_size || 0), 0) / 1024).toFixed(0)}KB`, label: 'Total Size' },
+                            { value: 'Jul 3', label: 'Last Updated' },
+                            { value: '18', label: 'Avg Read Time' }
+                        ].map((stat, index) => (
+                            <div
+                                key={index}
+                                className="file-card p-6 rounded-lg"
+                                onMouseEnter={() => gsap.to(`#stat-${index}`, { scale: 1.05, duration: 0.3 })}
+                                onMouseLeave={() => gsap.to(`#stat-${index}`, { scale: 1, duration: 0.3 })}
+                                id={`stat-${index}`}
+                            >
+                                <p className="text-3xl font-bold">{stat.value}</p>
+                                <p>{stat.label}</p>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Filters and Sorting */}
@@ -169,7 +240,7 @@
                             <button
                                 key={category}
                                 onClick={() => setFilter(category)}
-                                className={`px-4 py-2 rounded ${filter === category ? 'bg-blue-500 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}
+                                className={`gradient-btn px-4 py-2 rounded ${filter === category ? 'shadow-lg' : ''}`}
                             >
                                 {category}
                             </button>
@@ -180,41 +251,46 @@
                             <button
                                 key={sort}
                                 onClick={() => setSortBy(sort)}
-                                className={`px-4 py-2 rounded ${sortBy === sort ? 'bg-blue-500 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}
+                                className={`gradient-btn px-4 py-2 rounded ${sortBy === sort ? 'shadow-lg' : ''}`}
                             >
                                 Sort by {sort}
                             </button>
                         ))}
                         <button
                             onClick={() => setSortOrder(sortOrder === 'Ascending' ? 'Descending' : 'Ascending')}
-                            className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600"
+                            className="gradient-btn px-4 py-2 rounded"
                         >
                             {sortOrder}
                         </button>
                     </div>
 
                     {/* File List */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="flex flex-col gap-6">
                         {sortedFiles.map((file, index) => (
                             <div
                                 key={file.filename}
-                                className="relative bg-gray-800 p-6 rounded-lg slide-in preview-card"
-                                style={{ animationDelay: `${index * 0.1}s` }}
-                                onMouseEnter={() => setHoveredFile(file.filename)}
-                                onMouseLeave={() => setHoveredFile(null)}
+                                className="file-card p-6 rounded-lg relative"
+                                onMouseEnter={() => handleHover(file.filename, true)}
+                                onMouseLeave={() => handleHover(file.filename, false)}
                             >
                                 <a href={file.url} target="_blank" className="flex items-center space-x-3">
-                                    <span className="text-2xl">{getIcon(file.file_type, file.category)}</span>
+                                    <span className="text-2xl" id={`icon-${file.filename}`}>
+                                        {getIcon(file.file_type, file.category)}
+                                    </span>
                                     <span className="font-semibold text-blue-400 hover:underline">{file.filename}</span>
                                 </a>
                                 {hoveredFile === file.filename && (
-                                    <div className="absolute z-10 bg-gray-900 p-4 rounded-lg mt-2 w-full md:w-96 shadow-lg fade-in">
+                                    <div
+                                        id={`preview-${file.filename}`}
+                                        className="preview-card absolute z-10 p-4 rounded-lg mt-2 w-full shadow-lg fade-in"
+                                        style={{ top: '100%' }}
+                                    >
                                         <p className="text-sm italic">{file.summary}</p>
                                         <div className="mt-2 text-sm">
                                             <p><strong>Category:</strong> {file.category}</p>
                                             <p><strong>Created:</strong> {new Date(file.creation_time).toLocaleDateString()}</p>
                                             <p><strong>Modified:</strong> {new Date(file.modified_time).toLocaleDateString()}</p>
-                                            <p><strong>Size:</strong> {(file.file_size.length / 1024).toFixed(2)} KB</p>
+                                            <p><strong>Size:</strong> {(file.file_size / 1024).toFixed(2)} KB</p>
                                             <p><strong>Type:</strong> {file.file_type}</p>
                                         </div>
                                     </div>

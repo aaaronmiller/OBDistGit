@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Implementation: Beyond Simple Chunking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .slide {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideIn 0.8s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide:nth-child(1) { animation-delay: 0.1s; }
+        .slide:nth-child(2) { animation-delay: 0.3s; }
+        .slide:nth-child(3) { animation-delay: 0.5s; }
+        .slide:nth-child(4) { animation-delay: 0.7s; }
+        .slide:nth-child(5) { animation-delay: 0.9s; }
+        .slide:nth-child(6) { animation-delay: 1.1s; }
+        
+        .title-slide {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+        }
+        
+        .title-slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .title-slide p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        h2 {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            color: #fff;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .icon {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        
+        .problem-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .problem-item, .pattern-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #ff6b6b;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .problem-item:hover, .pattern-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pattern-item {
+            border-left-color: #4ecdc4;
+            margin: 15px 0;
+        }
+        
+        .problem-item h3, .pattern-item h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .step {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .step:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            line-height: 30px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .step h4 {
+            margin: 10px 0 5px 0;
+            color: #fff;
+        }
+        
+        .key-insight {
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.2), rgba(118, 75, 162, 0.2));
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        
+        .emphasis {
+            color: #ffd93d;
+            font-weight: bold;
+        }
+        
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        li:before {
+            content: "▶";
+            color: #4ecdc4;
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+        
+        .conclusion {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Title Slide -->
+        <div class="slide title-slide">
+            <h1>RAG Implementation</h1>
+            <p><strong>Beyond Simple Chunking:</strong> The Reality of Production-Ready Retrieval Systems</p>
+        </div>
+
+        <!-- Problem Statement -->
+        <div class="slide">
+            <h2><span class="icon">⚠️</span> The PDF Problem</h2>
+            <div class="problem-list">
+                <div class="problem-item">
+                    <h3>Header & Footer Pollution</h3>
+                    <p>PDFs contain contaminating elements that confuse AI systems during text extraction</p>
+                </div>
+                <div class="problem-item">
+                    <h3>Poor Copy-Paste Behavior</h3>
+                    <p>What you see isn't what the system gets - formatting artifacts create noise</p>
+                </div>
+                <div class="problem-item">
+                    <h3>OCR Accuracy Issues</h3>
+                    <p>Scanned documents require specialized tools (like Mistral's OCR) for reliable text extraction</p>
+                </div>
+                <div class="problem-item">
+                    <h3>Spatial Relationships</h3>
+                    <p>Tables and structured data lose meaning without proper encoding of spatial context</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Principle -->
+        <div class="slide">
+            <h2><span class="icon">🎯</span> The Golden Rule</h2>
+            <div class="key-insight">
+                <strong>Clean First, Chunk Later</strong><br>
+                <span class="emphasis">Never attempt to chunk a PDF directly</span><br>
+                Always convert to clean boilerplate → clean markdown → then chunk
+            </div>
+        </div>
+
+        <!-- Patterns -->
+        <div class="slide">
+            <h2><span class="icon">🔄</span> Key Implementation Patterns</h2>
+            
+            <div class="pattern-item">
+                <h3>📋 The Clean-First Pattern</h3>
+                <ul>
+                    <li>Convert to clean boilerplate before any chunking attempts</li>
+                    <li>Transform to clean markdown as intermediate format</li>
+                    <li>Handle tables with special spatial relationship encoding</li>
+                </ul>
+            </div>
+
+            <div class="pattern-item">
+                <h3>🏷️ The Metadata Enhancement Pattern</h3>
+                <ul>
+                    <li>Add <span class="emphasis">source, section, and date</span> to each chunk</li>
+                    <li>Enable recency-based retrieval (2025 updates > 2024 updates)</li>
+                    <li>Dramatically improves retrieval accuracy through context</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 10-Step Process -->
+        <div class="slide">
+            <h2><span class="icon">⚙️</span> The 10-Step Production Pipeline</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Convert to Text</h4>
+                    <p>Use appropriate parser</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Split Sections</h4>
+                    <p>Logical document division</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Remove Boilerplate</h4>
+                    <p>Clean headers & footers</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Normalize Whitespace</h4>
+                    <p>Consistent formatting</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h4>Extract Titles</h4>
+                    <p>Section identification</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <h4>Add Metadata</h4>
+                    <p>Source, section, date tags</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">7</div>
+                    <h4>Chunk with Overlap</h4>
+                    <p>Strategic text division</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">8</div>
+                    <h4>Embed Chunks</h4>
+                    <p>Vector representation</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">9</div>
+                    <h4>Verify Samples</h4>
+                    <p>Quality assurance</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">10</div>
+                    <h4>Iterate</h4>
+                    <p>Continuous refinement</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="slide conclusion">
+            <h2><span class="icon">💡</span> Key Takeaways</h2>
+            <div class="key-insight">
+                <p><strong>RAG complexity is real.</strong> This 10-step process represents the <span class="emphasis">minimum viable effort</span> for a "fairly simple exercise."</p>
+                <br>
+                <p>Effective RAG systems require <span class="emphasis">extensive preprocessing</span> - the chunking step is just the tip of the iceberg.</p>
+                <br>
+                <p><strong>Clean data in = Quality retrieval out</strong></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

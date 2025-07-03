@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI Degradation Framework (Dark Theme)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Midnight Scholar -->
+    <!-- Application Structure Plan: A dashboard-style SPA with top navigation to three thematic sections: Prompt Adherence, Context Degradation, and Cohesion Loss. This structure was chosen to transform the linear, academic report into an exploratory tool. Each section follows a 'Define -> Visualize -> Interact' pattern to make the mathematical concepts tangible and intuitive for researchers and developers. The dashboard approach encourages non-linear exploration, which is more user-friendly for understanding distinct but related concepts than a simple document scroll. -->
+    <!-- Visualization & Content Choices: 1. Prompt Adherence: Goal=Inform/Explain. Method=Dynamic text calculation with sliders (for PA_V). Justification=Makes the formula interactive and easy to grasp. Library=Vanilla JS. 2. Context Degradation: Goal=Change over time. Method=Interactive Line Chart. Justification=Best way to show trends and degradation. Interaction=Toggle between 'vs. Turns' and 'vs. Tokens'. Library=Chart.js. 3. Cohesion Loss: Goal=Organize/Explain relationships. Method=HTML/CSS-based diagram. Justification=Visually explains the abstract concept of contradiction without complex libraries. Interaction=Hover to highlight violations. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* gray-900 */
+            color: #D1D5DB; /* gray-300 */
+        }
+        .font-slab {
+            font-family: 'Roboto Slab', serif;
+        }
+        .katex {
+            color: #F9FAFB; /* gray-50 */
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #F9FAFB; /* gray-50 */
+            color: #111827; /* gray-900 */
+        }
+        .nav-button:not(.active):hover {
+            background-color: #374151; /* gray-700 */
+        }
+        .card {
+            background-color: #1F2937; /* gray-800 */
+            border: 1px solid #374151; /* gray-700 */
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.1);
+            border-color: #4B5563; /* gray-600 */
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #60A5FA; /* blue-400 */
+            color: #F9FAFB; /* gray-50 */
+            font-weight: 600;
+        }
+        input[type=range] {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 100%;
+          cursor: pointer;
+          outline: none;
+          border-radius: 15px;
+          height: 6px;
+          background: #374151; /* gray-700 */
+        }
+        input[type=range]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          height: 18px;
+          width: 18px;
+          background-color: #60A5FA; /* blue-400 */
+          border-radius: 50%;
+          border: 2px solid #1F2937; /* gray-800 */
+        }
+        input[type=range]::-moz-range-thumb {
+          height: 18px;
+          width: 18px;
+          background-color: #60A5FA; /* blue-400 */
+          border-radius: 50%;
+          border: 2px solid #1F2937; /* gray-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-gray-900/80 backdrop-blur-lg sticky top-0 z-20 border-b border-gray-700">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <h1 class="text-2xl font-bold font-slab text-gray-100">AI Degradation Framework</h1>
+                <nav class="hidden md:flex items-center space-x-2">
+                    <button onclick="scrollToSection('pa')" class="nav-button active px-4 py-2 text-sm font-medium rounded-lg">Prompt Adherence</button>
+                    <button onclick="scrollToSection('cwd')" class="nav-button px-4 py-2 text-sm font-medium rounded-lg text-gray-300">Context Degradation</button>
+                    <button onclick="scrollToSection('cl')" class="nav-button px-4 py-2 text-sm font-medium rounded-lg text-gray-300">Cohesion Loss</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <section id="intro" class="mb-16 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold font-slab text-gray-50 mb-4">Exploring AI Performance Limits</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-400">
+                This interactive application provides a hands-on exploration of a formal mathematical framework designed to measure and quantify AI performance degradation. Interact with the models below to understand how an AI's ability to follow instructions and maintain context can be evaluated.
+            </p>
+        </section>
+
+        <section id="pa" class="mb-16 scroll-mt-20">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold font-slab text-gray-50">1. Prompt Adherence (PA)</h2>
+                <p class="max-w-2xl mx-auto mt-2 text-gray-400">
+                    Prompt Adherence measures how well an AI's output matches a predefined structure or pattern. It's a foundational metric for assessing reliability. This can be calculated through structural similarity or by penalizing specific violations.
+                </p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="border-b border-gray-700 mb-6">
+                    <nav class="flex -mb-px space-x-6" aria-label="Tabs">
+                        <button id="tab-pas" onclick="switchTab('pa', 'pas')" class="tab-button active text-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            Similarity-Based (PA_S)
+                        </button>
+                        <button id="tab-pav" onclick="switchTab('pa', 'pav')" class="tab-button text-gray-500 hover:text-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            Violation-Based (PA_V)
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="content-pas" class="tab-content">
+                    <div class="card p-6 rounded-lg">
+                        <h3 class="font-semibold font-slab text-xl mb-2 text-gray-100">Similarity-Based Adherence ($PA_S$)</h3>
+                        <p class="text-gray-400 mb-4">This metric compares the generated code's structure to an ideal template. A higher score means a closer match. The score is calculated by a similarity function, $f(X, P)$, which evaluates a generated code structure, $C_{\text{gen}}$, against an ideal one, $C_{\text{ideal}}$.</p>
+                        <div id="formula-pas" class="bg-gray-900 p-4 rounded-md text-center"></div>
+                        <p class="text-gray-400 mt-4">When the ideal implementation scores a perfect 1, the formula simplifies to just the score of the generated code: $PA_S = f(C_{\text{gen}}, P)$.</p>
+                    </div>
+                </div>
+
+                <div id="content-pav" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="card p-6 rounded-lg">
+                            <h3 class="font-semibold font-slab text-xl mb-2 text-gray-100">Violation-Based Adherence ($PA_V$)</h3>
+                            <p class="text-gray-400 mb-4">This metric starts with a perfect score of 1 and subtracts penalties for each rule violation, weighted by severity. It provides a nuanced view of adherence by focusing on specific errors.</p>
+                            <div id="formula-pav" class="bg-gray-900 p-4 rounded-md text-center"></div>
+                            <p class="text-gray-400 mt-4 text-sm">Here, the total severity of all violations is divided by a maximum possible score to normalize the penalty.</p>
+                        </div>
+                        <div class="card p-6 rounded-lg flex flex-col justify-center">
+                            <h4 class="font-semibold text-lg mb-4 text-gray-100">Interactive Calculator</h4>
+                            <div class="space-y-5">
+                                <div>
+                                    <label for="violations" class="block text-sm font-medium text-gray-300">Number of Violations: <span id="violations-value" class="font-bold text-gray-100">5</span></label>
+                                    <input type="range" id="violations" min="0" max="20" value="5" class="mt-1">
+                                </div>
+                                <div>
+                                    <label for="severity" class="block text-sm font-medium text-gray-300">Average Severity: <span id="severity-value" class="font-bold text-gray-100">0.5</span></label>
+                                    <input type="range" id="severity" min="0.1" max="1" step="0.1" value="0.5" class="mt-1">
+                                </div>
+                            </div>
+                            <div class="mt-6 text-center bg-blue-900/50 border border-blue-700 p-4 rounded-lg">
+                                <p class="text-sm text-blue-300">Calculated Adherence Score ($PA_V$)</p>
+                                <p id="pav-score" class="text-3xl font-bold font-slab text-blue-200">0.75</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cwd" class="mb-16 scroll-mt-20">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold font-slab text-gray-50">2. Context Window Degradation (CWD)</h2>
+                <p class="max-w-2xl mx-auto mt-2 text-gray-400">
+                    As a conversation with an AI continues, its context window fills up. CWD measures how Prompt Adherence declines as more tokens or conversational turns are added, indicating a loss of focus or "memory."
+                </p>
+            </div>
+            <div class="card p-4 sm:p-6 rounded-lg">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold font-slab text-gray-100 mb-2 sm:mb-0">PA Score vs. Context Size</h3>
+                     <div class="flex items-center space-x-2 bg-gray-900 p-1 rounded-lg">
+                        <button id="btn-turns" class="px-3 py-1 text-sm rounded-md bg-gray-700 text-gray-100 shadow">vs. Turns</button>
+                        <button id="btn-tokens" class="px-3 py-1 text-sm rounded-md text-gray-400">vs. Tokens</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="cwdChart"></canvas>
+                </div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                    <div class="bg-gray-900/70 p-4 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-400">Absolute Degradation ($\text{CWD}\%$)</h4>
+                        <p id="cwd-percent" class="text-2xl font-bold font-slab text-gray-100">25.53%</p>
+                        <p class="text-xs text-gray-500">Total drop from start to finish</p>
+                    </div>
+                    <div class="bg-gray-900/70 p-4 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-400">Degradation Rate (DR)</h4>
+                        <p id="dr-value" class="text-2xl font-bold font-slab text-gray-100">0.028/turn</p>
+                        <p class="text-xs text-gray-500" id="dr-unit-label">Average PA loss per turn</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cl" class="scroll-mt-20">
+             <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold font-slab text-gray-50">3. Cohesion Loss (CL)</h2>
+                <p class="max-w-2xl mx-auto mt-2 text-gray-400">
+                    Cohesion Loss is a critical failure where the AI contradicts its own previous outputs or instructions. This metric tracks these specific, impactful violations, which often signal a deeper breakdown in contextual understanding.
+                </p>
+            </div>
+             <div class="card p-6 rounded-lg">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="font-semibold font-slab text-xl mb-2 text-gray-100">Example of a Cohesion Violation</h3>
+                        <p class="text-gray-400 mb-4">Imagine a sequence of commands where the AI is first told to use a new, efficient module, but later reverts to a deprecated one it was told to avoid. This is a cohesion violation.</p>
+                        <div id="formula-cl" class="bg-gray-900 p-4 rounded-md text-center mb-6"></div>
+                        <div class="bg-red-900/50 border border-red-700 p-4 rounded-lg text-center">
+                            <p class="text-sm text-red-300">Calculated Cohesion Loss (CL)</p>
+                            <p class="text-3xl font-bold font-slab text-red-200">0.25</p>
+                             <p class="text-xs text-red-400">(1 violation / 4 contextual checks)</p>
+                        </div>
+                    </div>
+                    <div class="border border-gray-700 rounded-lg p-4 space-y-3 bg-gray-900">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">1</div>
+                            <p class="pt-1 text-gray-300"><strong>Initial Prompt:</strong> "Refactor the authentication system to use the new `AuthV2` module."</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">2</div>
+                            <p class="pt-1 text-gray-300"><strong>AI Output:</strong> Correctly implements `AuthV2`.</p>
+                        </div>
+                         <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300 font-bold">...</div>
+                            <p class="pt-1 text-gray-500 italic">Several turns later...</p>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 rounded-lg bg-red-900/40 border border-red-700">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">5</div>
+                            <div>
+                                <p class="pt-1 text-red-200"><strong>New Prompt:</strong> "Add a password reset feature."</p>
+                                <p class="pt-1 text-red-200"><strong>AI Output:</strong> Implements the feature using the deprecated `AuthV1` module.</p>
+                                <p class="text-xs font-semibold text-red-400 mt-1">COHESION VIOLATION</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center p-8 mt-12 border-t border-gray-800">
+        <p class="text-sm text-gray-500">Interactive Framework Explorer. Built to make complex concepts understandable.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFormulas();
+            setupPAVCalculator();
+            setupCWDChart();
+            setupNavScroll();
+        });
+
+        function renderFormulas() {
+            katex.render("PA_S = \\frac{f(C_{\\text{gen}}, P)}{f(C_{\\text{ideal}}, P)}", document.getElementById('formula-pas'), {
+                throwOnError: false,
+                displayMode: true
+            });
+            katex.render("PA_V = 1 - \\frac{\\sum_{k=1}^{V_{\\text{total}}} \\text{Severity}(v_k)}{\\text{MaxScore}_P}", document.getElementById('formula-pav'), {
+                throwOnError: false,
+                displayMode: true
+            });
+            katex.render("\\text{CL} = \\frac{V_{\\text{cohesion}}}{N_{\\text{contextual\\_checks}}}", document.getElementById('formula-cl'), {
+                throwOnError: false,
+                displayMode: true
+            });
+        }
+
+        function switchTab(section, activeTab) {
+            const contentElements = document.querySelectorAll(`#${section} .tab-content`);
+            contentElements.forEach(el => el.classList.add('hidden'));
+
+            const buttonElements = document.querySelectorAll(`#${section} .tab-button`);
+            buttonElements.forEach(el => {
+                el.classList.remove('active', 'text-gray-50');
+                el.classList.add('text-gray-500', 'hover:text-gray-300');
+            });
+
+            document.getElementById(`content-${activeTab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${activeTab}`);
+            activeBtn.classList.add('active', 'text-gray-50');
+            activeBtn.classList.remove('text-gray-500', 'hover:text-gray-300');
+        }
+
+        function setupPAVCalculator() {
+            const violationsSlider = document.getElementById('violations');
+            const severitySlider = document.getElementById('severity');
+            const violationsValue = document.getElementById('violations-value');
+            const severityValue = document.getElementById('severity-value');
+            const pavScore = document.getElementById('pav-score');
+            const maxScore = 20 * 1.0; 
+
+            function updatePAV() {
+                const numViolations = parseFloat(violationsSlider.value);
+                const avgSeverity = parseFloat(severitySlider.value);
+                violationsValue.textContent = numViolations;
+                severityValue.textContent = avgSeverity.toFixed(1);
+
+                const totalSeverity = numViolations * avgSeverity;
+                const score = 1 - (totalSeverity / maxScore);
+                pavScore.textContent = Math.max(0, score).toFixed(2);
+            }
+
+            violationsSlider.addEventListener('input', updatePAV);
+            severitySlider.addEventListener('input', updatePAV);
+            updatePAV();
+        }
+
+        let cwdChartInstance = null;
+        const data = {
+            turns: {
+                labels: Array.from({ length: 11 }, (_, i) => `T${i}`),
+                pa_scores: [0.94, 0.95, 0.91, 0.88, 0.89, 0.85, 0.81, 0.77, 0.72, 0.69, 0.70],
+            },
+            tokens: {
+                labels: ['0k', '5k', '10k', '15k', '20k', '25k', '30k', '35k', '40k', '45k', '50k'],
+                pa_scores: [0.94, 0.92, 0.90, 0.87, 0.83, 0.80, 0.78, 0.74, 0.71, 0.68, 0.70],
+            }
+        };
+
+        function setupCWDChart() {
+            const ctx = document.getElementById('cwdChart').getContext('2d');
+            const textColor = '#9CA3AF'; // gray-400
+            const gridColor = 'rgba(55, 65, 81, 0.5)'; // gray-700 with alpha
+
+            cwdChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.turns.labels,
+                    datasets: [{
+                        label: 'Prompt Adherence Score',
+                        data: data.turns.pa_scores,
+                        fill: true,
+                        backgroundColor: 'rgba(96, 165, 250, 0.2)', // blue-400
+                        borderColor: 'rgba(96, 165, 250, 1)', // blue-400
+                        tension: 0.1,
+                        pointBackgroundColor: 'rgba(96, 165, 250, 1)',
+                        pointBorderColor: '#1F2937', // card bg
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#1F2937',
+                        pointHoverBorderColor: 'rgba(96, 165, 250, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0.5,
+                            max: 1.0,
+                            title: { display: true, text: 'PA Score', color: textColor },
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            title: { display: true, text: 'Conversational Turns', color: textColor },
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#374151',
+                            titleColor: '#F9FAFB',
+                            bodyColor: '#D1D5DB',
+                            callbacks: {
+                                label: function(context) {
+                                    return `PA Score: ${context.parsed.y.toFixed(3)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            calculateCWDMetrics('turns');
+            
+            document.getElementById('btn-turns').addEventListener('click', () => updateChartData('turns'));
+            document.getElementById('btn-tokens').addEventListener('click', () => updateChartData('tokens'));
+        }
+
+        function updateChartData(type) {
+            const btnTurns = document.getElementById('btn-turns');
+            const btnTokens = document.getElementById('btn-tokens');
+
+            if (type === 'turns') {
+                btnTurns.classList.add('bg-gray-700', 'text-gray-100', 'shadow');
+                btnTurns.classList.remove('text-gray-400');
+                btnTokens.classList.remove('bg-gray-700', 'text-gray-100', 'shadow');
+                btnTokens.classList.add('text-gray-400');
+            } else {
+                btnTokens.classList.add('bg-gray-700', 'text-gray-100', 'shadow');
+                btnTokens.classList.remove('text-gray-400');
+                btnTurns.classList.remove('bg-gray-700', 'text-gray-100', 'shadow');
+                btnTurns.classList.add('text-gray-400');
+            }
+            
+            cwdChartInstance.data.labels = data[type].labels;
+            cwdChartInstance.data.datasets[0].data = data[type].pa_scores;
+            cwdChartInstance.options.scales.x.title.text = type === 'turns' ? 'Conversational Turns' : 'Context Size (Tokens)';
+            cwdChartInstance.update();
+            calculateCWDMetrics(type);
+        }
+
+        function calculateCWDMetrics(type) {
+            const scores = data[type].pa_scores;
+            const pa_initial = scores[0];
+            const pa_final = scores[scores.length - 1];
+
+            const cwd_percent = (1 - (pa_final / pa_initial)) * 100;
+            document.getElementById('cwd-percent').textContent = `${cwd_percent.toFixed(2)}%`;
+
+            const total_diff = pa_initial - pa_final;
+            let dr, unitLabel, unit;
+            if (type === 'turns') {
+                dr = total_diff / (scores.length - 1);
+                unit = '/turn';
+                unitLabel = 'Average PA loss per turn';
+            } else {
+                const totalTokens = parseInt(data[type].labels[data[type].labels.length-1].replace('k', '')) * 1000;
+                dr = total_diff / totalTokens;
+                unit = '/1k tokens';
+                dr = dr * 1000;
+                unitLabel = 'Average PA loss per 1k tokens';
+            }
+            document.getElementById('dr-value').textContent = `${dr.toFixed(3)}${unit}`;
+            document.getElementById('dr-unit-label').textContent = unitLabel;
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function setupNavScroll() {
+            const sections = document.querySelectorAll('main section[id]');
+            const navButtons = document.querySelectorAll('header nav button');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navButtons.forEach(button => {
+                            button.classList.remove('active');
+                            if (button.getAttribute('onclick').includes(entry.target.id)) {
+                                button.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+    </script>
+</body>
+</html>

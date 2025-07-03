@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Processed - Reference Manual: Ingestion Protocols</title>
+    <style>
+        /* --- Core Style Replication from 'The Complete Guide to RAG' --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: #1a1a1a; color: #e8e8e8; line-height: 1.8; font-size: 18px; }
+        .article-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: center; margin-bottom: 60px; border-bottom: 2px solid #333; padding-bottom: 40px; }
+        .header h1 { font-size: 2.8em; margin-bottom: 20px; color: #fff; font-weight: 300; letter-spacing: -1px; }
+        section { margin: 50px 0; border-bottom: 1px solid #333; padding-bottom: 30px; }
+        section:last-child { border-bottom: none; }
+        h2 { font-size: 2.2em; color: #fff; margin: 40px 0 25px 0; font-weight: 400; border-left: 4px solid #4a9eff; padding-left: 20px; }
+        p, li { margin: 10px 0; text-align: justify; }
+        ul { padding-left: 40px; list-style-type: disc; }
+        .highlight-box { background: #2a2a2a; border-left: 4px solid #ff6b6b; padding: 25px; margin: 30px 0; border-radius: 0 8px 8px 0; }
+        .code-block { background: #252525; padding: 25px; border-radius: 8px; border-top: 3px solid #facc15; font-family: 'Courier New', monospace; color: #f0f0f0; white-space: pre-wrap; font-size: 16px; }
+        .emphasis { color: #60a5fa; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- Aegis Metadata (for RAG ingestion) -->
+    <script id="aegis-metadata" type="application/json">
+    {
+      "version": "1.0.0",
+      "source_filename": "aegis-reference-manual.md",
+      "source_hash": "placeholder_sha256_hash_l7m6n5o4p3q2",
+      "aegis_id": "3d2e1f0g-9h8i-7j6k-5l4m-3n2o1p0q9r8s",
+      "processed_by_agent": "Markdown-Agent",
+      "ingestion_date_utc": "2025-07-03T16:35:00.000Z",
+      "file_metadata": { "creation_date_utc": null, "modification_date_utc": null, "size_bytes": 0, "mime_type": "text/markdown" },
+      "extracted_elements": [
+        { "type": "protocol", "name": "Microsoft Word Document (.docx)" },
+        { "type": "protocol", "name": "YouTube Video (from URL)" },
+        { "type": "protocol", "name": "AI Conversation Log (.txt or .md)" },
+        { "type": "protocol", "name": "macOS Screenshot (.png)" }
+      ],
+      "tags": ["AegisFramework", "ReferenceManual", "IngestionProtocols", "RAG", "DataProcessing"],
+      "relationships": { "parent_doc_id": "2c1d0e9f-8g7h-6i5j-4k3l-2m1n0o9p8q7r", "child_doc_ids": [] },
+      "custom_fields": { "ingestion_source": "User Upload", "ingestion_version": "2.0" }
+    }
+    </script>
+
+    <!-- Cleaned Markdown Content (for RAG ingestion) -->
+    <div id="aegis-markdown-content" hidden>
+# Aegis Reference Manual: Ingestion Protocols
+
+This document provides the specific processing instructions for various data types. An agent will use this manual to understand how to correctly process a given file.
+
+---
+
+### Protocol 1: Microsoft Word Document (`.docx`)
+- **Responsible Agent:** `Office-Agent`
+- **Primary Tool(s):** `mammoth.js` or a similar library.
+- **Processing Steps:**
+    1. Use the library to convert the `.docx` file directly to clean Markdown. The library should handle headings, lists, bold/italic text, and tables automatically.
+    2. Extract all images from the document, save them to an assets folder, and replace them in the Markdown with a standard image link: `![image_alt_text](./assets/image_name.png)`.
+    3. Parse the generated Markdown for any remaining non-standard elements.
+    4. Generate the `.meta.json` file, setting `mime_type` to `application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
+- **Functional Elements to Extract:** Tables, images (for later analysis by `Multimedia-Agent`), and code blocks.
+
+---
+
+### Protocol 2: YouTube Video (from URL)
+- **Responsible Agent:** `Web-Agent`
+- **Primary Tool(s):** `youtube-dl` (or `yt-dlp`), `OpenAI Whisper` (or a local transcription model).
+- **Processing Steps:**
+    1. Use `yt-dlp` to download the video's metadata (title, description, author, upload date) and the audio track as a `.mp3` or `.wav` file.
+    2. Use a transcription service/model to convert the audio to a text transcript.
+    3. The transcript becomes the body of the `.md` file.
+    4. The video title becomes the H1 header of the Markdown file. The video description is included as a blockquote at the beginning.
+    5. Generate the `.meta.json` file. Populate `file_metadata` with the downloaded video metadata. Store the original YouTube URL in a `custom_fields.source_url` field.
+- **Functional Elements to Extract:** Any code, links, or lists mentioned in the video description or spoken in the transcript.
+
+---
+
+### Protocol 3: AI Conversation Log (`.txt` or `.md`)
+- **Responsible Agent:** `Chat-Agent`
+- **Primary Tool(s):** Custom RegEx/parsing logic.
+- **Processing Steps:**
+    1. Parse the text file to identify distinct conversation turns (e.g., lines starting with "USER:", "ASSISTANT:", "the Gnnnome:", "Gemini:").
+    2. For each turn, extract the speaker, the timestamp (if available), and the content.
+    3. Format the output in the `.md` file for clear readability (e.g., using blockquotes or headings for each speaker).
+    4. **Crucially for Context Degradation Analysis:** Generate a structured representation of the conversation for the **Non-Relational DB**.
+        - Create a single document in the `prompts` collection with an array of turn objects:
+            ```json
+            // In MongoDB
+            {
+              "source_aegis_id": "uuid_of_this_conversation",
+              "conversation": [
+                { "turn": 1, "speaker": "user", "content": "...", "token_count": 50 },
+                { "turn": 2, "speaker": "assistant", "content": "...", "token_count": 450 },
+                ...
+              ]
+            }
+            ```
+    5. Reference this MongoDB object ID in the `.meta.json` file.
+- **Functional Elements to Extract:** All user prompts, all assistant responses, and any code blocks provided within the conversation.
+
+---
+
+### Protocol 4: macOS Screenshot (`.png`)
+- **Responsible Agent:** `Multimedia-Agent`
+- **Primary Tool(s):** An OCR library/service (like `Tesseract.js` or a cloud vision API).
+- **Processing Steps:**
+    1. Perform OCR on the image to extract all visible text.
+    2. The extracted text becomes the body of the `.md` file.
+    3. Generate a textual description of the image's visual layout (e.g., "Screenshot of a terminal window on the left and a code editor on the right."). This description is added to the top of the `.md` file.
+    4. The original `.png` is kept in an assets folder and linked in the `.meta.json` under `custom_fields.original_image_path`.
+- **Functional Elements to Extract:** Any text that appears to be code, terminal commands, or file paths.
+    </div>
+
+    <!-- Stylized HTML for Web Distribution -->
+    <div class="article-container">
+        <div class="header">
+            <h1>Aegis Reference Manual</h1>
+            <p class="subtitle">Ingestion Protocols</p>
+        </div>
+
+        <section>
+            <h2>Protocol 1: Microsoft Word Document (`.docx`)</h2>
+            <ul>
+                <li><strong>Responsible Agent:</strong> `Office-Agent`</li>
+                <li><strong>Primary Tool(s):</strong> `mammoth.js` or a similar library.</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>Processing Steps:</strong> Use a library like `mammoth.js` to convert the `.docx` file directly to clean Markdown. This should handle headings, lists, and tables automatically. Extract all images, save them to an assets folder, and replace them with standard Markdown links. Finally, generate the `.meta.json` file.</p>
+                <p><strong>Functional Elements to Extract:</strong> Tables, images, and code blocks.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Protocol 2: YouTube Video (from URL)</h2>
+            <ul>
+                <li><strong>Responsible Agent:</strong> `Web-Agent`</li>
+                <li><strong>Primary Tool(s):</strong> `yt-dlp`, `OpenAI Whisper` (or similar).</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>Processing Steps:</strong> Use `yt-dlp` to download video metadata and the audio track. Transcribe the audio to text, which becomes the body of the Markdown file. The video title becomes the H1 header. Generate the `.meta.json` file, populating it with the video metadata and the source URL.</p>
+                <p><strong>Functional Elements to Extract:</strong> Any code, links, or lists mentioned in the video description or spoken in the transcript.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Protocol 3: AI Conversation Log (`.txt` or `.md`)</h2>
+            <ul>
+                <li><strong>Responsible Agent:</strong> `Chat-Agent`</li>
+                <li><strong>Primary Tool(s):</strong> Custom RegEx/parsing logic.</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>Processing Steps:</strong> Parse the text to identify distinct conversation turns. For context degradation analysis, generate a structured representation of the conversation for the Non-Relational Database, creating a document in the `prompts` collection with an array of turn objects.</p>
+                <div class="code-block">{
+  "source_aegis_id": "uuid_of_this_conversation",
+  "conversation": [
+    { "turn": 1, "speaker": "user", "content": "...", "token_count": 50 },
+    { "turn": 2, "speaker": "assistant", "content": "...", "token_count": 450 }
+  ]
+}</div>
+                <p><strong>Functional Elements to Extract:</strong> All user prompts, all assistant responses, and any code blocks provided within the conversation.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Protocol 4: macOS Screenshot (`.png`)</h2>
+            <ul>
+                <li><strong>Responsible Agent:</strong> `Multimedia-Agent`</li>
+                <li><strong>Primary Tool(s):</strong> An OCR library/service like `Tesseract.js`.</li>
+            </ul>
+            <div class="highlight-box">
+                <p><strong>Processing Steps:</strong> Perform OCR on the image to extract all visible text. This text becomes the body of the Markdown file. Also, generate a textual description of the image's visual layout (e.g., "Screenshot of a terminal window..."). The original image is kept and linked in the metadata.</p>
+                <p><strong>Functional Elements to Extract:</strong> Any text that appears to be code, terminal commands, or file paths.</p>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Complete Guide to RAG: From Basic Concepts to Enterprise Implementation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            line-height: 1.8;
+            font-size: 18px;
+        }
+        
+        .article-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: 300;
+            letter-spacing: -1px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #b0b0b0;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .header .meta {
+            color: #888;
+            font-size: 0.95em;
+        }
+        
+        .section {
+            margin: 50px 0;
+        }
+        
+        h2 {
+            font-size: 2.2em;
+            color: #fff;
+            margin: 40px 0 25px 0;
+            font-weight: 400;
+            border-left: 4px solid #4a9eff;
+            padding-left: 20px;
+        }
+        
+        h3 {
+            font-size: 1.6em;
+            color: #ddd;
+            margin: 30px 0 15px 0;
+            font-weight: 500;
+        }
+        
+        h4 {
+            font-size: 1.3em;
+            color: #ccc;
+            margin: 25px 0 12px 0;
+            font-weight: 500;
+        }
+        
+        p {
+            margin: 20px 0;
+            text-align: justify;
+        }
+        
+        .highlight-box {
+            background: #2a2a2a;
+            border-left: 4px solid #ff6b6b;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, #2a3a4a, #1f2937);
+            border: 1px solid #374151;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .insight-box .key-point {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 15px;
+        }
+        
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .problem-item {
+            background: #252525;
+            padding: 25px;
+            border-radius: 8px;
+            border-top: 3px solid #ff6b6b;
+        }
+        
+        .problem-item h4 {
+            color: #ff9999;
+            margin-bottom: 12px;
+        }
+        
+        .solution-item {
+            background: #1f2937;
+            padding: 25px;
+            border-radius: 8px;
+            border-top: 3px solid #10b981;
+            margin: 15px 0;
+        }
+        
+        .solution-item h4 {
+            color: #6ee7b7;
+            margin-bottom: 12px;
+        }
+        
+        .steps-container {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .step-item:hover {
+            background: #333;
+        }
+        
+        .step-number {
+            background: #4a9eff;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h4 {
+            margin: 0 0 8px 0;
+            color: #4a9eff;
+        }
+        
+        .comparison-table {
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 30px 0;
+        }
+        
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid #333;
+        }
+        
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+        
+        .comparison-cell {
+            padding: 20px;
+        }
+        
+        .comparison-header {
+            background: #333;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .rag-cell {
+            background: #1f2937;
+            border-right: 1px solid #333;
+        }
+        
+        .agentic-cell {
+            background: #2d1b69;
+        }
+        
+        .warning-box {
+            background: #3d2914;
+            border: 1px solid #d97706;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .warning-box h4 {
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+        
+        .success-box {
+            background: #1f2937;
+            border: 1px solid #10b981;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .success-box h4 {
+            color: #6ee7b7;
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            border-bottom: 1px solid #333;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li:before {
+            content: "▶";
+            color: #4a9eff;
+            position: absolute;
+            left: 0;
+            top: 12px;
+        }
+        
+        .emphasis {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+        
+        .code-inline {
+            background: #333;
+            color: #fbbf24;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .quote {
+            font-style: italic;
+            color: #b0b0b0;
+            border-left: 3px solid #666;
+            padding-left: 20px;
+            margin: 25px 0;
+            font-size: 1.1em;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            padding: 40px;
+            border-radius: 10px;
+            margin: 50px 0;
+            text-align: center;
+            border: 2px solid #374151;
+        }
+        
+        .toc {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 40px 0;
+        }
+        
+        .toc h3 {
+            margin-bottom: 20px;
+            color: #4a9eff;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .toc li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc a {
+            color: #e8e8e8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .toc a:hover {
+            color: #4a9eff;
+        }
+    </style>
+</head>
+<body>
+    <div class="article-container">
+        <div class="header">
+            <h1>The Complete Guide to RAG</h1>
+            <div class="subtitle">From Basic Concepts to Enterprise Implementation</div>
+            <div class="meta">A comprehensive analysis of Retrieval-Augmented Generation systems</div>
+        </div>
+
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#introduction">Introduction: The Reality of RAG</a></li>
+                <li><a href="#document-processing">The Document Processing Challenge</a></li>
+                <li><a href="#advanced-rag">Advanced RAG Techniques</a></li>
+                <li><a href="#memory-management">Memory Management in AI Systems</a></li>
+                <li><a href="#evaluation">Evaluation and Testing</a></li>
+                <li><a href="#common-failures">How RAG Goes Wrong</a></li>
+                <li><a href="#enterprise-scale">Enterprise-Scale Challenges</a></li>
+                <li><a href="#rag-vs-agentic">RAG vs. Agentic Search</a></li>
+                <li><a href="#when-not-to-use">When Not to Use RAG</a></li>
+                <li><a href="#future">The Future of RAG</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+            </ul>
+        </div>
+
+        <section id="introduction" class="section">
+            <h2>Introduction: The Reality of RAG</h2>
+            <p>Retrieval-Augmented Generation (RAG) has emerged as one of the most powerful techniques for bridging the gap between AI models and real-world data. Yet beneath the surface of this seemingly straightforward concept lies a complex ecosystem of challenges, patterns, and best practices that determine the difference between a successful implementation and an expensive failure.</p>
+            
+            <p>RAG solves some of AI's biggest problems: hallucination, stale knowledge, and lack of memory. It can be started as simple as a few lines of code, and it does scale up to enterprise level—although not with those same 15 lines of code. This comprehensive guide explores the full spectrum of RAG implementation, from basic concepts to enterprise-scale deployment.</p>
+
+            <div class="insight-box">
+                <div class="key-point">The Core Promise</div>
+                <p>RAG enables AI systems to access and reason over vast amounts of external data, transforming static models into dynamic, knowledge-aware systems that can provide accurate, up-to-date responses grounded in real information.</p>
+            </div>
+        </section>
+
+        <section id="document-processing" class="section">
+            <h2>The Document Processing Challenge</h2>
+            <p>Before diving into advanced RAG techniques, we must confront the fundamental challenge that underlies all successful RAG implementations: document processing. This is where most RAG projects succeed or fail, long before they reach the retrieval stage.</p>
+
+            <h3>The PDF Problem</h3>
+            <p>PDFs represent one of the most common yet problematic data sources for RAG systems. The challenges they present are both technical and systemic:</p>
+
+            <div class="problem-grid">
+                <div class="problem-item">
+                    <h4>Header & Footer Pollution</h4>
+                    <p>PDFs contain contaminating elements that confuse AI systems during text extraction. These artifacts create noise that degrades retrieval quality.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>Poor Copy-Paste Behavior</h4>
+                    <p>What you see when viewing a PDF isn't what the system extracts. Formatting artifacts and hidden characters create unexpected text patterns.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>OCR Accuracy Issues</h4>
+                    <p>Scanned documents require specialized tools for reliable text extraction. Standard OCR often produces corrupted or incomplete text that undermines retrieval accuracy.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>Spatial Relationships</h4>
+                    <p>Tables and structured data lose their meaning without proper encoding of spatial context, making it impossible to preserve important relationships.</p>
+                </div>
+            </div>
+
+            <h3>The Golden Rule: Clean First, Chunk Later</h3>
+            <div class="highlight-box">
+                <p><strong>Never attempt to chunk a PDF directly.</strong> This is perhaps the most important rule in RAG implementation. Always follow the pattern: PDF → clean boilerplate → clean markdown → chunking.</p>
+            </div>
+
+            <p>This preprocessing philosophy extends beyond PDFs to all document types. The quality of your RAG system is fundamentally limited by the quality of your input text. No amount of sophisticated chunking, embedding, or retrieval can compensate for dirty, poorly structured source material.</p>
+
+            <h3>The Production Pipeline: 10 Essential Steps</h3>
+            <p>Effective document processing requires a systematic approach. Here's the complete pipeline that transforms raw documents into RAG-ready content:</p>
+
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Convert to Text</h4>
+                        <p>Use appropriate parsers for each document type. Don't rely on generic text extraction—match the parser to the format.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Split into Sections</h4>
+                        <p>Perform logical document division based on structure, not arbitrary length limits.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Remove Boilerplate</h4>
+                        <p>Clean headers, footers, and other recurring elements that add noise without value.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Normalize Whitespace</h4>
+                        <p>Ensure consistent formatting that won't confuse downstream processing.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Extract Section Titles</h4>
+                        <p>Identify and preserve structural elements that provide context for content chunks.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h4>Add Metadata</h4>
+                        <p>Include source, section, and date information that dramatically improves retrieval accuracy.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <h4>Chunk with Overlap</h4>
+                        <p>Perform strategic text division that preserves context across chunk boundaries.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">8</div>
+                    <div class="step-content">
+                        <h4>Embed Chunks</h4>
+                        <p>Generate vector representations using consistent embedding models.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">9</div>
+                    <div class="step-content">
+                        <h4>Verify Samples</h4>
+                        <p>Implement quality assurance checks to catch processing errors early.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">10</div>
+                    <div class="step-content">
+                        <h4>Iterate and Refine</h4>
+                        <p>Continuously improve the pipeline based on retrieval performance and user feedback.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <div class="key-point">The Metadata Advantage</div>
+                <p>Adding source, section, and date metadata to each chunk can dramatically improve retrieval accuracy. For example, when a policy is updated in March 2024, the system can distinguish it from a 2025 update and choose the most recent version when recency matters.</p>
+            </div>
+        </section>
+
+        <section id="advanced-rag" class="section">
+            <h2>Advanced RAG Techniques</h2>
+            <p>Once you've mastered the fundamentals of document processing, several advanced techniques can significantly improve your RAG system's performance and capabilities.</p>
+
+            <h3>Graph RAG: Preserving Entity Relationships</h3>
+            <p>Traditional RAG treats text as isolated chunks, potentially losing important relationships between entities. Graph RAG addresses this limitation by encoding entity relationships directly into the retrieval system.</p>
+
+            <div class="solution-item">
+                <h4>How Graph RAG Works</h4>
+                <p>Instead of storing simple text chunks, Graph RAG creates knowledge graphs that preserve entity relationships. LinkedIn reported significantly better retrieval performance using this approach, as it maintains the contextual connections that traditional chunking destroys.</p>
+            </div>
+
+            <h3>Hybrid Search: The Best of Both Worlds</h3>
+            <p>Hybrid search combines vector similarity search with traditional keyword search, using a rank-choice voting approach to identify the best results across different search methods.</p>
+
+            <div class="solution-item">
+                <h4>The Hybrid Advantage</h4>
+                <p>Consider searching for a specific error code. It might rank highly in keyword search but lower in semantic search. However, with proper metadata, it appears in both searches. The hybrid system recognizes this pattern and elevates it to the top result, improving overall accuracy.</p>
+            </div>
+
+            <h3>Multimodal RAG: Beyond Text</h3>
+            <p>Modern documents often contain a mix of text, images, and tables. Effective multimodal RAG requires thoughtful handling of these different content types and their relationships.</p>
+
+            <ul class="feature-list">
+                <li><strong>Unified indexing:</strong> Create common indexes across text, images, and tables</li>
+                <li><strong>Specialized embeddings:</strong> Use tools like CLIP for image embeddings</li>
+                <li><strong>Cross-modal queries:</strong> Enable queries like "Show me the revenue table from Q3" that can retrieve both data and visualizations</li>
+                <li><strong>Invoice processing:</strong> Handle complex documents that combine structured tables, unstructured text, and visual elements</li>
+            </ul>
+
+            <h3>MCP: The Universal Connector</h3>
+            <p>Model Context Protocol (MCP) serves as the "USB port for AI," providing a universal protocol for AI data connectivity. This enables RAG systems to extend beyond internal company data to external sources seamlessly.</p>
+
+            <div class="insight-box">
+                <div class="key-point">MCP Integration</div>
+                <p>A well-designed RAG system with MCP integration can search internal company data and seamlessly extend that search to external data sources, creating a unified knowledge access layer.</p>
+            </div>
+        </section>
+
+        <section id="memory-management" class="section">
+            <h2>Memory Management in AI Systems</h2>
+            <p>Understanding memory management is crucial for effective RAG implementation. The relationship between different types of memory determines how well your system handles long-running conversations and complex queries.</p>
+
+            <h3>The Memory Hierarchy</h3>
+            <p>AI systems operate with multiple layers of memory, each serving different purposes:</p>
+
+            <div class="solution-item">
+                <h4>Context Windows: Working Memory</h4>
+                <p>This is what every AI ships with—typically 100,000 to 1,000,000+ tokens. It's the immediate, active memory that handles current conversations but has hard limits.</p>
+            </div>
+
+            <div class="solution-item">
+                <h4>Vector Stores: Long-term Memory</h4>
+                <p>Effectively unlimited storage that compresses and summarizes information through embeddings. This enables retrieval of relevant information from vast datasets.</p>
+            </div>
+
+            <h3>Advanced Memory Techniques</h3>
+            <p>Sophisticated RAG systems implement multiple abstraction levels for memory management:</p>
+
+            <ul class="feature-list">
+                <li><strong>Conversation compression:</strong> Summarize old conversations while preserving key facts</li>
+                <li><strong>Conversational RAG:</strong> Retrieve previous conversation segments using RAG on the conversation itself</li>
+                <li><strong>Layered memory:</strong> Multiple abstraction levels ensure important context isn't lost</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Real-world example:</strong> Imagine ordering French fries through an AI assistant. You mention wanting extra fries in your second message, then have 20-30 more exchanges. Without proper memory management, the system forgets your original request. RAG-based memory management prevents this common frustration by maintaining context across extended conversations.</p>
+            </div>
+
+            <h3>The OpenAI vs. Claude Memory Mystery</h3>
+            <p>Users often perceive OpenAI as having longer context windows than Claude, but this isn't necessarily true. OpenAI likely uses sophisticated memory management techniques to maintain conversation context longer, while Claude has more apparent hard memory limits. This illustrates how memory management can dramatically impact user experience regardless of raw context window size.</p>
+        </section>
+
+        <section id="evaluation" class="section">
+            <h2>Evaluation and Testing</h2>
+            <p>Systematic evaluation separates successful RAG implementations from expensive failures. Without proper testing frameworks, you're essentially flying blind.</p>
+
+            <h3>The Four Pillars of RAG Evaluation</h3>
+            
+            <div class="problem-grid">
+                <div class="problem-item">
+                    <h4>Relevance</h4>
+                    <p>Are we retrieving the right chunks? This measures whether your retrieval system finds the most pertinent information for each query.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>Faithfulness</h4>
+                    <p>Is the answer based on actual sources? This ensures your system doesn't hallucinate information that contradicts retrieved content.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>Quality</h4>
+                    <p>Would a human rate the response as correct? This measures the overall usefulness and accuracy of generated responses.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>Latency</h4>
+                    <p>Is this fast enough for real-world use? Most applications require sub-second response times for good user experience.</p>
+                </div>
+            </div>
+
+            <h3>Building Effective Evaluation Sets</h3>
+            <p>Your evaluation foundation requires careful construction:</p>
+
+            <ul class="feature-list">
+                <li><strong>Gold standard questions:</strong> Create a comprehensive set of questions that represent real use cases</li>
+                <li><strong>Include edge cases:</strong> Don't make evaluation easy—include tricky scenarios that stress-test your system</li>
+                <li><strong>Measure both stages:</strong> Evaluate retrieval accuracy and generation quality separately</li>
+                <li><strong>A/B testing:</strong> Systematically compare improvements using controlled experiments</li>
+            </ul>
+
+            <div class="success-box">
+                <h4>Notion's Success Story</h4>
+                <p>Notion implemented rigorous A/B testing when improving their RAG system. They could prove improved search value over time, analyze failure patterns, and systematically fix data quality issues. This methodical approach led to measurable improvements in user satisfaction.</p>
+            </div>
+        </section>
+
+        <section id="common-failures" class="section">
+            <h2>How RAG Goes Wrong</h2>
+            <p>Understanding common failure modes helps you avoid expensive mistakes and design more robust systems from the start.</p>
+
+            <h3>The Seven Deadly Sins of RAG</h3>
+
+            <div class="problem-grid">
+                <div class="problem-item">
+                    <h4>1. Chunking Gone Wrong</h4>
+                    <p>Breaking context mid-sentence or losing important relationships between related information.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>2. Lost in Translation</h4>
+                    <p>LLMs missing information in large chunks or important details getting buried in irrelevant context.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>3. Retrieval Failures</h4>
+                    <p>Bad RAG implementation can actually make memory problems worse by failing to retrieve relevant information.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>4. Hallucination Despite Context</h4>
+                    <p>The system makes up facts even when correct information is available in the retrieved context.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>5. Wrong Database Choice</h4>
+                    <p>Expensive, incorrect vector database setups that don't match your use case or scale requirements.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>6. Stale Data Problems</h4>
+                    <p>No update pipeline means information becomes outdated and useless over time.</p>
+                </div>
+                <div class="problem-item">
+                    <h4>7. Security Catastrophes</h4>
+                    <p>Security leaks, PII exposure, and compliance failures that can destroy business relationships.</p>
+                </div>
+            </div>
+
+            <h3>Prevention Strategies</h3>
+            <p>Most RAG failures are preventable with proper planning and implementation practices:</p>
+
+            <div class="solution-item">
+                <h4>Design Principles</h4>
+                <ul class="feature-list">
+                    <li><strong>Always overlap chunks:</strong> Maintain context across boundaries</li>
+                    <li><strong>Test with production-like data:</strong> Avoid surprises in deployment</li>
+                    <li><strong>Allow "I don't know" responses:</strong> Reduces hallucination risks</li>
+                    <li><strong>Start with open-source options:</strong> Validate architecture before expensive commitments</li>
+                    <li><strong>Build update pipelines from day one:</strong> Don't treat data freshness as an afterthought</li>
+                    <li><strong>Security review upfront:</strong> Address compliance and privacy concerns before building</li>
+                    <li><strong>Track embedding versions:</strong> Prevent index/query mismatches that destroy performance</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="enterprise-scale" class="section">
+            <h2>Enterprise-Scale Challenges</h2>
+            <p>Scaling RAG systems to handle millions of queries introduces entirely new categories of challenges that require sophisticated solutions.</p>
+
+            <h3>Technical Scaling Challenges</h3>
+            
+            <div class="solution-item">
+                <h4>Infrastructure Requirements</h4>
+                <ul class="feature-list">
+                    <li><strong>Vector database sharding:</strong> Distribute data across multiple nodes for performance</li>
+                    <li><strong>Replication strategies:</strong> Ensure availability and fault tolerance</li>
+                    <li><strong>Query caching:</strong> Cache popular queries to reduce computational overhead</li>
+                    <li><strong>Model cascading:</strong> Use different models for different query types and complexity levels</li>
+                </ul>
+            </div>
+
+            <div class="solution-item">
+                <h4>Cost Optimization</h4>
+                <p>At enterprise scale, cost optimization can save millions of dollars. This involves model selection strategies, where you determine the smallest capable model for each query type and implement sophisticated routing based on query complexity and performance requirements.</p>
+            </div>
+
+            <h3>Security and Compliance</h3>
+            <p>Enterprise RAG deployments face extensive security requirements:</p>
+
+            <ul class="feature-list">
+                <li><strong>Access control filtering:</strong> Ensure users only access information they're authorized to see</li>
+                <li><strong>PII scrubbing:</strong> Automatically detect and protect personally identifiable information</li>
+                <li><strong>Audit trails:</strong> Comprehensive logging for compliance and security monitoring</li>
+                <li><strong>Compliance frameworks:</strong> HIPAA, GDPR, SOC 2, and industry-specific requirements</li>
+            </ul>
+
+            <div class="warning-box">
+                <h4>Timeline Reality Check</h4>
+                <p>Enterprise security implementations typically take months, not weeks. Plan accordingly, but recognize that the investment is essential for sustainable deployment.</p>
+            </div>
+
+            <div class="success-box">
+                <h4>RBC Banking Case Study</h4>
+                <p>RBC built a RAG system for support agents that indexes policies and past tickets. The result: faster resolution times and better consistency. They rolled it out internally first, then to customers—a proven pattern for enterprise RAG deployment.</p>
+            </div>
+        </section>
+
+        <section id="rag-vs-agentic" class="section">
+            <h2>RAG vs. Agentic Search</h2>
+            <p>Understanding when to use RAG versus agentic search systems is crucial for making appropriate technology choices.</p>
+
+            <div class="comparison-table">
+                <div class="comparison-row">
+                    <div class="comparison-cell comparison-header">Aspect</div>
+                    <div class="comparison-cell comparison-header">RAG</div>
+                    <div class="comparison-cell comparison-header">Agentic Search</div>
+                </div>
+                <div class="comparison-row">
+                    

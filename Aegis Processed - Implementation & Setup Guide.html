@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Processed - Implementation & Setup Guide</title>
+    <style>
+        /* --- Core Style Replication from 'The Complete Guide to RAG' --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: #1a1a1a; color: #e8e8e8; line-height: 1.8; font-size: 18px; }
+        .article-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: center; margin-bottom: 60px; border-bottom: 2px solid #333; padding-bottom: 40px; }
+        .header h1 { font-size: 2.8em; margin-bottom: 20px; color: #fff; font-weight: 300; letter-spacing: -1px; }
+        section { margin: 50px 0; border-bottom: 1px solid #333; padding-bottom: 30px; }
+        section:last-child { border-bottom: none; }
+        h2 { font-size: 2.2em; color: #fff; margin: 40px 0 25px 0; font-weight: 400; border-left: 4px solid #4a9eff; padding-left: 20px; }
+        h3 { font-size: 1.6em; color: #ddd; margin: 30px 0 15px 0; font-weight: 500; }
+        p, li { margin: 10px 0; text-align: justify; }
+        ul { padding-left: 40px; list-style-type: disc; }
+        .code-block { background: #252525; padding: 25px; border-radius: 8px; border-top: 3px solid #facc15; font-family: 'Courier New', monospace; color: #f0f0f0; white-space: pre-wrap; font-size: 16px; margin: 20px 0; }
+        .emphasis { color: #60a5fa; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- Aegis Metadata (for RAG ingestion) -->
+    <script id="aegis-metadata" type="application/json">
+    {
+      "version": "1.0.0",
+      "source_filename": "aegis-implementation-setup.md",
+      "source_hash": "placeholder_sha256_hash_m8n7o6p5q4r3",
+      "aegis_id": "4e3f2g1h-0i9j-8k7l-6m5n-4o3p2q1r0s9t",
+      "processed_by_agent": "Markdown-Agent",
+      "ingestion_date_utc": "2025-07-03T16:45:00.000Z",
+      "file_metadata": { "creation_date_utc": null, "modification_date_utc": null, "size_bytes": 0, "mime_type": "text/markdown" },
+      "extracted_elements": [
+        { "type": "setup_step", "name": "Prerequisites" },
+        { "type": "setup_step", "name": "Project Initialization" },
+        { "type": "setup_step", "name": "Database Setup" },
+        { "type": "setup_step", "name": "Schema & ORM Setup" },
+        { "type": "setup_step", "name": "MCP Server Setup" },
+        { "type": "setup_step", "name": "Obsidian Integration" },
+        { "type": "code_block", "language": "bash" },
+        { "type": "code_block", "language": "yaml" },
+        { "type": "code_block", "language": "typescript" }
+      ],
+      "tags": ["AegisFramework", "ImplementationGuide", "Setup", "VSCode", "Hono", "DrizzleORM", "PNPM", "Bun", "Neon", "MongoDB"],
+      "relationships": { "parent_doc_id": "2c1d0e9f-8g7h-6i5j-4k3l-2m1n0o9p8q7r", "child_doc_ids": [] },
+      "custom_fields": { "ingestion_source": "User Upload", "ingestion_version": "2.0" }
+    }
+    </script>
+
+    <!-- Cleaned Markdown Content (for RAG ingestion) -->
+    <div id="aegis-markdown-content" hidden>
+# Aegis Framework: Implementation & Setup Guide
+
+### 1. Prerequisites
+First, install the necessary tools using **Homebrew**:
+```bash
+# Install Bun (Runtime), Git (Version Control)
+brew install bun git
+# You should already have VS Code installed
+```
+
+### 2. Project Initialization
+1.  **Create Project Directory & Initialize Git**
+    ```bash
+    mkdir aegis-framework
+    cd aegis-framework
+    git init
+    ```
+2.  **Initialize PNPM Workspace**
+    ```bash
+    # This command may vary based on your pnpm setup
+    # You are creating a monorepo structure
+    pnpm init
+    touch pnpm-workspace.yaml
+    ```
+    Add the following to `pnpm-workspace.yaml`:
+    ```yaml
+    packages:
+      - 'packages/*'
+    ```
+3.  **Create Core Packages (Folders)**
+    ```bash
+    mkdir -p packages/mcp-server packages/database-schema packages/scripts
+    ```
+
+### 3. Database Setup
+#### 3.1. Relational DB (Neon PostgreSQL)
+1.  Go to [Neon.tech](https://neon.tech), create an account, and create a new PostgreSQL project.
+2.  Get the connection string (the one that ends in `?sslmode=require`).
+3.  Store this securely in a `.env` file in the root of your project.
+    ```
+    # .env
+    DATABASE_URL="your_neon_connection_string"
+    ```
+
+#### 3.2. Non-Relational DB (MongoDB Atlas)
+1.  Go to [MongoDB Atlas](https://cloud.mongodb.com/), create an account, and set up a free-tier cluster.
+2.  Create a new database and a collection (e.g., `aegis_functional_data`).
+3.  Get the application connection string.
+4.  Add it to your `.env` file.
+    ```
+    # .env
+    MONGO_URI="your_mongodb_atlas_connection_string"
+    ```
+
+### 4. Schema & ORM Setup (`packages/database-schema`)
+1.  **Install Dependencies**
+    ```bash
+    cd packages/database-schema
+    pnpm add drizzle-orm pg drizzle-kit
+    pnpm add -D @types/pg
+    cd ../.. # back to root
+    ```
+2.  **Define Schema (`packages/database-schema/schema.ts`)**
+    ```typescript
+    // packages/database-schema/schema.ts
+    import { pgTable, uuid, text, timestamp, jsonb, integer, primaryKey } from 'drizzle-orm/pg-core';
+   
+    export const documents = pgTable('documents', {
+      aegis_id: uuid('aegis_id').primaryKey().defaultRandom(),
+      source_filename: text('source_filename').notNull(),
+      source_hash: text('source_hash').notNull().unique(),
+      processed_by_agent: text('processed_by_agent'),
+      ingestion_date_utc: timestamp('ingestion_date_utc').defaultNow(),
+      file_metadata: jsonb('file_metadata'),
+      tags: text('tags').array(),
+      relationships: jsonb('relationships'),
+      custom_fields: jsonb('custom_fields'),
+    });
+   
+    // Add other tables like chunks, tags, etc. here
+    ```
+3.  **Configure Drizzle Kit**
+    Create `drizzle.config.ts` in the `packages/database-schema` directory.
+
+### 5. MCP Server Setup (`packages/mcp-server`)
+1.  **Create a Hono App**
+    ```bash
+    # From the root directory
+    pnpm create hono packages/mcp-server --template cloudflare-workers
+    ```
+2.  **Install Dependencies**
+    ```bash
+    cd packages/mcp-server
+    pnpm add hono
+    # Add libraries for file processing, e.g., mammoth
+    pnpm add mammoth
+    cd ../.. # back to root
+    ```
+3.  **Create the Orchestrator Endpoint (`packages/mcp-server/src/index.ts`)**
+    ```typescript
+    // packages/mcp-server/src/index.ts
+    import { Hono } from 'hono';
+   
+    const app = new Hono();
+   
+    // The main ingestion endpoint
+    app.post('/ingest', async (c) => {
+      const formData = await c.req.formData();
+      const file = formData.get('file');
+   
+      if (!file || !(file instanceof File)) {
+        return c.json({ error: 'File not provided' }, 400);
+      }
+   
+      const fileType = file.type;
+      let agentEndpoint = '';
+   
+      // Simple routing logic
+      if (fileType === 'application/pdf') {
+        agentEndpoint = '/agent/pdf';
+      } else if (fileType.includes('wordprocessingml')) {
+        agentEndpoint = '/agent/office';
+      } else {
+        return c.json({ error: 'Unsupported file type' }, 400);
+      }
+   
+      // In a real scenario, you would forward the request
+      // For now, just return the plan
+      return c.json({
+        message: `File received. Dispatching to ${agentEndpoint}`,
+        fileName: file.name,
+        fileSize: file.size,
+      });
+    });
+   
+    // Example PDF Agent endpoint
+    app.post('/agent/pdf', async (c) => {
+        // PDF processing logic would go here
+        return c.json({ message: 'PDF Agent processing complete.' });
+    });
+   
+    export default app;
+    ```
+
+### 6. Obsidian Integration
+1.  **Install Plugins:** In Obsidian, install the `Dataview` and `Database Folder` community plugins.
+2.  **Connecting to Data:**
+    * **Dataview:** You can write scripts that use `fetch()` to query your deployed MCP server API endpoints to pull metadata directly into your notes.
+    * **Database Folder:** This can be configured to represent the data from your relational database, providing a table-like view of your knowledge base right inside Obsidian.
+    * **Local Files:** Point your Obsidian vault to the directory where the `.md` and `.meta.json` files are stored. This will make them immediately available.
+    </div>
+
+    <!-- Stylized HTML for Web Distribution -->
+    <div class="article-container">
+        <div class="header">
+            <h1>Aegis Framework: Implementation & Setup Guide</h1>
+        </div>
+
+        <section>
+            <h2>1. Prerequisites</h2>
+            <p>First, install the necessary tools for the environment using <span class="emphasis">Homebrew</span>.</p>
+            <div class="code-block"># Install Bun (Runtime), Git (Version Control)
+brew install bun git</div>
+        </section>
+
+        <section>
+            <h2>2. Project Initialization</h2>
+            <p>The project is structured as a monorepo using <span class="emphasis">PNPM Workspaces</span> to manage multiple packages within a single repository.</p>
+            <h3>1. Create Project Directory & Initialize Git</h3>
+            <div class="code-block">mkdir aegis-framework
+cd aegis-framework
+git init</div>
+            <h3>2. Initialize PNPM Workspace & Create Core Packages</h3>
+            <div class="code-block">pnpm init
+touch pnpm-workspace.yaml
+mkdir -p packages/mcp-server packages/database-schema packages/scripts</div>
+            <p>The `pnpm-workspace.yaml` file should define the `packages/*` path.</p>
+        </section>
+
+        <section>
+            <h2>3. Database Setup</h2>
+            <p>The framework uses a dual-database model. Connection strings for both databases should be stored securely in a root `.env` file.</p>
+            <h3>3.1. Relational DB (Neon PostgreSQL)</h3>
+            <p>Go to <span class="emphasis">Neon.tech</span>, create a new PostgreSQL project, and retrieve the connection string.</p>
+            <h3>3.2. Non-Relational DB (MongoDB Atlas)</h3>
+            <p>Go to <span class="emphasis">MongoDB Atlas</span>, set up a free-tier cluster, and retrieve the application connection string.</p>
+        </section>
+
+        <section>
+            <h2>4. Schema & ORM Setup (`packages/database-schema`)</h2>
+            <p>We will use <span class="emphasis">Drizzle ORM</span> for type-safe queries against our PostgreSQL database.</p>
+            <h3>Define Schema (`schema.ts`)</h3>
+            <div class="code-block">// packages/database-schema/schema.ts
+import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+
+export const documents = pgTable('documents', {
+  aegis_id: uuid('aegis_id').primaryKey().defaultRandom(),
+  source_filename: text('source_filename').notNull(),
+  source_hash: text('source_hash').notNull().unique(),
+  processed_by_agent: text('processed_by_agent'),
+  ingestion_date_utc: timestamp('ingestion_date_utc').defaultNow(),
+  file_metadata: jsonb('file_metadata'),
+  tags: text('tags').array(),
+  relationships: jsonb('relationships'),
+  custom_fields: jsonb('custom_fields'),
+});</div>
+        </section>
+
+        <section>
+            <h2>5. MCP Server Setup (`packages/mcp-server`)</h2>
+            <p>The core of the multi-agent system is a <span class="emphasis">Hono</span> application running on <span class="emphasis">Cloudflare Workers</span>.</p>
+            <h3>Create the Orchestrator Endpoint (`index.ts`)</h3>
+            <div class="code-block">// packages/mcp-server/src/index.ts
+import { Hono } from 'hono';
+
+const app = new Hono();
+
+// The main ingestion endpoint
+app.post('/ingest', async (c) => {
+  const formData = await c.req.formData();
+  const file = formData.get('file');
+
+  if (!file || !(file instanceof File)) {
+    return c.json({ error: 'File not provided' }, 400);
+  }
+  
+  const fileType = file.type;
+  let agentEndpoint = '';
+
+  // Simple routing logic
+  if (fileType === 'application/pdf') {
+    agentEndpoint = '/agent/pdf';
+  } else if (fileType.includes('wordprocessingml')) {
+    agentEndpoint = '/agent/office';
+  } else {
+    return c.json({ error: 'Unsupported file type' }, 400);
+  }
+  
+  return c.json({
+    message: `File received. Dispatching to ${agentEndpoint}`,
+    fileName: file.name,
+  });
+});
+
+export default app;</div>
+        </section>
+
+        <section>
+            <h2>6. Obsidian Integration</h2>
+            <p>To connect your knowledge base to your local <span class="emphasis">Obsidian</span> vault:</p>
+            <ul>
+                <li>Install the `Dataview` and `Database Folder` community plugins.</li>
+                <li>Use `Dataview` scripts with `fetch()` to query your deployed MCP server API endpoints and pull live metadata into your notes.</li>
+                <li>Configure the `Database Folder` plugin to represent data from your relational database, creating a powerful, spreadsheet-like view of your documents.</li>
+                <li>Point your Obsidian vault to the local directory where the processed `.md` and `.meta.json` files are stored for direct access.</li>
+            </ul>
+        </section>
+
+    </div>
+
+</body>
+</html>

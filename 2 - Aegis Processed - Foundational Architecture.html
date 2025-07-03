@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Processed | Foundational Architecture</title>
+    <style>
+        /* --- Core Style Replication from 'The Complete Guide to RAG' --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: #1a1a1a; color: #e8e8e8; line-height: 1.8; font-size: 18px; }
+        .article-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: center; margin-bottom: 60px; border-bottom: 2px solid #333; padding-bottom: 40px; }
+        .header h1 { font-size: 2.8em; margin-bottom: 20px; color: #fff; font-weight: 300; letter-spacing: -1px; }
+        .header .subtitle { font-size: 1.3em; color: #b0b0b0; font-style: italic; }
+        section { margin: 50px 0; }
+        h2 { font-size: 2.2em; color: #fff; margin: 40px 0 25px 0; font-weight: 400; border-left: 4px solid #4a9eff; padding-left: 20px; }
+        h3 { font-size: 1.6em; color: #ddd; margin: 30px 0 15px 0; font-weight: 500; }
+        p, li { margin: 10px 0; text-align: justify; }
+        ul { padding-left: 40px; list-style-type: disc; }
+        .highlight-box { background: #2a2a2a; border-left: 4px solid #ff6b6b; padding: 25px; margin: 30px 0; border-radius: 0 8px 8px 0; }
+        .insight-box { background: linear-gradient(135deg, #2a3a4a, #1f2937); border: 1px solid #374151; padding: 30px; margin: 30px 0; border-radius: 10px; }
+        .code-block { background: #252525; padding: 25px; border-radius: 8px; border-top: 3px solid #facc15; font-family: 'Courier New', monospace; color: #f0f0f0; white-space: pre-wrap; font-size: 16px; }
+        .emphasis { color: #60a5fa; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- Aegis Metadata (for RAG ingestion) -->
+    <script id="aegis-metadata" type="application/json">
+    {
+      "version": "1.0.0",
+      "source_filename": "aegis-framework-architecture.md",
+      "source_hash": "placeholder_sha256_hash_k6l5m4n3o2p1",
+      "aegis_id": "2c1d0e9f-8g7h-6i5j-4k3l-2m1n0o9p8q7r",
+      "processed_by_agent": "Markdown-Agent",
+      "ingestion_date_utc": "2025-07-03T16:21:00.000Z",
+      "file_metadata": { "creation_date_utc": null, "modification_date_utc": null, "size_bytes": 0, "mime_type": "text/markdown" },
+      "extracted_elements": [
+        { "type": "architecture_pillar", "name": "Multi-Agent Ingestion Framework" },
+        { "type": "architecture_pillar", "name": "Dual-File Ingestion Standard" },
+        { "type": "architecture_pillar", "name": "Dual-Database Model" },
+        { "type": "schema_definition", "name": "Standard .meta.json Schema" },
+        { "type": "process_flow", "name": "The Unified Data Flow" }
+      ],
+      "tags": ["AegisFramework", "SystemArchitecture", "MultiAgent", "RAG", "DatabaseDesign"],
+      "relationships": { "parent_doc_id": null, "child_doc_ids": [] },
+      "custom_fields": { "ingestion_source": "User Upload", "ingestion_version": "2.0" }
+    }
+    </script>
+
+    <!-- Cleaned Markdown Content (for RAG ingestion) -->
+    <div id="aegis-markdown-content" hidden>
+# The Aegis Framework: Foundational Architecture
+
+## 1. Executive Summary & Core Philosophy
+The Aegis Framework is a comprehensive, multi-agent system designed to ingest, process, analyze, and index a vast array of heterogeneous data types. Its core philosophy is built on the principle of **decoupling**: separating the task of parsing from analysis, and separating contextual metadata from extracted functional data. This architecture addresses the limitations of monolithic RAG pipelines by creating a flexible, scalable, and extensible ecosystem of specialized agents that work in concert. The ultimate goal is to transform a chaotic collection of raw files into a highly structured, deeply searchable, and machine-analyzable knowledge base.
+
+## 2. The Three Pillars of the Aegis Architecture
+### 2.1. Pillar I: The Multi-Agent Ingestion Framework (MCP Server)
+The system operates as a fleet of specialized agents coordinated by a central orchestrator, implemented as a Model Context Protocol (MCP) server using a lightweight backend like **Hono** running on **Cloudflare Workers**.
+- **Orchestrator Agent:** The primary API endpoint. It receives a raw file, identifies its type (MIME type, extension), and dispatches the processing task to the appropriate specialized sub-agent.
+- **Specialized Sub-Agents:** Each agent is a dedicated API endpoint responsible for a specific data category. This modularity allows for independent development, scaling, and updates.
+  - `PDF-Agent`: Handles `.pdf` files, including OCR for scanned documents.
+  - `Office-Agent`: Handles `.docx`, `.pptx`, `.xlsx`.
+  - `Code-Agent`: Handles various programming language files.
+  - `Multimedia-Agent`: Handles audio/video transcription and image analysis.
+  - `Web-Agent`: Handles URL scraping, including YouTube and dynamic JavaScript sites.
+  - `Chat-Agent`: Handles structured logs from Discord, IRC, etc.
+  - `Database-Agent`: Manages all interactions with the backend databases.
+  - `Chunking-Agent`: Performs context-aware chunking on cleaned Markdown.
+
+### 2.2. Pillar II: The Dual-File Ingestion Standard
+Every ingested source document is normalized into a standard two-file format, ensuring consistency and portability.
+1. **Content File (`<source_filename>.md`):** A clean, standardized Markdown file containing the full textual content of the source document.
+2. **Metadata File (`<source_filename>.meta.json`):** A structured JSON file containing comprehensive metadata about the source document.
+
+**Standard `.meta.json` Schema:**
+```json
+{
+  "version": "1.0.0",
+  "source_filename": "original_name.pdf",
+  "source_hash": "sha256_hash_of_original_file",
+  "aegis_id": "unique_uuid_for_this_document",
+  "processed_by_agent": "PDF-Agent",
+  "ingestion_date_utc": "iso_8601_timestamp",
+  "file_metadata": {
+    "creation_date_utc": "original_file_creation_date",
+    "modification_date_utc": "original_file_mod_date",
+    "size_bytes": 123456,
+    "mime_type": "application/pdf"
+  },
+  "extracted_elements": [
+    { "type": "code_block", "language": "python", "db_ref_id": "mongo_object_id_1" },
+    { "type": "table", "rows": 15, "columns": 4, "db_ref_id": "mongo_object_id_2" }
+  ],
+  "tags": ["project_a", "research", "rag"],
+  "relationships": {
+    "parent_doc_id": null,
+    "child_doc_ids": []
+  },
+  "custom_fields": {
+    "ocr_confidence_score": 0.95
+  }
+}
+```
+
+### 2.3. Pillar III: The Dual-Database Model
+The framework utilizes two distinct database types to handle the different shapes of data it produces.
+1. **Relational Database (PostgreSQL via Neon/Turso):** Stores all the structured metadata from the `.meta.json` files. This is the "index" or "card catalog" of the entire knowledge base. It uses Drizzle ORM and contains tables for `documents`, `chunks` (with pgvector embeddings), `tags`, and `relationships`.
+2. **Non-Relational Database (MongoDB Atlas):** Stores the extracted "functional elements"—complex, semi-structured data like `code_blocks`, `tables`, `schematics`, and `prompts`. Each document here contains a `source_aegis_id` linking back to the relational DB.
+
+## 3. The Unified Data Flow
+1. **Ingestion:** A file is sent to the **Orchestrator Agent**.
+2. **Dispatch & Processing:** The Orchestrator calls the correct **Sub-Agent** (e.g., `PDF-Agent`), which produces the `.md` and `.meta.json` files and extracts functional elements.
+3. **Storage & Indexing:** The Sub-Agent calls the **Database-Agent**. The `.meta.json` is saved to the Relational DB, functional elements are saved to the Non-Relational DB, and the `.md` file is passed to the **Chunking-Agent** to be embedded and stored.
+4. **Retrieval:** A **Query-Agent** queries the Relational DB for relevant documents/chunks and, if needed, retrieves full functional elements from the Non-Relational DB using the reference ID. The context is then passed to an LLM.
+    </div>
+
+    <!-- Stylized HTML for Web Distribution -->
+    <div class="article-container">
+        <div class="header">
+            <h1>The Aegis Framework</h1>
+            <p class="subtitle">Foundational Architecture</p>
+        </div>
+
+        <section>
+            <h2>1. Executive Summary & Core Philosophy</h2>
+            <p>The Aegis Framework is a comprehensive, multi-agent system designed to ingest, process, analyze, and index a vast array of heterogeneous data types. Its core philosophy is built on the principle of <span class="emphasis">decoupling</span>: separating the task of parsing from analysis, and separating contextual metadata from extracted functional data.</p>
+            <p>This architecture addresses the limitations of monolithic RAG pipelines by creating a flexible, scalable, and extensible ecosystem of specialized agents that work in concert. The ultimate goal is to transform a chaotic collection of raw files into a highly structured, deeply searchable, and machine-analyzable knowledge base.</p>
+        </section>
+
+        <section>
+            <h2>2. The Three Pillars of the Aegis Architecture</h2>
+            
+            <div class="insight-box">
+                <h3>2.1. Pillar I: The Multi-Agent Ingestion Framework (MCP Server)</h3>
+                <p>The system operates as a fleet of specialized agents coordinated by a central orchestrator, implemented as a Model Context Protocol (MCP) server using a lightweight backend like <span class="emphasis">Hono</span> running on <span class="emphasis">Cloudflare Workers</span>. The Orchestrator Agent identifies file types and dispatches tasks to specialized sub-agents (`PDF-Agent`, `Code-Agent`, `Web-Agent`, etc.), allowing for modular and scalable processing.</p>
+            </div>
+
+            <div class="insight-box">
+                <h3>2.2. Pillar II: The Dual-File Ingestion Standard</h3>
+                <p>Every ingested source document is normalized into a standard two-file format: a clean <span class="emphasis">Content File (`.md`)</span> for the full text, and a structured <span class="emphasis">Metadata File (`.meta.json`)</span> which acts as the manifest for the content, ensuring consistency and portability.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Standard `.meta.json` Schema Example</h3>
+                <div class="code-block">{
+  "version": "1.0.0",
+  "source_filename": "original_name.pdf",
+  "source_hash": "sha256_hash_of_original_file",
+  "aegis_id": "unique_uuid_for_this_document",
+  "processed_by_agent": "PDF-Agent",
+  "ingestion_date_utc": "iso_8601_timestamp",
+  "file_metadata": { ... },
+  "extracted_elements": [ ... ],
+  "tags": ["project_a", "research", "rag"],
+  "relationships": { ... },
+  "custom_fields": { ... }
+}</div>
+            </div>
+
+            <div class="insight-box">
+                <h3>2.3. Pillar III: The Dual-Database Model</h3>
+                <p>The framework utilizes two distinct database types: a <span class="emphasis">Relational Database (PostgreSQL)</span> to store all structured metadata from the `.meta.json` files, acting as the "card catalog" of the knowledge base. A <span class="emphasis">Non-Relational Database (MongoDB)</span> stores the extracted "functional elements"—complex data like code blocks, tables, and schematics that don't fit neatly into relational tables.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. The Unified Data Flow</h2>
+            <p>The process is a clear, four-step flow:</p>
+            <ul>
+                <li><strong>1. Ingestion:</strong> A file is sent to the Orchestrator Agent.</li>
+                <li><strong>2. Dispatch & Processing:</strong> The Orchestrator calls the correct Sub-Agent, which produces the `.md` and `.meta.json` files and extracts functional elements.</li>
+                <li><strong>3. Storage & Indexing:</strong> A Database-Agent saves the metadata to the relational DB, functional elements to the non-relational DB, and sends the content file for chunking and embedding.</li>
+                <li><strong>4. Retrieval:</strong> A Query-Agent uses both databases to find relevant context and functional data to pass to an LLM for a final, informed response.</li>
+            </ul>
+        </section>
+    </div>
+
+</body>
+</html>

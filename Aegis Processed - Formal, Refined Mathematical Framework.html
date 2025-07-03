@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Processed - Formal, Refined Mathematical Framework</title>
+    <style>
+        /* --- Core Style Replication from Reference Document --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; background: #1a1a1a; color: #e8e8e8; line-height: 1.8; font-size: 18px; }
+        .article-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: center; margin-bottom: 60px; border-bottom: 2px solid #333; padding-bottom: 40px; }
+        .header h1 { font-size: 2.8em; margin-bottom: 20px; color: #fff; font-weight: 300; letter-spacing: -1px; }
+        section { margin: 50px 0; }
+        h2 { font-size: 2.2em; color: #fff; margin: 40px 0 25px 0; font-weight: 400; border-left: 4px solid #4a9eff; padding-left: 20px; }
+        h3 { font-size: 1.6em; color: #ddd; margin: 30px 0 15px 0; font-weight: 500; }
+        p, li { margin: 10px 0; text-align: justify; }
+        ul { padding-left: 40px; list-style-type: disc; }
+        .math-block { background: #2a2a2a; border-left: 4px solid #ff6b6b; padding: 25px; margin: 30px 0; border-radius: 0 8px 8px 0; font-family: 'Courier New', monospace; color: #facc15; }
+        .emphasis { font-style: italic; color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+    <!-- Aegis Metadata (for RAG ingestion) -->
+    <script id="aegis-metadata" type="application/json">
+    {
+      "version": "1.0.0",
+      "source_filename": "Part 1 Formal, Refined Mathematical Framework.md",
+      "source_hash": "placeholder_sha256_hash_c1d0e9f8g7h6",
+      "aegis_id": "d6c0b3b2-c7d0-4e8f-a0c1-4d3e2f9g8h7i",
+      "processed_by_agent": "Markdown-Agent",
+      "ingestion_date_utc": "2025-07-03T15:49:01.000Z",
+      "file_metadata": { "creation_date_utc": null, "modification_date_utc": null, "size_bytes": 0, "mime_type": "text/markdown" },
+      "extracted_elements": [
+        { "type": "mathematical_definition", "name": "Prompt Adherence (PA)" },
+        { "type": "mathematical_formula", "name": "Similarity-Based Prompt Adherence (PAS)" },
+        { "type": "mathematical_formula", "name": "Violation-Based Prompt Adherence (PAV)" },
+        { "type": "mathematical_definition", "name": "Context Window Degradation (CWD)" },
+        { "type": "mathematical_formula", "name": "Absolute Context Window Degradation Percentage (CWD%)" },
+        { "type": "mathematical_formula", "name": "Context Window Degradation Rate (DR)" },
+        { "type": "mathematical_definition", "name": "Cohesion Loss (CL)" }
+      ],
+      "tags": ["AIDegradation", "research_paper", "AI", "project", "project_AIDegradation", "mathematics", "formal_framework"],
+      "relationships": { "parent_doc_id": null, "child_doc_ids": [] },
+      "custom_fields": { "ingestion_source": "User Upload", "ingestion_version": "1.0" }
+    }
+    </script>
+
+    <!-- Cleaned Markdown Content (for RAG ingestion) -->
+    <div id="aegis-markdown-content" hidden>
+# Part 1: Formal, Refined Mathematical Framework
+
+Here are the core mathematical formulations for your framework, presented with formal notation and clear definitions.
+
+### 1. Prompt Adherence (PA)
+Prompt Adherence quantifies the degree to which an LLM's generated code adheres to a predefined, pattern-based architectural and coding structure.
+
+**a) Similarity-Based Prompt Adherence (PAS)**
+This metric assesses adherence by measuring the structural similarity between the generated code and the specified pattern, normalized by the ideal adherence score.
+
+Let:
+- P be the defined, pattern-based coding structure (the architectural blueprint).
+- Cgen be the abstract structural representation of the LLM-generated code (e.g., its Abstract Syntax Tree, Dependency Graph, or a custom structural graph).
+- Cideal be the abstract structural representation of an ideal, perfectly compliant code output for a given prompt, serving as the benchmark.
+- f(X,P) be a **Similarity Function** that outputs a score between 0 (no adherence) and 1 (perfect adherence) by comparing a code structure X against the rules and templates defined in P. This function incorporates weighted checks for various structural, design, and style elements.
+
+The Prompt Adherence score based on similarity is defined as:
+`PAS = f(Cgen, P) / f(Cideal, P)`
+Ideally, `f(Cideal, P) = 1`, simplifying to `PAS = f(Cgen, P)`.
+
+**b) Violation-Based Prompt Adherence (PAV)**
+This metric quantifies adherence by penalizing deviations from the pattern, weighted by their severity.
+
+Let:
+- Vtotal be the total number of identified violations in the LLM-generated code relative to P.
+- Severity(vk) be a predefined weight for the kth violation, ranging from 0 < Severity <= 1 (e.g., minor=0.1, moderate=0.5, critical=1.0).
+- MaxScoreP be the maximum possible cumulative severity score for a perfectly non-compliant (worst-case) output, ensuring PAV remains between 0 and 1. This would be the sum of severities for all applicable rules if they were all violated.
+
+The Prompt Adherence score based on violations is defined as:
+`PAV = 1 - (sum(Severity(vk) for k=1 to Vtotal) / MaxScoreP)`
+
+### 2. Context Window Degradation (CWD)
+This set of metrics quantifies the decline in an LLM's Prompt Adherence and structural coherence as the context window fills with sequential, interdependent commands.
+
+Let:
+- PAt be the Prompt Adherence score (either PAS or PAV) at a specific time t (or after turn t, or at context length Ct).
+- Nt be the total number of tokens in the LLM's context window at time t.
+- T be the turn number (sequential command number) in the testing sequence.
+
+**a) Absolute Context Window Degradation Percentage (CWD%)**
+This metric measures the overall percentage drop in Prompt Adherence from an initial state to a final state within a testing sequence.
+
+Let:
+- PAinitial be the Prompt Adherence score at the beginning of the sequence (T=1).
+- PAfinal be the Prompt Adherence score at the end of the sequence (T=Nmax).
+
+`CWD% = (1 - (PAfinal / PAinitial)) * 100%`
+
+**b) Context Window Degradation Rate (DR)**
+This metric quantifies the average rate at which Prompt Adherence declines per unit of added context or per sequential turn.
+- **Degradation Rate per Token (DRtoken):**
+  `DRtoken = (PAt1 - PAt2) / (Nt2 - Nt1)`
+- **Degradation Rate per Turn (DRturn):**
+  `DRturn = (PAT1 - PAT2) / (T2 - T1)`
+
+### 3. Cohesion Loss (CL) - Derived Metric
+This metric captures specific instances where the LLM's output directly contradicts earlier, critical instructions or established architectural elements within the ongoing conversation, indicating a loss of internal consistency.
+
+Let:
+- Vcohesion be the count of identified cohesion violations.
+- Ncontextual_checks be the total number of checks for contextual consistency.
+
+`CL = Vcohesion / Ncontextual_checks`
+    </div>
+
+    <!-- Stylized HTML for Web Distribution -->
+    <div class="article-container">
+        <div class="header">
+            <h1>Formal, Refined Mathematical Framework</h1>
+        </div>
+
+        <section>
+            <h2>1. Prompt Adherence (PA)</h2>
+            <p>Prompt Adherence quantifies the degree to which an LLM's generated code adheres to a predefined, pattern-based architectural and coding structure.</p>
+            
+            <h3>a) Similarity-Based Prompt Adherence (PAS)</h3>
+            <p>This metric assesses adherence by measuring the structural similarity between the generated code and the specified pattern, normalized by the ideal adherence score.</p>
+            <ul>
+                <li><span class="emphasis">P:</span> The defined, pattern-based coding structure (the architectural blueprint).</li>
+                <li><span class="emphasis">Cgen:</span> The abstract structural representation of the LLM-generated code.</li>
+                <li><span class="emphasis">Cideal:</span> The abstract structural representation of an ideal, perfectly compliant code output.</li>
+                <li><span class="emphasis">f(X,P):</span> A Similarity Function that outputs a score between 0 (no adherence) and 1 (perfect adherence).</li>
+            </ul>
+            <div class="math-block">PAS = f(Cgen, P) / f(Cideal, P)</div>
+            <p>Ideally, f(Cideal, P) = 1, simplifying the formula to PAS = f(Cgen, P).</p>
+
+            <h3>b) Violation-Based Prompt Adherence (PAV)</h3>
+            <p>This metric quantifies adherence by penalizing deviations from the pattern, weighted by their severity.</p>
+            <div class="math-block">PAV = 1 - (Σ Severity(vk)) / MaxScoreP</div>
+        </section>
+
+        <section>
+            <h2>2. Context Window Degradation (CWD)</h2>
+            <p>This set of metrics quantifies the decline in an LLM's Prompt Adherence and structural coherence as the context window fills with sequential, interdependent commands.</p>
+
+            <h3>a) Absolute Context Window Degradation Percentage (CWD%)</h3>
+            <p>This metric measures the overall percentage drop in Prompt Adherence from an initial state to a final state within a testing sequence.</p>
+            <div class="math-block">CWD% = (1 - (PAfinal / PAinitial)) * 100%</div>
+
+            <h3>b) Context Window Degradation Rate (DR)</h3>
+            <p>This metric quantifies the average rate at which Prompt Adherence declines per unit of added context or per sequential turn.</p>
+            <div class="math-block">DRtoken = (PAt1 - PAt2) / (Nt2 - Nt1)</div>
+            <div class="math-block">DRturn = (PAT1 - PAT2) / (T2 - T1)</div>
+        </section>
+
+        <section>
+            <h2>3. Cohesion Loss (CL) - Derived Metric</h2>
+            <p>This metric captures specific instances where the LLM's output directly contradicts earlier, critical instructions or established architectural elements within the ongoing conversation, indicating a loss of internal consistency.</p>
+            <div class="math-block">CL = Vcohesion / Ncontextual_checks</div>
+        </section>
+    </div>
+
+</body>
+</html>

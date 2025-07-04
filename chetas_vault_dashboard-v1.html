@@ -1,3 +1,6 @@
+#--obsidian-tags: #dashboard, #frontend, #html, #fix
+#--bash-path: ~/Doc/ChetasVault/OBDistGit/chetas_vault_dashboard-v1.html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -641,9 +644,9 @@
 
     <div class="header">
         <div class="banner-container">
-            <div class="banner-slide active" style="background-image: url('https://via.placeholder.com/1200x400/ff00ff/ffffff?text=Banner+1')"></div>
-            <div class="banner-slide" style="background-image: url('https://via.placeholder.com/1200x400/00ffff/ffffff?text=Banner+2')"></div>
-            <div class="banner-slide" style="background-image: url('https://via.placeholder.com/1200x400/ffff00/ffffff?text=Banner+3')"></div>
+            <div class="banner-slide active" style="background-image: url('https://raw.githubusercontent.com/aaaronmiller/OBDistGit/main/chetah-banner1.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://raw.githubusercontent.com/aaaronmiller/OBDistGit/main/chetah-banner2.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://raw.githubusercontent.com/aaaronmiller/OBDistGit/main/chetah-banner3.png')"></div>
             <div class="banner-overlay"></div>
         </div>
         <div class="header-content">
@@ -667,7 +670,7 @@
                 <div class="stat-label">Last Updated</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="avgReadTime">0</div>
+                <div class="stat-number" id="avgReadTime">0m</div>
                 <div class="stat-label">Avg Read Time</div>
             </div>
         </div>
@@ -706,153 +709,221 @@
         let currentSort = 'filename';
         let currentOrder = 'asc';
         
-        // Configuration - Update this with your actual GitHub username
-        const GITHUB_USERNAME = 'aaaronmiller'; // CHANGE THIS TO YOUR GITHUB USERNAME
-        const REPO_NAME = 'OBDistGit'; // CHANGE THIS TO YOUR REPO NAME
+        const GITHUB_USERNAME = 'aaaronmiller';
+        const REPO_NAME = 'OBDistGit';
         const GITHUB_URL = `https://${GITHUB_USERNAME}.github.io/${REPO_NAME}`;
 
-        // Banner slideshow
+        // --- Banner Slideshow ---
         let currentBannerIndex = 0;
         const bannerSlides = document.querySelectorAll('.banner-slide');
-        
         function nextBanner() {
+            if (bannerSlides.length === 0) return;
             bannerSlides[currentBannerIndex].classList.remove('active');
             currentBannerIndex = (currentBannerIndex + 1) % bannerSlides.length;
             bannerSlides[currentBannerIndex].classList.add('active');
         }
-        
-        setInterval(nextBanner, 4000);
+        setInterval(nextBanner, 5000);
 
-        // Theme toggle
+        // --- Theme Toggle ---
         function toggleTheme() {
             document.body.classList.toggle('theme-light');
         }
 
-        // Format file size
+        // --- Utility Functions ---
         function formatFileSize(bytes) {
-            if (!bytes) return '0B';
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + sizes[i];
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Format date
         function formatDate(dateString) {
+            if (!dateString) return 'N/A';
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-            });
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
         }
-
-        // Get file icon
+        
         function getFileIcon(fileType) {
             const icons = {
-                'html': '📄',
-                'pdf': '📕',
-                'md': '📝',
-                'txt': '📄',
-                'js': '⚙️',
-                'json': '📊',
-                'png': '🖼️',
-                'jpg': '🖼️',
-                'jpeg': '🖼️'
+                'html': '📄', 'pdf': '📕', 'md': '📝', 'txt': '📄',
+                'js': '⚙️', 'json': '📊', 'png': '🖼️', 'jpg': '🖼️', 'jpeg': '🖼️'
             };
             return icons[fileType] || '📄';
         }
 
-        // Create sample data when metadata is not available
-        function createSampleData() {
-            return [
-                {
-                    filename: 'sample-file.html',
-                    url: `${GITHUB_URL}/sample-file.html`,
-                    category: 'AI',
-                    creation_time: new Date().toISOString(),
-                    modified_time: new Date().toISOString(),
-                    time_diff_hours: '0.1',
-                    time_worked: '10',
-                    file_size: '2048',
-                    word_count: 500,
-                    char_count: 2048,
-                    summary: 'This is a sample file showing the dashboard functionality.',
-                    file_type: 'html'
-                },
-                {
-                    filename: 'example-doc.md',
-                    url: `${GITHUB_URL}/example-doc.md`,
-                    category: 'Research',
-                    creation_time: new Date(Date.now() - 86400000).toISOString(),
-                    modified_time: new Date(Date.now() - 43200000).toISOString(),
-                    time_diff_hours: '24.0',
-                    time_worked: '120',
-                    file_size: '4096',
-                    word_count: 1200,
-                    char_count: 4096,
-                    summary: 'Example research document with comprehensive analysis.',
-                    file_type: 'md'
-                }
-            ];
-        }
-
-        // Load metadata from GitHub
+        // --- Core Data Handling ---
         async function loadMetadata() {
             try {
-                const response = await fetch(`${GITHUB_URL}/file_metadata.json`);
+                const response = await fetch(`${GITHUB_URL}/file_metadata.json?cache_bust=${new Date().getTime()}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
                 allFiles = data;
                 
-                // Update stats
                 updateStats();
-                
-                // Generate filter buttons
                 generateFilters();
-                
-                // Render files
                 renderFiles();
                 
             } catch (error) {
                 console.error('Error loading metadata:', error);
-                
-                // Show error but also provide sample data
                 document.getElementById('fileGrid').innerHTML = `
-                    <div class="no-data">
-                        <h3>⚠️ Metadata Not Found</h3>
-                        <p>file_metadata.json not found. This might be because:</p>
-                        <ul style="text-align: left; margin: 1rem 0;">
-                            <li>You haven't run the metadata generation script yet</li>
-                            <li>The GitHub username/repo name is incorrect</li>
-                            <li>The file hasn't been uploaded to GitHub Pages</li>
-                        </ul>
-                        <p>Showing sample data for testing...</p>
-                    </div>
-                `;
-                
-                // Load sample data for testing
-                allFiles = createSampleData();
-                updateStats();
-                generateFilters();
-                renderFiles();
+                    <div class="error">
+                        <h3><span class="dog-emoji">🔥</span> Metadata Fetch Failed</h3>
+                        <p>Could not load <strong>file_metadata.json</strong>.</p>
+                        <p>Ensure the file exists at the correct URL and the repository is published via GitHub Pages.</p>
+                        <p>URL checked: ${GITHUB_URL}/file_metadata.json</p>
+                    </div>`;
             }
         }
 
-        // Update statistics
         function updateStats() {
             const totalFiles = allFiles.length;
-            const totalSize = allFiles.reduce((sum, file) => sum + parseInt(file.file_size || 0), 0);
-            const totalWords = allFiles.reduce((sum, file) => sum + parseInt(file.word_count || 0), 0);
-            const avgReadTime = Math.round(totalWords / 200); // 200 words per minute
+            const totalSize = allFiles.reduce((sum, file) => sum + (parseInt(file.file_size, 10) || 0), 0);
+            const totalWords = allFiles.reduce((sum, file) => sum + (parseInt(file.word_count, 10) || 0), 0);
+            const avgReadTime = totalFiles > 0 ? Math.ceil(totalWords / 200) : 0; // 200 WPM
             
-            let mostRecentFile = null;
-            if (allFiles.length > 0) {
-                mostRecentFile = allFiles.reduce((latest, file) => {
-                    return new Date(file.modified_time) > new Date(latest.modified_time) ? file : latest;
-                }, allFiles[0]);
+            let lastUpdated = '-';
+            if (totalFiles > 0) {
+                const mostRecentDate = allFiles.map(file => new Date(file.modified_time)).reduce((a, b) => a > b ? a : b);
+                lastUpdated = formatDate(mostRecentDate);
             }
             
             document.getElementById('totalFiles').textContent = totalFiles;
-            document.getElementById('totalSize').textContent = format
+            document.getElementById('totalSize').textContent = formatFileSize(totalSize);
+            document.getElementById('lastUpdated').textContent = lastUpdated;
+            document.getElementById('avgReadTime').textContent = `${avgReadTime}m`;
+        }
+
+        function generateFilters() {
+            const filtersContainer = document.getElementById('filters');
+            const categories = [...new Set(allFiles.map(file => file.category))];
+            
+            categories.forEach(category => {
+                if (category) {
+                    const btn = document.createElement('button');
+                    btn.className = 'filter-btn';
+                    btn.dataset.filter = category;
+                    btn.textContent = category;
+                    filtersContainer.appendChild(btn);
+                }
+            });
+        }
+
+        function renderFiles() {
+            const fileGrid = document.getElementById('fileGrid');
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+
+            let filteredFiles = allFiles;
+
+            // Filter by category
+            if (currentFilter !== 'all') {
+                filteredFiles = filteredFiles.filter(file => file.category === currentFilter);
+            }
+
+            // Filter by search term
+            if (searchTerm) {
+                filteredFiles = filteredFiles.filter(file => 
+                    file.filename.toLowerCase().includes(searchTerm) ||
+                    (file.summary && file.summary.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            // Sort files
+            filteredFiles.sort((a, b) => {
+                let valA, valB;
+
+                switch (currentSort) {
+                    case 'modified_time':
+                        valA = new Date(a.modified_time);
+                        valB = new Date(b.modified_time);
+                        break;
+                    case 'file_size':
+                    case 'word_count':
+                        valA = parseInt(a[currentSort] || 0, 10);
+                        valB = parseInt(b[currentSort] || 0, 10);
+                        break;
+                    default: // filename, file_type
+                        valA = a[currentSort] ? a[currentSort].toLowerCase() : '';
+                        valB = b[currentSort] ? b[currentSort].toLowerCase() : '';
+                }
+
+                if (valA < valB) return currentOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return currentOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Render
+            fileGrid.innerHTML = '';
+            if (filteredFiles.length === 0) {
+                fileGrid.innerHTML = `<div class="no-data">No files match the current criteria.</div>`;
+                return;
+            }
+
+            filteredFiles.forEach(file => {
+                const card = `
+                    <div class="card" data-category="${file.category}">
+                        <div class="card-header">
+                            <div class="file-icon">${getFileIcon(file.file_type)}</div>
+                            <div class="card-title">${file.filename}</div>
+                        </div>
+                        <span class="category-badge ${file.category ? file.category.toLowerCase() : 'other'}-badge">${file.category || 'Other'}</span>
+                        <div class="card-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Last Modified</span>
+                                <span class="meta-value">${formatDate(file.modified_time)}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Size</span>
+                                <span class="meta-value">${formatFileSize(parseInt(file.file_size, 10))}</span>
+                            </div>
+                             <div class="meta-item">
+                                <span class="meta-label">Read Time</span>
+                                <span class="meta-value">~${Math.ceil((file.word_count || 0) / 200)} min</span>
+                            </div>
+                        </div>
+                        <div class="card-summary">${file.summary || 'No summary available.'}</div>
+                        <div class="card-actions">
+                            <a href="${file.url}" class="btn btn-primary" target="_blank">View File</a>
+                            <a href="https://github.com/${GITHUB_USERNAME}/${REPO_NAME}/blob/main/${encodeURIComponent(file.filename)}" class="btn btn-secondary" target="_blank">View Source</a>
+                        </div>
+                    </div>
+                `;
+                fileGrid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            document.getElementById('searchBox').addEventListener('input', renderFiles);
+            
+            document.getElementById('sortBy').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                renderFiles();
+            });
+
+            document.getElementById('sortOrder').addEventListener('change', (e) => {
+                currentOrder = e.target.value;
+                renderFiles();
+            });
+            
+            document.getElementById('filters').addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    document.querySelector('.filter-btn.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    currentFilter = e.target.dataset.filter;
+                    renderFiles();
+                }
+            });
+        }
+        
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMetadata();
+            setupEventListeners();
+        });
+
+    </script>
+</body>
+</html>

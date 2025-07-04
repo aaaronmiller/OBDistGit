@@ -267,6 +267,79 @@
             transform: scale(1.05);
         }
 
+        .system-prompt-section {
+            background: #1a1a1a;
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            position: relative;
+        }
+
+        .system-prompt-section h2 {
+            color: #00d4ff;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .prompt-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .prompt-btn {
+            background: #2a2a2a;
+            border: 1px solid #00d4ff;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-btn:hover {
+            background: #00d4ff;
+            color: #0a0a0a;
+            transform: translateY(-2px);
+        }
+
+        .system-prompt-area {
+            width: 100%;
+            min-height: 200px;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            resize: vertical;
+            display: none;
+        }
+
+        .system-prompt-area:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .prompt-info {
+            text-align: center;
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
         @media (max-width: 768px) {
             .grid-2, .grid-3 {
                 grid-template-columns: 1fr;
@@ -280,6 +353,12 @@
                 width: 100px;
                 height: 100px;
                 font-size: 0.8em;
+            }
+
+            .system-prompt-section {
+                margin-left: -20px;
+                margin-right: -20px;
+                width: calc(100% + 40px);
             }
         }
     </style>
@@ -512,6 +591,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- System Prompt Section -->
+        <div class="system-prompt-section">
+            <h2>RAG System Prompt Configuration</h2>
+            <div class="prompt-controls">
+                <button id="pastePrompt" class="prompt-btn">Paste System Prompt</button>
+                <button id="clearPrompt" class="prompt-btn">Clear</button>
+                <button id="copyPrompt" class="prompt-btn">Copy</button>
+            </div>
+            <textarea 
+                id="systemPromptArea" 
+                class="system-prompt-area" 
+                placeholder="Paste your 297-word system prompt here..."
+                spellcheck="false"
+            ></textarea>
+            <div class="prompt-info">
+                Click "Paste System Prompt" to reveal the text area for your RAG system prompt configuration
+            </div>
+        </div>
     </div>
 
     <script>
@@ -700,6 +798,27 @@
                     bar.style.width = width;
                 }, 500);
             });
+        });
+
+        // System prompt functionality
+        document.getElementById('pastePrompt').addEventListener('click', function() {
+            const textarea = document.getElementById('systemPromptArea');
+            textarea.style.display = textarea.style.display === 'none' ? 'block' : 'none';
+            this.textContent = textarea.style.display === 'none' ? 'Paste System Prompt' : 'Hide System Prompt';
+        });
+
+        document.getElementById('clearPrompt').addEventListener('click', function() {
+            document.getElementById('systemPromptArea').value = '';
+        });
+
+        document.getElementById('copyPrompt').addEventListener('click', function() {
+            const textarea = document.getElementById('systemPromptArea');
+            textarea.select();
+            document.execCommand('copy');
+            this.textContent = 'Copied!';
+            setTimeout(() => {
+                this.textContent = 'Copy';
+            }, 2000);
         });
     </script>
 </body>

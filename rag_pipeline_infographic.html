@@ -324,7 +324,8 @@
             font-size: 0.9em;
             line-height: 1.4;
             resize: vertical;
-            display: none;
+            display: block;
+            box-sizing: border-box;
         }
 
         .system-prompt-area:focus {
@@ -595,19 +596,14 @@
         <!-- System Prompt Section -->
         <div class="system-prompt-section">
             <h2>RAG System Prompt Configuration</h2>
-            <div class="prompt-controls">
-                <button id="pastePrompt" class="prompt-btn">Paste System Prompt</button>
-                <button id="clearPrompt" class="prompt-btn">Clear</button>
-                <button id="copyPrompt" class="prompt-btn">Copy</button>
-            </div>
             <textarea 
                 id="systemPromptArea" 
                 class="system-prompt-area" 
-                placeholder="Paste your 297-word system prompt here..."
+                placeholder="what can be done next time to makje the analysis more effective (patterns and techniques to be implemented by the speakers) ? what about for me as the individual processing and creating the directives for the rag chunking and data extraction approaches? what can be done in the future to make the process more effective, more comprehensive and easier? specifically focus on patterns and prompting techniques utilized in our multifaceted rag approach. finally focus on the identification and definition of data structures within the data. How did our database schema(s) deal with the data analysis and qualifcatoin/definiton/storage? What can be done to make future rag queries on the data set more effective and comprehensive in nature? Finally how can the system prompts used by the agentic processes used to implement the structures and directives identified by the architect be improved?? research appraoaches whcih produce data that is not gathered though our approaches. Before you start, describe and define the process I have outlined and indicate the order in which you will implement the methods and tecnieques we have formed. Can our softwaer be improved? can our schema ? Our agentic personalities / system prompts? our overall techniques? which processes can be run asyncronously and which cannot? evaluate your mission and clearly state it in a comprehensive and thourough form; using a structured data format before you begin your tasks; and then proceed to implement said patterns in the order described. If you can identify a method or technique which is fundamentaly superiouir to any of my directeives; use that method instead and tlel me that you have domne so; do not feel that the rigors of my instructions prohibit you from peforming your tasks to the absolute most effective manner than you are able."
                 spellcheck="false"
             ></textarea>
             <div class="prompt-info">
-                Click "Paste System Prompt" to reveal the text area for your RAG system prompt configuration
+                System prompt text area - optimized for 297-word RAG configuration
             </div>
         </div>
     </div>
@@ -798,27 +794,6 @@
                     bar.style.width = width;
                 }, 500);
             });
-        });
-
-        // System prompt functionality
-        document.getElementById('pastePrompt').addEventListener('click', function() {
-            const textarea = document.getElementById('systemPromptArea');
-            textarea.style.display = textarea.style.display === 'none' ? 'block' : 'none';
-            this.textContent = textarea.style.display === 'none' ? 'Paste System Prompt' : 'Hide System Prompt';
-        });
-
-        document.getElementById('clearPrompt').addEventListener('click', function() {
-            document.getElementById('systemPromptArea').value = '';
-        });
-
-        document.getElementById('copyPrompt').addEventListener('click', function() {
-            const textarea = document.getElementById('systemPromptArea');
-            textarea.select();
-            document.execCommand('copy');
-            this.textContent = 'Copied!';
-            setTimeout(() => {
-                this.textContent = 'Copy';
-            }, 2000);
         });
     </script>
 </body>

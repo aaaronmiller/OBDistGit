@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Dynamics Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 50px 0;
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            border: 3px solid #e94560;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            background: linear-gradient(45deg, #e94560, #f27121);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(233, 69, 96, 0.6);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #b0b0b0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid #e94560;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(233, 69, 96, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .section:hover::before {
+            left: 100%;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 35px rgba(233, 69, 96, 0.3);
+        }
+
+        .section h2 {
+            color: #e94560;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(233, 69, 96, 0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-evolution {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .evolution-stage {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border: 2px solid #f27121;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .evolution-stage:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(242, 113, 33, 0.4);
+        }
+
+        .stage-number {
+            background: linear-gradient(45deg, #e94560, #f27121);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .influence-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #0f3460, #1a1a2e);
+            border-radius: 15px;
+            border: 2px solid #f27121;
+        }
+
+        .influence-node {
+            background: linear-gradient(135deg, #e94560, #f27121);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #fff;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .influence-node:hover {
+            transform: scale(1.2) rotate(5deg);
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.8);
+        }
+
+        .influence-arrow {
+            font-size: 2.5em;
+            color: #f27121;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #f27121; }
+            to { text-shadow: 0 0 20px #f27121, 0 0 30px #e94560; }
+        }
+
+        .miscommunication-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .misc-card {
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            border: 2px solid #e94560;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .misc-card:hover {
+            border-color: #f27121;
+            box-shadow: 0 0 25px rgba(233, 69, 96, 0.3);
+        }
+
+        .misc-header {
+            color: #f27121;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .speaker-quote {
+            background: rgba(233, 69, 96, 0.1);
+            border-left: 4px solid #e94560;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .delta-explanation {
+            background: rgba(242, 113, 33, 0.1);
+            border: 1px solid #f27121;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #444;
+            padding: 18px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #e94560, #f27121);
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(242, 113, 33, 0.2);
+            transform: scale(1.02);
+        }
+
+        .unresolved-threads {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .thread-card {
+            background: linear-gradient(135deg, #0f3460, #1a1a2e);
+            border: 2px solid #f27121;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .thread-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(242, 113, 33, 0.4);
+        }
+
+        .thread-title {
+            color: #f27121;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .system-prompt-section {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 3px solid #e94560;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            position: relative;
+        }
+
+        .system-prompt-section h2 {
+            color: #e94560;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
+        }
+
+        .system-prompt-area {
+            width: 100%;
+            min-height: 250px;
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+            resize: vertical;
+            display: block;
+            box-sizing: border-box;
+        }
+
+        .system-prompt-area:focus {
+            outline: none;
+            border-color: #e94560;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .prompt-info {
+            text-align: center;
+            color: #b0b0b0;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .influence-node {
+                width: 120px;
+                height: 120px;
+                font-size: 0.8em;
+            }
+
+            .system-prompt-section {
+                margin-left: -20px;
+                margin-right: -20px;
+                width: calc(100% + 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Conversation Dynamics Analysis</h1>
+            <p>Deconstructed Insights & Interpersonal Communication Patterns</p>
+        </div>
+
+        <!-- Project Evolution -->
+        <div class="section">
+            <h2>Evolution of "The Project"</h2>
+            <div class="project-evolution">
+                <div class="evolution-stage">
+                    <div class="stage-number">1</div>
+                    <h3 style="color: #f27121;">The Spark</h3>
+                    <p><strong>Concept:</strong> "What three books did 100 interesting people read?"</p>
+                    <p><strong>Contributor:</strong> Marc</p>
+                    <p><strong>Nature:</strong> Abstract, philosophical starting point focused on elite knowledge</p>
+                </div>
+                <div class="evolution-stage">
+                    <div class="stage-number">2</div>
+                    <h3 style="color: #f27121;">The Toolkit</h3>
+                    <p><strong>Concept:</strong> Comprehensive resource for students: study habits, socialization skills, films, music, books, activities</p>
+                    <p><strong>Contributor:</strong> Aaron</p>
+                    <p><strong>Transformation:</strong> Expanded from simple list to full-fledged, multi-format toolkit</p>
+                </div>
+                <div class="evolution-stage">
+                    <div class="stage-number">3</div>
+                    <h3 style="color: #f27121;">The Philosophy</h3>
+                    <p><strong>Concept:</strong> Goal is not just college survival, but creating a "world citizen"</p>
+                    <p><strong>Contributors:</strong> Brock & Marc</p>
+                    <p><strong>Elevation:</strong> Purpose elevated from practical skills to broader educational philosophy</p>
+                </div>
+                <div class="evolution-stage">
+                    <div class="stage-number">4</div>
+                    <h3 style="color: #f27121;">The Action Item</h3>
+                    <p><strong>Concept:</strong> Hyper-specific AI query for top 3 socialization skills, backed by multi-disciplinary sources</p>
+                    <p><strong>Contributor:</strong> Brock</p>
+                    <p><strong>Distillation:</strong> Entire conversation into concrete, measurable, achievable first step</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Idea Lifecycle Chart -->
+        <div class="section">
+            <h2>Idea Lifecycle: Influence and Adoption Patterns</h2>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <canvas id="ideaAdoptionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="contributorInfluenceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Flow -->
+        <div class="section">
+            <h2>Communication Influence Flow</h2>
+            <div class="influence-flow">
+                <div class="influence-node">Marc<br/>Initial Vision</div>
+                <div class="influence-arrow">→</div>
+                <div class="influence-node">Aaron<br/>Scope & Format</div>
+                <div class="influence-arrow">→</div>
+                <div class="influence-node">Brock<br/>Philosophy & Action</div>
+            </div>
+            <p style="text-align: center; color: #b0b0b0; margin-top: 20px;">
+                <em>The final project is a composite of all three perspectives</em>
+            </p>
+        </div>
+
+        <!-- Idea Proposal Analysis -->
+        <div class="section">
+            <h2>Idea Proposal Success/Failure Analysis</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Idea Proposed</th>
+                        <th>Proposed By</th>
+                        <th>Initial Reaction</th>
+                        <th>Final Outcome</th>
+                        <th>Success Factor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Speaker Identification</td>
+                        <td>Aaron</td>
+                        <td>Seen as technical digression by Marc</td>
+                        <td><span style="color: #4ecdc4;">ADOPTED</span> - Brock simplified and validated importance</td>
+                        <td>Translation to business need</td>
+                    </tr>
+                    <tr>
+                        <td>Client/Consultant Framework</td>
+                        <td>Marc</td>
+                        <td>Immediately accepted</td>
+                        <td><span style="color: #4ecdc4;">ADOPTED</span> - Became dominant metaphor</td>
+                        <td>Clear structural benefit</td>
+                    </tr>
+                    <tr>
+                        <td>AI Examples Provision</td>
+                        <td>Aaron</td>
+                        <td>Rejected as "rambling"</td>
+                        <td><span style="color: #4ecdc4;">ADOPTED</span> - Re-framed as quality necessity</td>
+                        <td>Reframing by mediator</td>
+                    </tr>
+                    <tr>
+                        <td>Monetizing Personal Data</td>
+                        <td>Aaron</td>
+                        <td>Rejected as off-topic by Brock</td>
+                        <td><span style="color: #ff6b6b;">TABLED</span> - Never revisited</td>
+                        <td>No business alignment</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Miscommunication Analysis -->
+        <div class="section">
+            <h2>Anatomy of Miscommunications</h2>
+            <div class="miscommunication-grid">
+                <div class="misc-card">
+                    <div class="misc-header">Mismatch 1: The "How" vs. The "What"</div>
+                    <div class="speaker-quote">
+                        <strong>Aaron Said:</strong> "This is how I would spec out what I want the AI to go out and look for..."
+                    </div>
+                    <div class="speaker-quote">
+                        <strong>Marc & Brock Heard:</strong> "He isn't listening to our project goal; he's getting lost in technical details."
+                    </div>
+                    <div class="delta-explanation">
+                        <strong>The Delta:</strong> Aaron believed defining the how was the first step to achieving the what. Marc and Brock believed the what needed to be fully settled before discussing the how.
+                    </div>
+                </div>
+                <div class="misc-card">
+                    <div class="misc-header">Mismatch 2: The Meaning of "Scope"</div>
+                    <div class="speaker-quote">
+                        <strong>Marc Asked For:</strong> A "small," "doable" task to prove the concept.
+                    </div>
+                    <div class="speaker-quote">
+                        <strong>Aaron Responded:</strong> "The scope of the project doesn't matter because... I'm just having the AI do it."
+                    </div>
+                    <div class="delta-explanation">
+                        <strong>The Delta:</strong> To Marc, "small scope" meant a focused, manageable goal. To Aaron, "scope" meant his personal level of effort, which he felt was negligible. He missed the client's need for a contained proof-of-concept.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Pattern Charts -->
+        <div class="section">
+            <h2>Communication Pattern Analysis</h2>
+            <div class="grid-3">
+                <div class="chart-container">
+                    <h3 style="color: #e94560; text-align: center; margin-bottom: 15px;">Friction Points by Topic</h3>
+                    <canvas id="frictionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 style="color: #e94560; text-align: center; margin-bottom: 15px;">Resolution Success Rate</h3>
+                    <canvas id="resolutionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 style="color: #e94560; text-align: center; margin-bottom: 15px;">Speaker Contribution Types</h3>
+                    <canvas id="contributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unresolved Threads -->
+        <div class="section">
+            <h2>Unresolved Threads: Opportunities for Future Discussion</h2>
+            <div class="unresolved-threads">
+                <div class="thread-card">
+                    <div class="thread-title">The Monetization Question</div>
+                    <p>Aaron's idea to monetize their data was parked but never addressed. Is there a "Phase 2" of this project that involves commercializing the output or the process itself?</p>
+                </div>
+                <div class="thread-card">
+                    <div class="thread-title">Aaron's Academic Paper</div>
+                    <p>The group spent significant time advising Aaron on his paper, but its content and potential relation to their project remains unknown. Could his "unique idea" be leveraged for the toolkit?</p>
+                </div>
+                <div class="thread-card">
+                    <div class="thread-title">The "100 Interesting People"</div>
+                    <p>Marc's original concept was superseded by the "socialization toolkit." Does this initial idea have merit as a separate, more focused project?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Insights -->
+        <div class="section">
+            <h2>Key Insights for Participants</h2>
+            <div style="background: rgba(233, 69, 96, 0.1); border: 2px solid #e94560; border-radius: 10px; padding: 25px; margin: 20px 0;">
+                <h3 style="color: #f27121; margin-bottom: 15px;">Critical Communication Gap Identified:</h3>
+                <p>Aaron's technical requirements were only adopted after being translated into business/project needs by Brock. This highlights that <strong>the why behind a technical need must be explained in terms the "client" understands.</strong></p>
+            </div>
+            <div style="background: rgba(242, 113, 33, 0.1); border: 2px solid #f27121; border-radius: 10px; padding: 25px; margin: 20px 0;">
+                <h3 style="color: #e94560; margin-bottom: 15px;">Root Cause Analysis:</h3>
+                <p>The most significant friction wasn't about disagreement on the goal, but on <strong>the sequence of operations and the definition of core project management terms.</strong></p>
+            </div>
+        </div>
+
+        <!-- System Prompt Section -->
+        <div class="system-prompt-section">
+            <h2>RAG System Prompt Configuration</h2>
+            <textarea 
+                id="systemPromptArea" 
+                class="system-prompt-area" 
+                placeholder="what can be done next time to makje the analysis more effective (patterns and techniques to be implemented by the speakers) ? what about for me as the individual processing and creating the directives for the rag chunking and data extraction approaches? what can be done in the future to make the process more effective, more comprehensive and easier? specifically focus on patterns and prompting techniques utilized in our multifaceted rag approach. finally focus on the identification and definition of data structures within the data. How did our database schema(s) deal with the data analysis and qualifcatoin/definiton/storage? What can be done to make future rag queries on the data set more effective and comprehensive in nature? Finally how can the system prompts used by the agentic processes used to implement the structures and directives identified by the architect be improved?? research appraoaches whcih produce data that is not gathered though our approaches. Before you start, describe and define the process I have outlined and indicate the order in which you will implement the methods and tecnieques we have formed. Can our softwaer be improved? can our schema ? Our agentic personalities / system prompts? our overall techniques? which processes can be run asyncronously and which cannot? evaluate your mission and clearly state it in a comprehensive and thourough form; using a structured data format before you begin your tasks; and then proceed to implement said patterns in the order described. If you can identify a method or technique which is fundamentaly superiouir to any of my directeives; use that method instead and tlel me that you have domne so; do not feel that the rigors of my instructions prohibit you from peforming your tasks to the absolute most effective manner than you are able."
+                spellcheck="false"
+            ></textarea>
+            <div class="prompt-info">
+                System prompt configuration area - optimized for conversation analysis RAG processing
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js configuration for dark theme
+        Chart.defaults.color = '#e0e0e0';
+        Chart.defaults.borderColor = '#444';
+        Chart.defaults.backgroundColor = '#2a2a2a';
+
+        // Idea Adoption Success Chart
+        const adoptionCtx = document.getElementById('ideaAdoptionChart').getContext('2d');
+        new Chart(adoptionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Adopted Ideas', 'Rejected/Tabled Ideas'],
+                datasets: [{
+                    data: [75, 25],
+                    backgroundColor: ['#4ecdc4', '#ff6b6b'],
+                    borderColor: ['#00a8a8', '#cc5555'],
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Idea Adoption Success Rate',
+                        color: '#e94560',
+                        font: { size: 16 }
+                    },
+                    legend: { labels: { color: '#e0e0e0' } }
+                }
+            }
+        });
+
+        // Contributor Influence Chart
+        const influenceCtx = document.getElementById('contributorInfluenceChart').getContext('2d');
+        new Chart(influenceCtx, {
+            type: 'polarArea',
+            data: {
+                labels: ['Marc - Vision', 'Aaron - Technical Scope', 'Brock - Philosophy & Action'],
+                datasets: [{
+                    data: [8, 7, 9],
+                    backgroundColor: [
+                        'rgba(233, 69, 96, 0.7)',
+                        'rgba(242, 113, 33, 0.7)',
+                        'rgba(78, 205, 196, 0.7)'
+                    ],
+                    borderColor: ['#e94560', '#f27121', '#4ecdc4'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Contributor Influence on Final Project',
+                        color: '#e94560',
+                        font: { size: 16 }
+                    },
+                    legend: { labels: { color: '#e0e0e0' } }
+                },
+                scales: {
+                    r: {
+                        ticks: { color: '#e0e0e0', backdropColor: 'transparent' },
+                        grid: { color: '#444' }
+                    }
+                }
+            }
+        });
+
+        // Friction Points Chart
+        const frictionCtx = document.getElementById('frictionChart').getContext('2d');
+        new Chart(frictionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Technical Details', 'Project Scope', 'Implementation Order', 'Business Alignment'],
+                datasets: [{
+                    label: 'Friction Intensity',
+                    data: [9, 8, 7, 6],
+                    backgroundColor: ['rgba(233, 69, 96, 0.7)', 'rgba(242, 113, 33, 0.7)', 'rgba(255, 193, 7, 0.7)', 'rgba(156, 39, 176, 0.7)'],
+                    borderColor: ['#e94560', '#f27121', '#ffc107', '#9c27b0'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#e0e0e0' } }
+                },
+                scales: {
+                    x: { ticks: { color: '#e0e0e0' }, grid: { color: '#444' } },
+                    y: { ticks: { color: '#e0e0e0' }, grid: { color: '#444' } }
+                }
+            }
+        });
+
+        // Resolution Success Chart
+        const resolutionCtx = document.getElementById('resolutionChart').getContext('2d');
+        new Chart(resolutionCtx, {
+            type: 'line',
+            data: {
+                labels: ['Initial Conflict', 'Mediator Intervention', 'Reframing', 'Final Resolution'],
+                datasets: [{
+                    label: 'Resolution Success %',
+                    data:

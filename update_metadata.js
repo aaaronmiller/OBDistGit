@@ -7,7 +7,7 @@ const genai = require('@google/generative-ai');
 const BASE_DIR = path.join(process.env.HOME, 'Doc', 'ChetasVault', 'OBDistGit');
 const METADATA_FILE = path.join(BASE_DIR, 'file_metadata.json');
 const LOG_FILE = path.join(BASE_DIR, 'metadata_update.log');
-const GITHUB_URL = 'https://yourusername.github.io/OBDistGit'; // Replace with your GitHub username
+const GITHUB_URL = 'https://aaaronmiller.github.io/OBDistGit'; // Replace with your GitHub username
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY; // Set in environment variables
 
 // Initialize Gemini API

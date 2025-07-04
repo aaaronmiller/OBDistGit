@@ -415,6 +415,7 @@
         .ai-badge { border-color: #8000ff; color: #8000ff; }
         .research-badge { border-color: #ff8000; color: #ff8000; }
         .math-badge { border-color: #0080ff; color: #0080ff; }
+        .mathematics-badge { border-color: #0080ff; color: #0080ff; }
         .security-badge { border-color: #ff4000; color: #ff4000; }
         .hardware-badge { border-color: #40ff00; color: #40ff00; }
         .other-badge { border-color: #80ff00; color: #80ff00; }
@@ -547,6 +548,23 @@
             opacity: 0.3;
         }
 
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.5rem;
+            color: #ff00ff;
+        }
+
+        .error {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.5rem;
+            color: #ff4000;
+            border: 2px solid #ff4000;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2.5rem;
@@ -584,17 +602,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Theme variations */
-        .theme-light {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .theme-classic {
-            background: #001122;
-            color: #00ff00;
-        }
     </style>
 </head>
 <body>
@@ -613,13 +620,13 @@
 
     <div class="header">
         <div class="banner-container">
-            <div class="banner-slide active" style="background-image: url('AutogenGGUF_00005_.png')"></div>
-            <div class="banner-slide" style="background-image: url('AutogenGGUF_00006_.png')"></div>
-            <div class="banner-slide" style="background-image: url('AutogenGGUF_00009_.png')"></div>
-            <div class="banner-slide" style="background-image: url('AutogenGGUF_00010_.png')"></div>
-            <div class="banner-slide" style="background-image: url('AutogenGGUF_00017_.png')"></div>
-            <div class="banner-slide" style="background-image: url('AutogenGGUF_00019_.png')"></div>
-            <div class="banner-slide" style="background-image: url('AutogenGGUF_00020_.png')"></div>
+            <div class="banner-slide active" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00005_.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00006_.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00009_.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00010_.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00017_.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00019_.png')"></div>
+            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00020_.png')"></div>
             <div class="banner-overlay"></div>
         </div>
         <div class="header-content">
@@ -631,43 +638,36 @@
     <div class="container">
         <div class="stats-panel">
             <div class="stat-card">
-                <div class="stat-number" id="totalFiles">35</div>
+                <div class="stat-number" id="totalFiles">0</div>
                 <div class="stat-label">Total Files</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="totalSize">685KB</div>
+                <div class="stat-number" id="totalSize">0KB</div>
                 <div class="stat-label">Total Size</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="lastUpdated">Jul 3</div>
+                <div class="stat-number" id="lastUpdated">-</div>
                 <div class="stat-label">Last Updated</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="avgReadTime">18</div>
+                <div class="stat-number" id="avgReadTime">0</div>
                 <div class="stat-label">Avg Read Time</div>
             </div>
         </div>
 
         <input type="text" class="search-box" placeholder="🔍 Search Cheta's vault..." id="searchBox">
 
-        <div class="filters">
+        <div class="filters" id="filters">
             <button class="filter-btn active" data-filter="all">All Files</button>
-            <button class="filter-btn" data-filter="aegis">Aegis</button>
-            <button class="filter-btn" data-filter="rag">RAG</button>
-            <button class="filter-btn" data-filter="ai">AI Research</button>
-            <button class="filter-btn" data-filter="math">Mathematics</button>
-            <button class="filter-btn" data-filter="security">Security</button>
-            <button class="filter-btn" data-filter="hardware">Hardware</button>
-            <button class="filter-btn" data-filter="other">Other</button>
         </div>
 
         <div class="sort-controls">
             <select class="sort-select" id="sortBy">
-                <option value="name">Sort by Name</option>
-                <option value="date">Sort by Date</option>
-                <option value="size">Sort by Size</option>
-                <option value="type">Sort by Type</option>
-                <option value="readTime">Sort by Read Time</option>
+                <option value="filename">Sort by Name</option>
+                <option value="modified_time">Sort by Date</option>
+                <option value="file_size">Sort by Size</option>
+                <option value="file_type">Sort by Type</option>
+                <option value="word_count">Sort by Word Count</option>
             </select>
             <select class="sort-select" id="sortOrder">
                 <option value="asc">Ascending</option>
@@ -676,147 +676,185 @@
         </div>
 
         <div class="grid" id="fileGrid">
-            <!-- Files will be populated here by JavaScript -->
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <br>Loading files from metadata...
+            </div>
         </div>
     </div>
 
     <script>
-        // Complete file data with all your documents
-        const files = [
-            {
-                name: "1 - Aegis Processed - Reference Manual- Ingestion Protocols.html",
-                title: "Aegis Reference Manual: Ingestion Protocols",
-                size: "11KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 8,
-                url: "https://yourusername.github.io/OBDistGit/1%20-%20Aegis%20Processed%20-%20Reference%20Manual-%20Ingestion%20Protocols.html"
-            },
-            {
-                name: "2 - Aegis Processed - Foundational Architecture.html",
-                title: "Aegis Foundational Architecture",
-                size: "12KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 9,
-                url: "https://yourusername.github.io/OBDistGit/2%20-%20Aegis%20Processed%20-%20Foundational%20Architecture.html"
-            },
-            {
-                name: "3 - Aegis Processed - Implementation & Setup Guide.html",
-                title: "Aegis Implementation & Setup Guide",
-                size: "13KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 10,
-                url: "https://yourusername.github.io/OBDistGit/3%20-%20Aegis%20Processed%20-%20Implementation%20&%20Setup%20Guide.html"
-            },
-            {
-                name: "4 - Aegis Processed - Preliminary Document Processing Prompt.html",
-                title: "Aegis Document Processing Prompt",
-                size: "11KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 8,
-                url: "https://yourusername.github.io/OBDistGit/4%20-%20Aegis%20Processed%20-%20Preliminary%20Document%20Processing%20Prompt.html"
-            },
-            {
-                name: "5- Aegis Processed - Deep Research Query Documentation.html",
-                title: "Aegis Deep Research Query Documentation",
-                size: "10KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 7,
-                url: "https://yourusername.github.io/OBDistGit/5-%20Aegis%20Processed%20-%20Deep%20Research%20Query%20Documentation.html"
-            },
-            {
-                name: "Absolute security.html",
-                title: "Absolute Security Framework",
-                size: "19KB",
-                type: "html",
-                category: "security",
-                date: "2024-07-03",
-                readTime: 14,
-                url: "https://yourusername.github.io/OBDistGit/Absolute%20security.html"
-            },
-            {
-                name: "Aegis Processed - AI Document Conversion Strategy.html",
-                title: "AI Document Conversion Strategy",
-                size: "10KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 7,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20AI%20Document%20Conversion%20Strategy.html"
-            },
-            {
-                name: "Aegis Processed - Deep Research Query Documentation.html",
-                title: "Deep Research Query Documentation",
-                size: "10KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 7,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20Deep%20Research%20Query%20Documentation.html"
-            },
-            {
-                name: "Aegis Processed - Formal, Refined Mathematical Framework.html",
-                title: "Formal Mathematical Framework",
-                size: "10KB",
-                type: "html",
-                category: "math",
-                date: "2024-07-03",
-                readTime: 8,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20Formal,%20Refined%20Mathematical%20Framework.html"
-            },
-            {
-                name: "Aegis Processed - Foundational Architecture.html",
-                title: "Foundational Architecture",
-                size: "12KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 9,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20Foundational%20Architecture.html"
-            },
-            {
-                name: "Aegis Processed - Implementation & Setup Guide.html",
-                title: "Implementation & Setup Guide",
-                size: "13KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 10,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20Implementation%20&%20Setup%20Guide.html"
-            },
-            {
-                name: "Aegis Processed - Initial Draft of Research Paper.html",
-                title: "Initial Research Paper Draft",
-                size: "12KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 9,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20Initial%20Draft%20of%20Research%20Paper.html"
-            },
-            {
-                name: "Aegis Processed - Preliminary Document Processing Prompt.html",
-                title: "Document Processing Prompt",
-                size: "11KB",
-                type: "html",
-                category: "aegis",
-                date: "2024-07-03",
-                readTime: 8,
-                url: "https://yourusername.github.io/OBDistGit/Aegis%20Processed%20-%20Preliminary%20Document%20Processing%20Prompt.html"
-            },
-            {
-                name: "Aegis Processed - RAG Analysis (Claude Text Output).html",
-                title: "RAG Analysis Report",
-                size: "9KB",
-                type: "html",
-                category: "rag",
-                date: "2024-07-
+        let allFiles = [];
+        let currentFilter = 'all';
+        let currentSort = 'filename';
+        let currentOrder = 'asc';
+
+        // Banner slideshow
+        let currentBannerIndex = 0;
+        const bannerSlides = document.querySelectorAll('.banner-slide');
+        
+        function nextBanner() {
+            bannerSlides[currentBannerIndex].classList.remove('active');
+            currentBannerIndex = (currentBannerIndex + 1) % bannerSlides.length;
+            bannerSlides[currentBannerIndex].classList.add('active');
+        }
+        
+        setInterval(nextBanner, 4000);
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('theme-light');
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (!bytes) return '0B';
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + sizes[i];
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Get file icon
+        function getFileIcon(fileType) {
+            const icons = {
+                'html': '📄',
+                'pdf': '📕',
+                'md': '📝',
+                'txt': '📄',
+                'js': '⚙️',
+                'json': '📊',
+                'png': '🖼️',
+                'jpg': '🖼️',
+                'jpeg': '🖼️'
+            };
+            return icons[fileType] || '📄';
+        }
+
+        // Load metadata from GitHub
+        async function loadMetadata() {
+            try {
+                const response = await fetch('https://aaaronmiller.github.io/OBDistGit/file_metadata.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                allFiles = data;
+                
+                // Update stats
+                updateStats();
+                
+                // Generate filter buttons
+                generateFilters();
+                
+                // Render files
+                renderFiles();
+                
+            } catch (error) {
+                console.error('Error loading metadata:', error);
+                document.getElementById('fileGrid').innerHTML = `
+                    <div class="error">
+                        <h3>Error Loading Files</h3>
+                        <p>Could not load file metadata. Make sure file_metadata.json exists and is accessible.</p>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalFiles = allFiles.length;
+            const totalSize = allFiles.reduce((sum, file) => sum + parseInt(file.file_size || 0), 0);
+            const totalWords = allFiles.reduce((sum, file) => sum + parseInt(file.word_count || 0), 0);
+            const avgReadTime = Math.round(totalWords / 200); // 200 words per minute
+            
+            const mostRecentFile = allFiles.reduce((latest, file) => {
+                return new Date(file.modified_time) > new Date(latest.modified_time) ? file : latest;
+            }, allFiles[0]);
+            
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('totalSize').textContent = formatFileSize(totalSize);
+            document.getElementById('lastUpdated').textContent = mostRecentFile ? formatDate(mostRecentFile.modified_time) : '-';
+            document.getElementById('avgReadTime').textContent = avgReadTime + 'min';
+        }
+
+        // Generate filter buttons
+        function generateFilters() {
+            const categories = [...new Set(allFiles.map(file => file.category?.toLowerCase() || 'other'))];
+            const filtersContainer = document.getElementById('filters');
+            
+            // Clear existing filters except "All Files"
+            filtersContainer.innerHTML = '<button class="filter-btn active" data-filter="all">All Files</button>';
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.filter = category;
+                btn.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                filtersContainer.appendChild(btn);
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderFiles();
+                });
+            });
+        }
+
+        // Filter files
+        function filterFiles() {
+            let filtered = allFiles;
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(file => 
+                    file.category?.toLowerCase() === currentFilter
+                );
+            }
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(file => 
+                    file.filename.toLowerCase().includes(searchTerm) ||
+                    file.summary?.toLowerCase().includes(searchTerm) ||
+                    file.category?.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            return filtered;
+        }
+
+        // Sort files
+        function sortFiles(files) {
+            return files.sort((a, b) => {
+                let aVal = a[currentSort];
+                let bVal = b[currentSort];
+                
+                // Handle numeric sorts
+                if (currentSort === 'file_size' || currentSort === 'word_count') {
+                    aVal = parseInt(aVal) || 0;
+                    bVal = parseInt(bVal) || 0;
+                }
+                
+                // Handle date sorts
+                if (currentSort === 'modified_time') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                }
+                
+                if (aVal < bVal) return currentOrder === 'asc

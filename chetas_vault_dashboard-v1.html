@@ -447,6 +447,17 @@
             font-weight: bold;
         }
 
+        .card-summary {
+            color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         .card-actions {
             display: flex;
             gap: 1rem;
@@ -565,6 +576,16 @@
             margin: 2rem 0;
         }
 
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.5rem;
+            color: #ffff00;
+            border: 2px solid #ffff00;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2.5rem;
@@ -620,13 +641,9 @@
 
     <div class="header">
         <div class="banner-container">
-            <div class="banner-slide active" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00005_.png')"></div>
-            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00006_.png')"></div>
-            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00009_.png')"></div>
-            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00010_.png')"></div>
-            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00017_.png')"></div>
-            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00019_.png')"></div>
-            <div class="banner-slide" style="background-image: url('https://aaaronmiller.github.io/OBDistGit/AutogenGGUF_00020_.png')"></div>
+            <div class="banner-slide active" style="background-image: url('https://via.placeholder.com/1200x400/ff00ff/ffffff?text=Banner+1')"></div>
+            <div class="banner-slide" style="background-image: url('https://via.placeholder.com/1200x400/00ffff/ffffff?text=Banner+2')"></div>
+            <div class="banner-slide" style="background-image: url('https://via.placeholder.com/1200x400/ffff00/ffffff?text=Banner+3')"></div>
             <div class="banner-overlay"></div>
         </div>
         <div class="header-content">
@@ -688,6 +705,11 @@
         let currentFilter = 'all';
         let currentSort = 'filename';
         let currentOrder = 'asc';
+        
+        // Configuration - Update this with your actual GitHub username
+        const GITHUB_USERNAME = 'aaaronmiller'; // CHANGE THIS TO YOUR GITHUB USERNAME
+        const REPO_NAME = 'OBDistGit'; // CHANGE THIS TO YOUR REPO NAME
+        const GITHUB_URL = `https://${GITHUB_USERNAME}.github.io/${REPO_NAME}`;
 
         // Banner slideshow
         let currentBannerIndex = 0;
@@ -740,10 +762,44 @@
             return icons[fileType] || '📄';
         }
 
+        // Create sample data when metadata is not available
+        function createSampleData() {
+            return [
+                {
+                    filename: 'sample-file.html',
+                    url: `${GITHUB_URL}/sample-file.html`,
+                    category: 'AI',
+                    creation_time: new Date().toISOString(),
+                    modified_time: new Date().toISOString(),
+                    time_diff_hours: '0.1',
+                    time_worked: '10',
+                    file_size: '2048',
+                    word_count: 500,
+                    char_count: 2048,
+                    summary: 'This is a sample file showing the dashboard functionality.',
+                    file_type: 'html'
+                },
+                {
+                    filename: 'example-doc.md',
+                    url: `${GITHUB_URL}/example-doc.md`,
+                    category: 'Research',
+                    creation_time: new Date(Date.now() - 86400000).toISOString(),
+                    modified_time: new Date(Date.now() - 43200000).toISOString(),
+                    time_diff_hours: '24.0',
+                    time_worked: '120',
+                    file_size: '4096',
+                    word_count: 1200,
+                    char_count: 4096,
+                    summary: 'Example research document with comprehensive analysis.',
+                    file_type: 'md'
+                }
+            ];
+        }
+
         // Load metadata from GitHub
         async function loadMetadata() {
             try {
-                const response = await fetch('https://aaaronmiller.github.io/OBDistGit/file_metadata.json');
+                const response = await fetch(`${GITHUB_URL}/file_metadata.json`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -761,13 +817,26 @@
                 
             } catch (error) {
                 console.error('Error loading metadata:', error);
+                
+                // Show error but also provide sample data
                 document.getElementById('fileGrid').innerHTML = `
-                    <div class="error">
-                        <h3>Error Loading Files</h3>
-                        <p>Could not load file metadata. Make sure file_metadata.json exists and is accessible.</p>
-                        <p>Error: ${error.message}</p>
+                    <div class="no-data">
+                        <h3>⚠️ Metadata Not Found</h3>
+                        <p>file_metadata.json not found. This might be because:</p>
+                        <ul style="text-align: left; margin: 1rem 0;">
+                            <li>You haven't run the metadata generation script yet</li>
+                            <li>The GitHub username/repo name is incorrect</li>
+                            <li>The file hasn't been uploaded to GitHub Pages</li>
+                        </ul>
+                        <p>Showing sample data for testing...</p>
                     </div>
                 `;
+                
+                // Load sample data for testing
+                allFiles = createSampleData();
+                updateStats();
+                generateFilters();
+                renderFiles();
             }
         }
 
@@ -778,83 +847,12 @@
             const totalWords = allFiles.reduce((sum, file) => sum + parseInt(file.word_count || 0), 0);
             const avgReadTime = Math.round(totalWords / 200); // 200 words per minute
             
-            const mostRecentFile = allFiles.reduce((latest, file) => {
-                return new Date(file.modified_time) > new Date(latest.modified_time) ? file : latest;
-            }, allFiles[0]);
+            let mostRecentFile = null;
+            if (allFiles.length > 0) {
+                mostRecentFile = allFiles.reduce((latest, file) => {
+                    return new Date(file.modified_time) > new Date(latest.modified_time) ? file : latest;
+                }, allFiles[0]);
+            }
             
             document.getElementById('totalFiles').textContent = totalFiles;
-            document.getElementById('totalSize').textContent = formatFileSize(totalSize);
-            document.getElementById('lastUpdated').textContent = mostRecentFile ? formatDate(mostRecentFile.modified_time) : '-';
-            document.getElementById('avgReadTime').textContent = avgReadTime + 'min';
-        }
-
-        // Generate filter buttons
-        function generateFilters() {
-            const categories = [...new Set(allFiles.map(file => file.category?.toLowerCase() || 'other'))];
-            const filtersContainer = document.getElementById('filters');
-            
-            // Clear existing filters except "All Files"
-            filtersContainer.innerHTML = '<button class="filter-btn active" data-filter="all">All Files</button>';
-            
-            categories.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn';
-                btn.dataset.filter = category;
-                btn.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-                filtersContainer.appendChild(btn);
-            });
-            
-            // Add event listeners
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    renderFiles();
-                });
-            });
-        }
-
-        // Filter files
-        function filterFiles() {
-            let filtered = allFiles;
-            
-            // Apply category filter
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(file => 
-                    file.category?.toLowerCase() === currentFilter
-                );
-            }
-            
-            // Apply search filter
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            if (searchTerm) {
-                filtered = filtered.filter(file => 
-                    file.filename.toLowerCase().includes(searchTerm) ||
-                    file.summary?.toLowerCase().includes(searchTerm) ||
-                    file.category?.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            return filtered;
-        }
-
-        // Sort files
-        function sortFiles(files) {
-            return files.sort((a, b) => {
-                let aVal = a[currentSort];
-                let bVal = b[currentSort];
-                
-                // Handle numeric sorts
-                if (currentSort === 'file_size' || currentSort === 'word_count') {
-                    aVal = parseInt(aVal) || 0;
-                    bVal = parseInt(bVal) || 0;
-                }
-                
-                // Handle date sorts
-                if (currentSort === 'modified_time') {
-                    aVal = new Date(aVal);
-                    bVal = new Date(bVal);
-                }
-                
-                if (aVal < bVal) return currentOrder === 'asc
+            document.getElementById('totalSize').textContent = format

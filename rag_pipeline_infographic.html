@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAG Pipeline Optimization Infographic</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
     <style>
         * {
             margin: 0;
@@ -593,13 +595,108 @@
             </div>
         </div>
 
+        <!-- Content Analysis & Idea Generation -->
+        <div class="section">
+            <h2>Content Analysis & Idea Generation</h2>
+            <div class="grid-3">
+                <div class="chart-container">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">Content Category Breakdown</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">Effort Distribution by Category</h3>
+                    <canvas id="effortChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">Content Velocity</h3>
+                    <canvas id="velocityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Metrics & Characteristics -->
+        <div class="section">
+            <h2>Document Metrics & Characteristics</h2>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">File Size vs. Word Count</h3>
+                    <canvas id="sizeVsWordCountChart"></canvas>
+                </div>
+                <div class="chart-container" style="grid-column: span 2;">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">Detailed Document Metrics</h3>
+                    <table class="comparison-table" id="documentsTable">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Category</th>
+                                <th>Time Worked (min)</th>
+                                <th>File Size (KB)</th>
+                                <th>Word Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be injected by script -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword Relationship Graph -->
+        <div class="section">
+            <h2>Project-Wide Keyword Analysis</h2>
+            <div id="keywordGraph" style="height: 500px; width: 100%; background: #1a1a1a; border-radius: 10px; border: 1px solid #333;"></div>
+        </div>
+
+        <!-- Conversational Dynamics -->
+        <div class="section">
+            <h2>Conversational Dynamics</h2>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">Sentiment Arc</h3>
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 style="color: #00d4ff; text-align: center; margin-bottom: 15px;">Topic Progression</h3>
+                    <div id="topicGraph" style="height: 400px; width: 100%; background: #1a1a1a; border-radius: 10px; border: 1px solid #333;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Pattern Analysis -->
+        <div class="section">
+            <h2>Communication Pattern Analysis</h2>
+            <div id="communicationPatterns">
+                <!-- Patterns will be injected by script -->
+            </div>
+        </div>
+
+        <!-- Key Findings & Actionable Insights -->
+        <div class="section">
+            <h2>Key Findings & Actionable Insights</h2>
+            <div class="grid-2">
+                <div>
+                    <h3 style="color: #00d4ff; margin-bottom: 15px;">Key Findings</h3>
+                    <ul id="keyFindingsList" style="list-style-position: inside;">
+                        <!-- Findings will be injected by script -->
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #00d4ff; margin-bottom: 15px;">Actionable Insights</h3>
+                    <ul id="actionableInsightsList" style="list-style-position: inside;">
+                        <!-- Insights will be injected by script -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- System Prompt Section -->
         <div class="system-prompt-section">
             <h2>RAG System Prompt Configuration</h2>
-            <textarea 
-                id="systemPromptArea" 
-                class="system-prompt-area" 
-                placeholder="what can be done next time to makje the analysis more effective (patterns and techniques to be implemented by the speakers) ? what about for me as the individual processing and creating the directives for the rag chunking and data extraction approaches? what can be done in the future to make the process more effective, more comprehensive and easier? specifically focus on patterns and prompting techniques utilized in our multifaceted rag approach. finally focus on the identification and definition of data structures within the data. How did our database schema(s) deal with the data analysis and qualifcatoin/definiton/storage? What can be done to make future rag queries on the data set more effective and comprehensive in nature? Finally how can the system prompts used by the agentic processes used to implement the structures and directives identified by the architect be improved?? research appraoaches whcih produce data that is not gathered though our approaches. Before you start, describe and define the process I have outlined and indicate the order in which you will implement the methods and tecnieques we have formed. Can our softwaer be improved? can our schema ? Our agentic personalities / system prompts? our overall techniques? which processes can be run asyncronously and which cannot? evaluate your mission and clearly state it in a comprehensive and thourough form; using a structured data format before you begin your tasks; and then proceed to implement said patterns in the order described. If you can identify a method or technique which is fundamentaly superiouir to any of my directeives; use that method instead and tlel me that you have domne so; do not feel that the rigors of my instructions prohibit you from peforming your tasks to the absolute most effective manner than you are able."
+            <textarea
+                id="systemPromptArea"
+                class="system-prompt-area"
+                placeholder="What can be done next time to make the analysis more effective (patterns and techniques to be implemented by the speakers)? What about for me, as the individual processing and creating the directives for the RAG chunking and data extraction approaches? What can be done in the future to make the process more effective, more comprehensive, and easier? Specifically, focus on patterns and prompting techniques utilized in our multifaceted RAG approach. Finally, focus on the identification and definition of data structures within the data. How did our database schema(s) handle data analysis, qualification, definition, and storage? What can be done to make future RAG queries on the data set more effective and comprehensive? Finally, how can the system prompts used by the agentic processes, which implement the structures and directives identified by the architect, be improved? Research approaches that produce data not gathered through our current methods. Before you start, describe and define the process I have outlined and indicate the order in which you will implement the methods and techniques we have formed. Can our software be improved? Can our schema? Our agentic personalities/system prompts? Our overall techniques? Which processes can be run asynchronously, and which cannot? Evaluate your mission and clearly state it in a comprehensive and thorough form, using a structured data format before you begin your tasks, and then proceed to implement said patterns in the order described. If you can identify a method or technique that is fundamentally superior to any of my directives, use that method instead and tell me that you have done so. Do not feel that the rigors of my instructions prohibit you from performing your tasks to the absolute most effective manner that you are able."
                 spellcheck="false"
             ></textarea>
             <div class="prompt-info">
@@ -795,6 +892,340 @@
                 }, 500);
             });
         });
+
+        // Fetch and process data
+        fetch('file_metadata.json')
+            .then(response => response.json())
+            .then(data => {
+                // Process data for charts
+                const categories = {};
+                const effort = {};
+                const velocity = [];
+                const sizeVsWords = [];
+                const documentsTable = document.querySelector('#documentsTable tbody');
+
+                data.forEach(file => {
+                    // Category breakdown
+                    categories[file.category] = (categories[file.category] || 0) + 1;
+
+                    // Effort distribution
+                    effort[file.category] = (effort[file.category] || 0) + parseInt(file.time_worked);
+
+                    // Content velocity
+                    velocity.push({
+                        x: new Date(file.creation_time),
+                        y: data.indexOf(file) + 1,
+                        label: file.filename
+                    });
+                    
+                    // Size vs Word Count
+                    sizeVsWords.push({
+                        x: file.word_count,
+                        y: file.file_size / 1024, // in KB
+                        label: file.filename
+                    });
+
+                    // Populate table
+                    const row = documentsTable.insertRow();
+                    row.innerHTML = `
+                        <td><a href="${file.url}" target="_blank">${file.filename}</a></td>
+                        <td>${file.category}</td>
+                        <td>${file.time_worked}</td>
+                        <td>${(file.file_size / 1024).toFixed(2)}</td>
+                        <td>${file.word_count}</td>
+                    `;
+                });
+
+                // Render charts
+                renderCategoryChart(categories);
+                renderEffortChart(effort);
+                renderVelocityChart(velocity);
+                renderSizeVsWordCountChart(sizeVsWords);
+                renderKeywordGraph(data.filter(d => d.category !== 'Conversational Analysis'));
+
+                // Render conversational analysis
+                const convoData = data.find(d => d.category === 'Conversational Analysis').analysis;
+                renderSentimentChart(convoData.sentiment_arc);
+                renderTopicGraph(convoData.topic_progression);
+                renderCommunicationPatterns(convoData.communication_patterns);
+                renderKeyFindings(convoData.key_findings, convoData.actionable_insights);
+            });
+
+        function renderCategoryChart(categories) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(categories),
+                    datasets: [{
+                        data: Object.values(categories),
+                        backgroundColor: ['#00d4ff', '#ff6b6b', '#4ecdc4'],
+                        borderColor: ['#00a8cc', '#cc5555', '#3db8af'],
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { labels: { color: '#e0e0e0' } } } }
+            });
+        }
+
+        function renderEffortChart(effort) {
+            const ctx = document.getElementById('effortChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(effort),
+                    datasets: [{
+                        label: 'Time Worked (minutes)',
+                        data: Object.values(effort),
+                        backgroundColor: 'rgba(0, 212, 255, 0.7)',
+                        borderColor: '#00d4ff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#e0e0e0' }, grid: { color: '#333' } },
+                        y: { ticks: { color: '#e0e0e0' }, grid: { color: '#333' } }
+                    }
+                }
+            });
+        }
+
+        function renderVelocityChart(velocity) {
+            const ctx = document.getElementById('velocityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Document Creation',
+                        data: velocity,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false }, tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.label;
+                            }
+                        }
+                    } },
+                    scales: {
+                        x: { type: 'time', time: { unit: 'day' }, ticks: { color: '#e0e0e0' }, grid: { color: '#333' } },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+        
+        function renderSizeVsWordCountChart(data) {
+            const ctx = document.getElementById('sizeVsWordCountChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Documents',
+                        data: data,
+                        backgroundColor: 'rgba(0, 212, 255, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false }, tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.label;
+                            }
+                        }
+                    } },
+                    scales: {
+                        x: { title: { display: true, text: 'Word Count', color: '#e0e0e0' }, ticks: { color: '#e0e0e0' }, grid: { color: '#333' } },
+                        y: { title: { display: true, text: 'File Size (KB)', color: '#e0e0e0' }, ticks: { color: '#e0e0e0' }, grid: { color: '#333' } }
+                    }
+                }
+            });
+        }
+
+        function renderKeywordGraph(data) {
+            const nodes = [];
+            const edges = [];
+            const keywordMap = {};
+            const stopWords = new Set(['a', 'an', 'the', 'and', 'in', 'to', 'of', 'for', 'is', 'with', 'on', 'deep', 'dive', 'guide', 'comprehensive', 'detailed', 'into', 'generation', 'implementation', 'protocols', 'framework', 'focusing']);
+
+            data.forEach(file => {
+                nodes.push({ id: file.filename, label: file.filename, group: file.category });
+                const summary = file.summary.toLowerCase().replace(/[.,]/g, '');
+                const keywords = summary.split(' ').filter(word => !stopWords.has(word) && word.length > 3);
+                
+                keywords.forEach(keyword => {
+                    if (!keywordMap[keyword]) {
+                        keywordMap[keyword] = [];
+                    }
+                    keywordMap[keyword].push(file.filename);
+                });
+            });
+
+            for (const keyword in keywordMap) {
+                const files = keywordMap[keyword];
+                if (files.length > 1) {
+                    for (let i = 0; i < files.length; i++) {
+                        for (let j = i + 1; j < files.length; j++) {
+                            edges.push({ from: files[i], to: files[j], label: keyword });
+                        }
+                    }
+                }
+            }
+
+            const container = document.getElementById('keywordGraph');
+            const graphData = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+            const options = {
+                nodes: {
+                    shape: 'dot',
+                    size: 16,
+                    font: {
+                        size: 12,
+                        color: '#ffffff'
+                    },
+                    borderWidth: 2
+                },
+                edges: {
+                    width: 2,
+                    color: {
+                        color: '#848484',
+                        highlight: '#00d4ff',
+                        hover: '#00d4ff'
+                    },
+                    font: {
+                        size: 10,
+                        color: '#ffffff',
+                        strokeWidth: 2,
+                        strokeColor: '#0a0a0a'
+                    }
+                },
+                physics: {
+                    forceAtlas2Based: {
+                        gravitationalConstant: -50,
+                        centralGravity: 0.005,
+                        springLength: 230,
+                        springConstant: 0.18
+                    },
+                    maxVelocity: 146,
+                    solver: 'forceAtlas2Based',
+                    timestep: 0.35,
+                    stabilization: { iterations: 150 }
+                },
+                groups: {
+                    AI: { color: { background: '#ff6b6b', border: '#cc5555' } },
+                    RAG: { color: { background: '#4ecdc4', border: '#3db8af' } },
+                    Aegis: { color: { background: '#feca57', border: '#e5a54a' } }
+                }
+            };
+            new vis.Network(container, graphData, options);
+        }
+
+        function renderSentimentChart(sentimentData) {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Sentiment Arc',
+                        data: sentimentData.map(d => ({x: d.time, y: d.sentiment, label: d.label})),
+                        borderColor: '#4ecdc4',
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false }, tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.label;
+                            }
+                        }
+                    } },
+                    scales: {
+                        x: { title: { display: true, text: 'Time (minutes)', color: '#e0e0e0' }, ticks: { color: '#e0e0e0' }, grid: { color: '#333' } },
+                        y: { title: { display: true, text: 'Sentiment Score', color: '#e0e0e0' }, ticks: { color: '#e0e0e0' }, grid: { color: '#333' } }
+                    }
+                }
+            });
+        }
+
+        function renderTopicGraph(topicData) {
+            const container = document.getElementById('topicGraph');
+            const graphData = {
+                nodes: new vis.DataSet(topicData.nodes),
+                edges: new vis.DataSet(topicData.edges)
+            };
+            const options = {
+                nodes: {
+                    shape: 'box',
+                    font: { color: '#ffffff' }
+                },
+                edges: {
+                    arrows: 'to',
+                    color: '#848484'
+                },
+                layout: {
+                    hierarchical: {
+                        direction: 'LR',
+                        sortMethod: 'directed'
+                    }
+                },
+                groups: {
+                    'Project Definition': { color: { background: '#ff6b6b', border: '#cc5555' } },
+                    'Technical Implementation': { color: { background: '#4ecdc4', border: '#3db8af' } },
+                    'Meta-Conversation': { color: { background: '#feca57', border: '#e5a54a' } }
+                }
+            };
+            new vis.Network(container, graphData, options);
+        }
+
+        function renderCommunicationPatterns(patterns) {
+            const container = document.getElementById('communicationPatterns');
+            patterns.forEach(pattern => {
+                const patternCard = document.createElement('div');
+                patternCard.className = 'phase-card';
+                patternCard.innerHTML = `
+                    <h3>${pattern.pattern_type}</h3>
+                    <p><strong>Topic:</strong> ${pattern.topic}</p>
+                    <p><strong>Participants:</strong> ${pattern.participants.join(', ')}</p>
+                    <p><strong>Duration:</strong> ${pattern.start_time} - ${pattern.end_time}</p>
+                    <p><strong>Summary:</strong> ${pattern.summary}</p>
+                    <div class="metric-card" style="margin-top: 15px; padding: 10px;">
+                        <span class="metric-value" style="font-size: 2em;">${pattern.turn_count}</span>
+                        <div class="metric-label">Turns</div>
+                    </div>
+                `;
+                container.appendChild(patternCard);
+            });
+        }
+
+        function renderKeyFindings(findings, insights) {
+            const findingsList = document.getElementById('keyFindingsList');
+            const insightsList = document.getElementById('actionableInsightsList');
+            findings.forEach(finding => {
+                const li = document.createElement('li');
+                li.textContent = finding;
+                findingsList.appendChild(li);
+            });
+            insights.forEach(insight => {
+                const li = document.createElement('li');
+                li.textContent = insight;
+                insightsList.appendChild(li);
+            });
+        }
     </script>
 </body>
 </html>

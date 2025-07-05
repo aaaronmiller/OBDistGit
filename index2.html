@@ -1,0 +1,310 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methamphetamine Adulterant Identification</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+        h1 {
+            color: #00ffcc;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+        h2 {
+            color: #ff00ff;
+            font-size: 1.8em;
+            margin-top: 20px;
+            border-bottom: 2px solid #00ffcc;
+            padding-bottom: 5px;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+        p, li {
+            font-size: 1em;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .section {
+            background-color: #333333;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            background-color: transparent;
+            color: #00ffcc;
+            border: 2px solid #ff00ff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #ff00ff;
+            color: #1a1a1a;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        li::before {
+            content: "▶";
+            color: #00ffcc;
+            margin-right: 10px;
+        }
+        .highlight {
+            color: #ff00ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Methamphetamine Adulterant Identification</h1>
+        <p>Methamphetamine, a potent stimulant, is frequently adulterated in the U.S. with cutting agents to increase volume and profit. The two most prevalent cuts are <span class="highlight">isopropylbenzylamine</span> and <span class="highlight">methylsulfonylmethane (MSM)</span>, both of which mimic methamphetamine’s appearance but differ in physical and chemical properties. Rudimentary detection relies on sensory and physical tests—sight, feel, taste, and melting behavior—though these methods are subjective and less reliable than laboratory analysis. Below, each substance is described with detailed guidance on how to identify it using these basic techniques, including practical considerations for onsite use.</p>
+
+        <div class="section">
+            <h2>1. Methamphetamine (Pure)</h2>
+            <p>Methamphetamine hydrochloride, the most common form in illicit markets, serves as the baseline for comparison.</p>
+            <ul>
+                <li><strong>Sight:</strong>
+                    <ul>
+                        <li><strong>Appearance:</strong> Forms <span class="highlight">clear, glassy shards</span> or <span class="highlight">white crystalline powder</span>. High-purity meth often resembles broken glass, with translucent, angular crystals that catch light. Lower-purity samples may appear as a fine white powder or slightly off-white crystals.</li>
+                        <li><strong>Texture/Clarity:</strong> Crystals are hard and brittle, with a distinct, reflective quality. Pure meth lacks cloudiness or dullness, though impurities can introduce slight discoloration (e.g., yellowish tint).</li>
+                        <li><strong>Variability:</strong> Street meth is rarely 100% pure, so even "pure" samples may contain minor cuts, affecting appearance slightly.</li>
+                    </ul>
+                </li>
+                <li><strong>Feel:</strong>
+                    <ul>
+                        <li><strong>Texture:</strong> Feels <span class="highlight">hard and crystalline</span> when crushed between fingers. Shards snap cleanly under pressure, and powder feels slightly gritty but not powdery like flour.</li>
+                        <li><strong>Stickiness:</strong> Pure meth is <span class="highlight">non-sticky</span> and doesn’t clump excessively unless exposed to moisture.</li>
+                    </ul>
+                </li>
+                <li><strong>Taste (not recommended due to toxicity):</strong>
+                    <ul>
+                        <li><strong>Flavor:</strong> Intensely <span class="highlight">bitter</span> with a sharp, chemical aftertaste. The bitterness lingers but lacks sweetness or other flavors.</li>
+                        <li><strong>Mouthfeel:</strong> Dissolves quickly on the tongue, leaving a numbing sensation due to its stimulant properties.</li>
+                    </ul>
+                </li>
+                <li><strong>Melting:</strong>
+                    <ul>
+                        <li><strong>Melting Point:</strong> Melts cleanly at <span class="highlight">170–175°C (338–347°F)</span> when heated slowly on a foil or glass surface.</li>
+                        <li><strong>Behavior:</strong> Forms a clear, bubbling liquid that vaporizes with a <span class="highlight">smooth, steady burn</span>. The vapor produces a characteristic <span class="highlight">chemical, slightly sweet odor</span>.</li>
+                        <li><strong>Residue:</strong> Leaves <span class="highlight">minimal residue</span>—typically a faint, transparent film.</li>
+                        <li><strong>Recrystallization:</strong> Reforms into <span class="highlight">irregular, crystalline patterns</span>, not long needles or uniform shapes.</li>
+                    </ul>
+                </li>
+                <li><strong>Additional Notes:</strong>
+                    <ul>
+                        <li><strong>Solubility:</strong> Highly soluble in water and alcohol, forming a <span class="highlight">clear solution</span> with no residue or cloudiness.</li>
+                        <li><strong>Practical Tip:</strong> Dissolve a small amount in a few drops of water. Pure meth dissolves completely, leaving no visible particles or film.</li>
+                        <li><strong>Limitations:</strong> Street meth is often cut, so even samples with these traits may contain isopropylbenzylamine or MSM.</li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="#workflow" class="button">Go to Detection Workflow</a>
+        </div>
+
+        <div class="section">
+            <h2>2. Isopropylbenzylamine</h2>
+            <p>Isopropylbenzylamine is a structural isomer of methamphetamine, making it a deceptive cut due to its similar appearance and melting point.</p>
+            <ul>
+                <li><strong>Sight:</strong>
+                    <ul>
+                        <li><strong>Appearance:</strong> Forms <span class="highlight">large, clear, or slightly cloudy crystals</span> that resemble methamphetamine. Crystals are often <span class="highlight">more uniform</span> in size and shape.</li>
+                        <li><strong>Texture/Clarity:</strong> Has a <span class="highlight">waxy or plastic-like sheen</span>, less glassy than pure meth.</li>
+                        <li><strong>Variability:</strong> In mixed samples, isopropylbenzylamine may dominate, giving a more consistent, "too perfect" crystalline structure.</li>
+                    </ul>
+                </li>
+                <li><strong>Feel:</strong>
+                    <ul>
+                        <li><strong>Texture:</strong> Feels <span class="highlight">waxy or slick</span> when handled, especially in larger crystals.</li>
+                        <li><strong>Stickiness:</strong> May feel <span class="highlight">slightly sticky</span> or oily, especially in humid conditions.</li>
+                    </ul>
+                </li>
+                <li><strong>Taste (not recommended due to toxicity):</strong>
+                    <ul>
+                        <li><strong>Flavor:</strong> Bitter, similar to meth, but with a <span class="highlight">sweeter or more chemical aftertaste</span>.</li>
+                        <li><strong>Mouthfeel:</strong> Dissolves more slowly and may leave a <span class="highlight">coating sensation</span>.</li>
+                    </ul>
+                </li>
+                <li><strong>Melting:</strong>
+                    <ul>
+                        <li><strong>Melting Point:</strong> Melts at <span class="highlight">180–190°C (356–374°F)</span>, requiring <span class="highlight">slightly more heat</span>.</li>
+                        <li><strong>Behavior:</strong> Melts into a liquid but may <span class="highlight">bubble unevenly</span> or burn with a <span class="highlight">faint chemical or plastic-like odor</span>.</li>
+                        <li><strong>Residue:</strong> Leaves a <span class="highlight">darker, more noticeable residue</span>, often brownish or yellowish.</li>
+                        <li><strong>Recrystallization:</strong> Forms <span class="highlight">long, needle-like or blade-like crystals</span>, a key differentiator.</li>
+                        <li><strong>Practical Tip:</strong> Heat a small amount on foil, let cool, and observe needle-like structures under light.</li>
+                    </ul>
+                </li>
+                <li><strong>Additional Notes:</strong>
+                    <ul>
+                        <li><strong>Solubility:</strong> <span class="highlight">Less soluble in water</span> than meth, may leave a <span class="highlight">cloudy residue</span> or <span class="highlight">oily film</span>.</li>
+                        <li><strong>Practical Test:</strong> Dissolve in water; cloudy solution or oily sheen suggests isopropylbenzylamine.</li>
+                        <li><strong>Burn Test:</strong> Produces a <span class="highlight">harsher, more acrid vapor</span>.</li>
+                        <li><strong>Limitations:</strong> Its similarity to meth makes it hard to detect without careful observation.</li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="#workflow" class="button">Go to Detection Workflow</a>
+        </div>
+
+        <div class="section">
+            <h2>3. Methylsulfonylmethane (MSM)</h2>
+            <p>MSM, a dietary supplement, is used as a cut because its white, crystalline form resembles methamphetamine.</p>
+            <ul>
+                <li><strong>Sight:</strong>
+                    <ul>
+                        <li><strong>Appearance:</strong> Appears as <span class="highlight">white, crystalline flakes</span> or <span class="highlight">fine powder</span>, resembling crushed sugar or salt.</li>
+                        <li><strong>Texture/Clarity:</strong> Has a <span class="highlight">duller, less reflective surface</span> than meth’s glassy shine.</li>
+                        <li><strong>Variability:</strong> MSM-heavy samples look <span class="highlight">flaky or powdery</span>, lacking meth’s hard structure.</li>
+                    </ul>
+                </li>
+                <li><strong>Feel:</strong>
+                    <ul>
+                        <li><strong>Texture:</strong> Feels <span class="highlight">soft and flaky</span>, almost like talcum powder.</li>
+                        <li><strong>Stickiness:</strong> Can become <span class="highlight">clumpy or sticky</span> in humid environments.</li>
+                    </ul>
+                </li>
+                <li><strong>Taste (not recommended due to toxicity):</strong>
+                    <ul>
+                        <li><strong>Flavor:</strong> <span class="highlight">Tasteless</span> or slightly <span class="highlight">salty</span>, lacking meth’s sharp bitterness.</li>
+                        <li><strong>Mouthfeel:</strong> Feels <span class="highlight">less numbing</span> and may leave a <span class="highlight">powdery residue</span>.</li>
+                    </ul>
+                </li>
+                <li><strong>Melting:</strong>
+                    <ul>
+                        <li><strong>Melting Point:</strong> Melts at <span class="highlight">109–110°C (228–230°F)</span>, liquefying quickly under minimal heat.</li>
+                        <li><strong>Behavior:</strong> <span class="highlight">Vaporizes rapidly</span> or <span class="highlight">sublimates</span>, often disappearing before meth would melt.</li>
+                        <li><strong>Odor:</strong> Produces a <span class="highlight">faint sulfur-like smell</span>, like "burnt rubber" or "rotten eggs."</li>
+                        <li><strong>Residue:</strong> Leaves <span class="highlight">little to no residue</span> if sublimated, or a white, powdery residue.</li>
+                        <li><strong>Recrystallization:</strong> Does not recrystallize; reforms as a <span class="highlight">flaky, non-crystalline mass</span>.</li>
+                    </ul>
+                </li>
+                <li><strong>Additional Notes:</strong>
+                    <ul>
+                        <li><strong>Solubility:</strong> <span class="highlight">Highly soluble in water</span>, but evaporation leaves a <span class="highlight">chalky or flaky residue</span>.</li>
+                        <li><strong>Practical Test:</strong> Dissolve in water, evaporate, and check for powdery residue.</li>
+                        <li><strong>Burn Test:</strong> Produces <span class="highlight">less vapor</span>, feeling "thinner" or less potent.</li>
+                        <li><strong>Limitations:</strong> Easier to detect due to low melting point, but small amounts may be harder to notice.</li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="#workflow" class="button">Go to Detection Workflow</a>
+        </div>
+
+        <div class="section" id="workflow">
+            <h2>Practical Onsite Detection Workflow</h2>
+            <p>To differentiate methamphetamine from isopropylbenzylamine and MSM using rudimentary methods, follow this step-by-step approach:</p>
+            <ol>
+                <li><strong>Visual Inspection:</strong>
+                    <ul>
+                        <li>Check for <span class="highlight">glassiness</span> (meth), <span class="highlight">waxy sheen</span> (isopropylbenzylamine), or <span class="highlight">flaky dullness</span> (MSM).</li>
+                        <li>Compare crystal size and uniformity: meth is irregular, isopropylbenzylamine is uniform, MSM is flaky or powdery.</li>
+                        <li>Use a magnifying glass or flashlight to inspect clarity and sheen if available.</li>
+                    </ul>
+                </li>
+                <li><strong>Feel Test:</strong>
+                    <ul>
+                        <li>Crush a small amount. Meth feels <span class="highlight">hard and gritty</span>, isopropylbenzylamine feels <span class="highlight">waxy</span>, MSM feels <span class="highlight">soft and chalky</span>.</li>
+                        <li>Note stickiness or clumping, suggesting MSM or isopropylbenzylamine in humid conditions.</li>
+                    </ul>
+                </li>
+                <li><strong>Solubility Test:</strong>
+                    <ul>
+                        <li>Dissolve a pinch in a few drops of water.</li>
+                        <li><strong>Meth:</strong> Clear solution, crystalline residue.</li>
+                        <li><strong>Isopropylbenzylamine:</strong> Cloudy solution, oily film, or amorphous residue.</li>
+                        <li><strong>MSM:</strong> Clear solution, chalky or flaky residue.</li>
+                    </ul>
+                </li>
+                <li><strong>Melting Test (use caution, avoid inhaling fumes):</strong>
+                    <ul>
+                        <li>Heat on clean foil or glass with a lighter (2–3 inches away).</li>
+                        <li>Observe <span class="highlight">melting speed</span>: MSM (<110°C), meth (~170°C), isopropylbenzylamine (~180°C).</li>
+                        <li>Note <span class="highlight">odor</span>: Meth (sweet-chemical), isopropylbenzylamine (plastic-acrid), MSM (sulfur-like).</li>
+                        <li>Check <span class="highlight">residue</span>: Meth (minimal, clear), isopropylbenzylamine (darker), MSM (powdery or none).</li>
+                        <li>Inspect <span class="highlight">recrystallization</span>: Meth (irregular), isopropylbenzylamine (needle-like), MSM (none or flaky).</li>
+                    </ul>
+                </li>
+                <li><strong>Taste Test (last resort, highly discouraged):</strong>
+                    <ul>
+                        <li>Use a tiny amount. Meth is <span class="highlight">bitter</span>, isopropylbenzylamine is <span class="highlight">bitter-sweet/chemical</span>, MSM is <span class="highlight">tasteless/salty</span>.</li>
+                        <li>Spit out immediately and rinse mouth.</li>
+                    </ul>
+                </li>
+                <li><strong>Cross-Check Observations:</strong>
+                    <ul>
+                        <li>Combine findings. Waxy crystals, needle-like recrystallization, and cloudy water test suggest isopropylbenzylamine. Flaky sample with chalky residue indicates MSM.</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

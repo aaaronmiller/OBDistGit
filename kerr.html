@@ -1,0 +1,205 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerr County, Texas Flood Infographic - July 4, 2025</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .infographic {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #2a2a2a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        h1, h2 {
+            color: #00ff00;
+            text-align: center;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 20px;
+        }
+        .section {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #333333;
+            border-left: 4px solid #00ff00;
+            border-radius: 5px;
+        }
+        .section p, .section ul {
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        ul li:before {
+            content: ">";
+            color: #00ff00;
+            position: absolute;
+            left: 0;
+        }
+        .highlight {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+    </style>
+</head>
+<body>
+    <div class="infographic">
+        <h1>Kerr County, Texas Flood - July 4, 2025</h1>
+        
+        <div class="section">
+            <h2>Overview</h2>
+            <p>Torrential rains triggered catastrophic flash flooding in Kerr County, Texas, along the Guadalupe River, with the river surging <span class="highlight">26 feet in 45 minutes</span>. Up to <span class="highlight">10–15 inches</span> of rain fell overnight, causing at least <span class="highlight">24 deaths</span> and leaving <span class="highlight">23–25 girls</span> missing from Camp Mystic.</p>[](https://www.usatoday.com/story/news/weather/2025/07/04/guadalupe-river-flooding-deaths-texas-kerrville/84470317007/)[](https://www.cnn.com/weather/live-news/texas-flooding-07-04-2025)
+        </div>
+
+        <div class="section">
+            <h2>Flood Duration and Recession</h2>
+            <ul>
+                <li><span class="highlight">Peak Height</span>: The Guadalupe River surged from 7 to over 29 feet in less than 2 hours, peaking around 4:35 a.m. on July 4, 2025. The exact duration at peak is unclear due to gauge failure, but likely brief.</li>[](https://www.newsweek.com/central-texas-flooding-live-tracker-maps-2094900)
+                <li><span class="highlight">Recession</span>: Waters began receding in some areas within an hour (e.g., Camp Mystic), but remained high into July 5, with the river near Spring Branch cresting at 37.2 feet at 2 a.m. Complete recession likely took hours to days.</li>[](https://www.cnn.com/weather/live-news/texas-flooding-07-04-2025)
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Affected Area</h2>
+            <ul>
+                <li><span class="highlight">Geographic Scope</span>: Flooding centered in Kerr County (1,107 sq miles), impacting Hunt, Kerrville, Ingram, and Center Point along the Guadalupe River. Neighboring Kendall and Tom Green counties also affected.</li>[](https://www.usatoday.com/story/news/weather/2025/07/04/guadalupe-river-flooding-deaths-texas-kerrville/84470317007/)[](https://www.newsweek.com/central-texas-flooding-live-tracker-maps-2094900)
+                <li><span class="highlight">Flood Corridor</span>: Affected a 20–30-mile river corridor from Hunt to downstream communities. Low-lying areas, camps, and neighborhoods like Bumble Bee Hills were hardest hit.</li>[](https://www.tpr.org/2025-07-04/kerr-county-residents-urged-not-to-travel-unless-seeking-higher-ground-along-guadalupe-as-severe-flooding-leads-to-fatalities)
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Population Impacted</h2>
+            <ul>
+                <li><span class="highlight">Kerr County Population</span>: ~52,598 (2020 Census). Thousands affected due to evacuations, property damage, and infrastructure disruption.</li>[](https://www.nytimes.com/live/2025/07/04/us/texas-floods-guadalupe-river)
+                <li><span class="highlight">Casualties</span>: At least 24 deaths, with 23–25 girls missing from Camp Mystic (750 campers). 237 people rescued, 167 by helicopter.</li>[](https://www.cnn.com/weather/live-news/texas-flooding-07-04-2025)[](https://www.foxnews.com/us/devastating-texas-river-flood-leaves-least-6-dead-emergency-crews-race-find-others-missing)
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Historical Comparison</h2>
+            <ul>
+                <li><span class="highlight">Last Major Event</span>: The 1987 Guadalupe River flood (11 inches of rain, 10 deaths) was the closest comparable event, 38 years prior. The 2025 flood surpassed it in intensity.</li>[](https://www.washingtonpost.com/weather/2025/07/04/texas-flooding-extreme-rains/)[](https://www.ksat.com/news/local/2025/07/04/fatalities-confirmed-in-kerr-county-flooding-along-guadalupe-river-sheriffs-office-says/)
+                <li><span class="highlight">Unprecedented Speed</span>: The 2025 event’s 26-foot rise in 45 minutes was faster than 1987, making it a rare catastrophe.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Likelihood of Recurrence</h2>
+            <ul>
+                <li><span class="highlight">Risk Factors</span>: Texas Hill Country’s hilly terrain and dry soils increase flash flood risk. The 2025 event was a 1-in-100-year flood, but climate change may raise future likelihood.</li>[](https://www.cnn.com/2025/07/04/weather/texas-flooding-climate)
+                <li><span class="highlight">Future Outlook</span>: More rain was forecast through July 5, with ongoing risks from San Antonio to Waco. Improved forecasting and infrastructure could mitigate future events.</li>[](https://www.reuters.com/business/environment/officials-confirm-deaths-after-flash-floods-central-texas-2025-07-04/)
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Why It Wasn’t Dealt with Properly</h2>
+            <ul>
+                <li><span class="highlight">Underestimated Forecasts</span>: NWS predicted 1–5 inches, but 10–15 inches fell, overwhelming preparations.</li>[](https://www.usatoday.com/story/news/weather/2025/07/04/guadalupe-river-flooding-deaths-texas-kerrville/84470317007/)[](https://www.reuters.com/business/environment/officials-confirm-deaths-after-flash-floods-central-texas-2025-07-04/)
+                <li><span class="highlight">Rapid Onset</span>: Flooding began pre-dawn, with a 26-foot surge in 45 minutes, limiting evacuation time.</li>[](https://www.newsweek.com/texas-flooding-harris-kerr-guadalupe-river-weather-warning-2094777)
+                <li><span class="highlight">Infrastructure Issues</span>: The USGS gauge failed at 4:35 a.m., and dry soils increased runoff.</li>[](https://www.tpr.org/2025-07-04/kerr-county-residents-urged-not-to-travel-unless-seeking-higher-ground-along-guadalupe-as-severe-flooding-leads-to-fatalities)[](https://www.cnn.com/2025/07/04/weather/texas-flooding-climate)
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Why It Was a Surprise</h2>
+            <ul>
+                <li><span class="highlight">Unpredictable Scale</span>: The rapid 26-foot rise and 10–15 inches of rain exceeded forecasts, driven by Tropical Storm Barry’s remnants.</li>[](https://en.wikipedia.org/wiki/July_2025_Central_Texas_floods)
+                <li><span class="highlight">Holiday Timing</span>: The July 4 holiday increased visitors, complicating response.</li>[](https://www.newsweek.com/central-texas-flooding-live-tracker-maps-2094900)
+                <li><span class="highlight">Comparison to 1987</span>: The 2025 flood’s speed outpaced the 1987 event, catching authorities off guard.</li>[](https://www.kens5.com/article/weather/weather-floods-kerrville-july-4-texas-evacuations/273-361090c5-4352-4e2d-84ba-3adcf2007354)
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Location</h2>
+            <ul>
+                <li><span class="highlight">Kerr County</span>: 65 miles northwest of San Antonio, 90 miles west of Austin, in Texas Hill Country. Not near Houston or Dallas.</li>[](https://www.usatoday.com/story/news/weather/2025/07/04/guadalupe-river-flooding-deaths-texas-kerrville/84470317007/)
+                <li><span class="highlight">Guadalupe River</span>: Flooding originated at the river’s headwaters near Hunt, flowing through Kerrville to Comfort.</li>[](https://www.tpr.org/2025-07-04/kerr-county-residents-urged-not-to-travel-unless-seeking-higher-ground-along-guadalupe-as-severe-flooding-leads-to-fatalities)
+                <li><span class="highlight">Canyons</span>: Likely refers to river tributaries (e.g., North/South Forks), which funneled water into the main river.</li>[](https://www.cbsnews.com/news/texas-hill-country-severe-floods/)
+            </ul>
+        </div> 
+
+        <div class="section">
+            <h2>Flood Sirens and Warnings</h2>
+            <ul>
+                <li><span class="highlight">Sirens Activated</span>: Sounded at 11 a.m. in Comfort, hours after flooding began at 4–5 a.m., too late for many.</li>[](https://www.usatoday.com/story/news/weather/2025/07/04/guadalupe-river-flooding-deaths-texas-kerrville/84470317007/)
+                <li><span class="highlight">Warning Issues</span>: NWS issued a flood watch on July 3, but the 5:34 a.m. emergency alert came after flooding started. No robust early warning system existed.</li>[](https://www.cbsnews.com/news/texas-hill-country-severe-floods/)
+                <li><span class="highlight">Regional Context</span>: Rural Kerr County lacks the dense warning systems of urban areas like Houston.</li>[](https://www.ksat.com/news/local/2025/07/04/fatalities-confirmed-in-kerr-county-flooding-along-guadalupe-river-sheriffs-office-says/)
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Data sourced from news reports and official statements, July 4–5, 2025. For updates, visit <a href="https://www.weather.gov" style="color: #00ff00;">weather.gov</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

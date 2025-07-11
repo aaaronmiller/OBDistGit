@@ -16,3 +16,19 @@
 2025-07-01 01:33:45,485 - INFO - mcp.server.lowlevel.server - Processing request of type ListToolsRequest
 2025-07-01 01:33:45,487 - INFO - mcp.server.lowlevel.server - Processing request of type ListResourcesRequest
 2025-07-01 01:33:45,488 - INFO - mcp.server.lowlevel.server - Processing request of type ListResourceTemplatesRequest
+2025-07-09 15:39:35,894 - INFO - __main__ - Logging to file: ./logs/conport.log
+2025-07-09 15:39:35,894 - INFO - __main__ - Starting ConPort in STDIO mode using FastMCP for initial CLI arg workspace_id: /Users/macbook/Documents/ChetasVault/OBDistGit
+2025-07-09 15:39:35,894 - INFO - __main__ - STDIO mode: Using effective_workspace_id '/Users/macbook/Documents/ChetasVault/OBDistGit'. Database directory will be created on first actual DB use.
+2025-07-09 15:39:35,898 - INFO - FastMCP.fastmcp.server.server - Starting MCP server 'ConPort' with transport 'stdio'
+2025-07-09 15:39:35,900 - INFO - __main__ - ConPort FastMCP server lifespan starting.
+2025-07-09 15:39:35,903 - INFO - mcp.server.lowlevel.server - Processing request of type ListToolsRequest
+2025-07-09 15:39:35,906 - INFO - mcp.server.lowlevel.server - Processing request of type ListResourcesRequest
+2025-07-09 15:39:35,907 - INFO - mcp.server.lowlevel.server - Processing request of type ListResourceTemplatesRequest
+2025-07-10 12:08:49,432 - INFO - __main__ - Logging to file: ./logs/conport.log
+2025-07-10 12:08:49,432 - INFO - __main__ - Starting ConPort in STDIO mode using FastMCP for initial CLI arg workspace_id: /Users/macbook/Documents/ChetasVault/OBDistGit
+2025-07-10 12:08:49,432 - INFO - __main__ - STDIO mode: Using effective_workspace_id '/Users/macbook/Documents/ChetasVault/OBDistGit'. Database directory will be created on first actual DB use.
+2025-07-10 12:08:49,436 - INFO - FastMCP.fastmcp.server.server - Starting MCP server 'ConPort' with transport 'stdio'
+2025-07-10 12:08:49,439 - INFO - __main__ - ConPort FastMCP server lifespan starting.
+2025-07-10 12:08:49,444 - INFO - mcp.server.lowlevel.server - Processing request of type ListToolsRequest
+2025-07-10 12:08:49,447 - INFO - mcp.server.lowlevel.server - Processing request of type ListResourcesRequest
+2025-07-10 12:08:49,449 - INFO - mcp.server.lowlevel.server - Processing request of type ListResourceTemplatesRequest

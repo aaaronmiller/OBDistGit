@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Formatting Guide for Social Media & Web</title>
+
+    <meta property="og:title" content="Content Formatting Guide for Social Media & Web">
+    <meta property="og:description" content="Optimize images, videos, text, and articles for X, LinkedIn, Facebook, YouTube, and web.">
+    <meta property="og:image" content="https://placehold.co/1200x675/000000/00FF00?text=Content+Formatting+Guide">
+    <meta property="og:image:alt" content="Infographic on content formatting for social media and web">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="675">
+    <meta property="og:url" content="https://example.com/infographic.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Your Awesome Site">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://placehold.co/1200x675/000000/00FF00?text=Content+Formatting+Guide">
+    <meta name="twitter:title" content="Content Formatting Guide for Social Media & Web">
+    <meta name="twitter:description" content="Optimize images, videos, text, and articles for X, LinkedIn, Facebook, YouTube, and web.">
+    <meta name="twitter:site" content="@YourHandleHere">
+
+    <style>
+        :root {
+            --primary-glow: #00ff00;
+            --secondary-accent: #00ccff;
+            --background-dark: #000;
+            --container-bg: #1a1a1a;
+            --text-light: #fff;
+            --text-dark: #000;
+            --text-muted: #666;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary-glow);
+            text-align: center;
+            text-shadow: 0 0 5px var(--primary-glow);
+            margin-bottom: 20px;
+        }
+
+        .icon-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .icon-button {
+            background: none;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            padding: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-button:focus-visible {
+            outline: none;
+            border-color: var(--secondary-accent);
+            box-shadow: 0 0 10px var(--secondary-accent);
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 5px var(--secondary-accent));
+            display: block;
+        }
+
+        .icon-button:hover .icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 2px solid var(--primary-glow);
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item {
+            flex: 0 0 100%;
+            background-color: var(--container-bg);
+            padding: 15px;
+        }
+
+        .carousel-item img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--primary-glow);
+            border-radius: 5px;
+            display: block;
+            margin: 15px auto;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 10px;
+            box-sizing: border-box;
+            pointer-events: none; /* Let clicks pass through to buttons */
+        }
+
+        .carousel-nav button {
+            background-color: var(--secondary-accent);
+            color: var(--text-dark);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            pointer-events: all; /* Make buttons clickable */
+            width: 44px;
+            height: 44px;
+            font-size: 1.5rem;
+        }
+
+        .carousel-nav button:hover {
+            background-color: #0099cc;
+            box-shadow: 0 0 10px var(--secondary-accent);
+        }
+        
+        .carousel-nav button:focus-visible {
+            outline: 2px solid var(--primary-glow);
+            outline-offset: 2px;
+        }
+
+        .section {
+            display: none;
+            background-color: var(--container-bg);
+            border: 2px solid var(--primary-glow);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-glow);
+            margin-top: 0;
+            text-shadow: 0 0 3px var(--primary-glow);
+        }
+
+        p, li {
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li::before {
+            content: "➤";
+            color: var(--secondary-accent);
+            margin-right: 10px;
+            font-size: 1.2em;
+            vertical-align: middle;
+        }
+        
+        a {
+            color: var(--secondary-accent);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #0099cc;
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--secondary-accent);
+            border-radius: 2px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .icon {
+                width: 40px;
+                height: 40px;
+            }
+            .carousel-item {
+                padding: 10px;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            .carousel-nav button {
+                padding: 8px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Content Formatting Guide</h1>
+        <nav class="icon-bar" aria-label="Platform Navigation">
+            <button class="icon-button" data-target="x-section" aria-label="X/Twitter">
+                <img src="https://cdn-icons-png.flaticon.com/64/5969/5969028.png" alt="X Icon" class="icon">
+            </button>
+            <button class="icon-button" data-target="linkedin-section" aria-label="LinkedIn">
+                 <img src="https://cdn-icons-png.flaticon.com/64/174/174857.png" alt="LinkedIn Icon" class="icon">
+            </button>
+            <button class="icon-button" data-target="facebook-section" aria-label="Facebook">
+                <img src="https://cdn-icons-png.flaticon.com/64/5968/5968764.png" alt="Facebook Icon" class="icon">
+            </button>
+            <button class="icon-button" data-target="youtube-section" aria-label="YouTube">
+                 <img src="https://cdn-icons-png.flaticon.com/64/1384/1384060.png" alt="YouTube Icon" class="icon">
+            </button>
+        </nav>
+
+        <div class="carousel" aria-roledescription="carousel" aria-label="Content Type Examples">
+            <div class="carousel-inner">
+                <div class="carousel-item" role="group" aria-label="slide 1 of 5">
+                    <h2>Single Image Post</h2>
+                    <p>Perfect for infographics or photos.</p>
+                    <img src="https://placehold.co/800x450/1a1a1a/00ff00?text=Single+Image+(16:9)" alt="Single Image Example">
+                    <ul>
+                        <li>Size: 1200x675px (1.91:1) or 1080x1350px (4:5).</li>
+                        <li>Formats: PNG (infographics), JPEG (photos), max 5 MB.</li>
+                        <li>Tips: Use alt text, compress with <a href="https://tinypng.com" target="_blank" rel="noopener noreferrer">TinyPNG</a>.</li>
+                    </ul>
+                </div>
+                <div class="carousel-item" role="group" aria-label="slide 2 of 5">
+                    <h2>Carousel Post</h2>
+                    <p>Multiple images for storytelling.</p>
+                     <img src="https://placehold.co/800x450/1a1a1a/00ff00?text=Carousel+(16:9)" alt="Carousel Example">
+                    <ul>
+                        <li>Size: 1200x675px (1.91:1) or 800x418px (X, 7:8).</li>
+                        <li>Formats: PNG/JPEG, max 5 MB per image.</li>
+                        <li>Tips: Consistent aspect ratios, number images.</li>
+                    </ul>
+                </div>
+                <div class="carousel-item" role="group" aria-label="slide 3 of 5">
+                    <h2>Video Post</h2>
+                    <p>Promotional or tutorial videos.</p>
+                    <img src="https://placehold.co/800x450/1a1a1a/00ff00?text=Video+Thumbnail+(16:9)" alt="Video Thumbnail Example">
+                    <ul>
+                        <li>Size: 1280x720px (16:9) or 1200x1200px (1:1), max 512 MB.</li>
+                        <li>Formats: MP4/MOV (H.264, AAC audio).</li>
+                        <li>Tips: Keep &lt;2m20s for X, use a compelling thumbnail.</li>
+                    </ul>
+                </div>
+                <div class="carousel-item" role="group" aria-label="slide 4 of 5">
+                    <h2>Text with Image Post</h2>
+                    <p>Text-heavy post with an inline image (e.g., a quote).</p>
+                    <img src="https://placehold.co/800x450/1a1a1a/00ff00?text=Text+with+Image+(16:9)" alt="Text with Image Example">
+                    <ul>
+                        <li>Size: 1200x675px (1.91:1), max 5 MB.</li>
+                        <li>Formats: PNG/JPEG.</li>
+                        <li>Tips: Use bold typography, high-contrast text.</li>
+                    </ul>
+                </div>
+                <div class="carousel-item" role="group" aria-label="slide 5 of 5">
+                    <h2>Article Post</h2>
+                    <p>Link to a blog/article with a preview image.</p>
+                    <img src="https://placehold.co/800x450/1a1a1a/00ff00?text=Article+Preview+(16:9)" alt="Article Preview Example">
+                    <ul>
+                        <li>Size: 1200x675px for og:image, max 5 MB.</li>
+                        <li>Formats: PNG/JPEG.</li>
+                        <li>Tips: Use OG tags (title &lt;90, desc &lt;160 chars), test with validators.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="carousel-nav">
+                <button class="carousel-prev" aria-label="Previous Slide">&larr;</button>
+                <button class="carousel-next" aria-label="Next Slide">&rarr;</button>
+            </div>
+        </div>
+
+        <section id="x-section" class="section">
+            <h2>X (Twitter)</h2>
+            <p>Format content for X to maximize engagement.</p>
+            <ul>
+                <li>Image Sizes: 1200x675px (1.91:1), 800x800px (1:1), GIF 1280x1080px.</li>
+                <li>Formats: JPEG, PNG, WebP, GIF. No TIFF/BMP. Max 15 MB on mobile.</li>
+                <li>OG/Twitter Tags: `og:image` (1200x675px), `twitter:card` ("summary_large_image").</li>
+                <li>Post Length: 280 chars (free), 25,000 chars (premium). URLs = 23 chars.</li>
+                <li>Tips: Center key info, test with the <a href="https://cards-dev.twitter.com/validator" target="_blank" rel="noopener noreferrer">X Card Validator</a>.</li>
+            </ul>
+        </section>
+        <section id="linkedin-section" class="section">
+            <h2>LinkedIn</h2>
+            <p>Professional previews for LinkedIn.</p>
+            <ul>
+                <li>Image Sizes: 1200x627px (1.91:1), 1200x1200px (1:1), max 5 MB.</li>
+                <li>Formats: JPEG, PNG. No WebP support.</li>
+                <li>OG Tags: `og:image` (1200x627px), `og:title` (&lt;90 chars), `og:description` (&lt;160 chars).</li>
+                <li>Tips: Use PNG for text-heavy images, test with the <a href="https://www.linkedin.com/post-inspector/" target="_blank" rel="noopener noreferrer">LinkedIn Post Inspector</a>.</li>
+            </ul>
+        </section>
+        <section id="facebook-section" class="section">
+            <h2>Facebook</h2>
+            <p>Engage audiences on Facebook.</p>
+            <ul>
+                <li>Image Sizes: 1200x630px (1.91:1), min 600x315px, max 5 MB.</li>
+                <li>Formats: JPEG, PNG.</li>
+                <li>OG Tags: `og:image` (1200x630px), `og:title` (&lt;90 chars), `og:description` (&lt;160 chars).</li>
+                <li>Tips: Center visuals, test with the <a href="https://developers.facebook.com/tools/debug/" target="_blank" rel="noopener noreferrer">Facebook Sharing Debugger</a>.</li>
+            </ul>
+        </section>
+        <section id="youtube-section" class="section">
+            <h2>YouTube</h2>
+            <p>Clickable thumbnails for YouTube videos.</p>
+            <ul>
+                <li>Image Size: 1280x720px (16:9), max 2 MB.</li>
+                <li>Formats: JPEG, PNG, GIF, BMP.</li>
+                <li>Safe Zone: Keep text/logos away from the bottom right corner (timestamp overlay).</li>
+                <li>Tips: Use bold text, high-contrast colors, and expressive faces to increase CTR.</li>
+            </ul>
+        </section>
+
+        <footer class="footer">
+            Icons by <a href="https://www.flaticon.com" target="_blank" rel="noopener noreferrer">Flaticon</a>. This is a conceptual guide.
+        </footer>
+    </div>
+
+    <script defer>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Section Toggling ---
+            const iconButtons = document.querySelectorAll('.icon-button');
+            const sections = document.querySelectorAll('.section');
+            
+            iconButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    const targetSection = document.getElementById(targetId);
+
+                    // If the clicked section is already active, hide it. Otherwise, show it.
+                    if (targetSection.classList.contains('active')) {
+                        targetSection.classList.remove('active');
+                    } else {
+                        sections.forEach(section => section.classList.remove('active'));
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+
+            // --- Carousel Logic ---
+            const carousel = document.querySelector('.carousel');
+            const carouselInner = document.querySelector('.carousel-inner');
+            const items = document.querySelectorAll('.carousel-item');
+            const prevBtn = document.querySelector('.carousel-prev');
+            const nextBtn = document.querySelector('.carousel-next');
+            const totalItems = items.length;
+            let currentIndex = 0;
+            let autoScrollInterval;
+
+            function updateCarousel() {
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            function showNext() {
+                currentIndex = (currentIndex + 1) % totalItems;
+                updateCarousel();
+            }
+
+            function showPrev() {
+                currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+                updateCarousel();
+            }
+
+            function startAutoScroll() {
+                stopAutoScroll(); // Prevent multiple intervals
+                autoScrollInterval = setInterval(showNext, 5000);
+            }
+
+            function stopAutoScroll() {
+                clearInterval(autoScrollInterval);
+            }
+
+            // Event Listeners
+            nextBtn.addEventListener('click', () => {
+                showNext();
+                stopAutoScroll();
+            });
+
+            prevBtn.addEventListener('click', () => {
+                showPrev();
+                stopAutoScroll();
+            });
+            
+            carousel.addEventListener('mouseenter', stopAutoScroll);
+            carousel.addEventListener('mouseleave', startAutoScroll);
+
+            // Keyboard Navigation for Accessibility
+            carousel.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    showNext();
+                    stopAutoScroll();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    showPrev();
+                    stopAutoScroll();
+                }
+            });
+
+            // Initial state
+            startAutoScroll();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChetasVault - File Browser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            text-shadow: 0 0 10px #00ffff;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ffff; }
+            to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff; }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: rgba(16, 16, 46, 0.8);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .control-btn:hover, .control-btn.active {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .file-browser {
+            background: rgba(16, 16, 46, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .browser-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .browser-title {
+            font-size: 1.3em;
+            color: #ff00ff;
+        }
+
+        .file-count {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .file-list {
+            height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .file-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .file-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .file-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border-radius: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .file-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #00ffff;
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .file-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            color: #ff00ff;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            color: #00ffff;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .file-meta {
+            color: #888;
+            font-size: 0.8em;
+            display: flex;
+            gap: 15px;
+        }
+
+        .file-category {
+            background: rgba(255, 0, 255, 0.8);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            margin-left: 10px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .analytics-panel {
+            background: rgba(16, 16, 46, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .panel-title {
+            color: #ff00ff;
+            font-size: 1.1em;
+        }
+
+        .time-selector {
+            display: flex;
+            gap: 5px;
+        }
+
+        .time-btn {
+            padding: 3px 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .time-btn:hover, .time-btn.active {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.8em;
+        }
+
+        .activity-chart {
+            height: 100px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: end;
+            padding: 10px;
+            gap: 3px;
+        }
+
+        .activity-bar {
+            flex: 1;
+            background: linear-gradient(to top, #00ffff, #ff00ff);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .activity-bar:hover {
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .category-bubbles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .category-bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .category-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .category-bubble::after {
+            content: attr(data-count);
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7em;
+            color: #888;
+        }
+
+        .preview-card {
+            position: fixed;
+            background: rgba(16, 16, 46, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 350px;
+            max-height: 400px;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .preview-card.show {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .preview-icon {
+            font-size: 2em;
+            margin-right: 15px;
+            color: #ff00ff;
+        }
+
+        .preview-title {
+            color: #00ffff;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .preview-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preview-meta-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .preview-meta-value {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .preview-meta-label {
+            color: #888;
+            font-size: 0.8em;
+        }
+
+        .preview-summary {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+            margin-bottom: 15px;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .preview-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preview-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .featured-files {
+            margin-bottom: 20px;
+        }
+
+        .featured-title {
+            color: #ff00ff;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .featured-file {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .featured-file:hover {
+            border-color: #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-wrap: wrap;
+            }
+            
+            .file-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="header">
+                <h1>🔥 CHETASVAULT 🔥</h1>
+                <p>Elite Document Archive & Research Hub</p>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn active" data-sort="recent">📅 Recent</button>
+                <button class="control-btn" data-sort="size">📊 Size</button>
+                <button class="control-btn" data-sort="category">🏷️ Category</button>
+                <button class="control-btn" data-sort="name">📝 Name</button>
+            </div>
+
+            <div class="file-browser">
+                <div class="browser-header">
+                    <div class="browser-title">📁 Document Library</div>
+                    <div class="file-count" id="fileCount">27 files</div>
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="featured-files">
+                <div class="featured-title">⭐ Most Recent</div>
+                <div class="featured-file" id="featuredFile">
+                    <div class="file-header">
+                        <div class="file-icon">🛡️</div>
+                        <div class="file-info">
+                            <div class="file-name">Aegis Reference Manual</div>
+                            <div class="file-meta">
+                                <span>45min work</span>
+                                <span>11KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-panel">
+                <div class="panel-header">
+                    <div class="panel-title">📊 Analytics</div>
+                    <div class="time-selector">
+                        <button class="time-btn active" data-period="day">Day</button>
+                        <button class="time-btn" data-period="week">Week</button>
+                        <button class="time-btn" data-period="month">Month</button>
+                    </div>
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="wordsWritten">12.5K</div>
+                        <div class="stat-label">Words Written</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="timeSpent">8.2h</div>
+                        <div class="stat-label">Time Spent</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="filesCreated">6</div>
+                        <div class="stat-label">Files Created</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="peakHour">2PM</div>
+                        <div class="stat-label">Peak Hour</div>
+                    </div>
+                </div>
+
+                <div class="activity-chart" id="activityChart"></div>
+            </div>
+
+            <div class="analytics-panel">
+                <div class="panel-header">
+                    <div class="panel-title">🎯 Categories</div>
+                </div>
+                <div class="category-bubbles">
+                    <div class="category-bubble" data-count="8" title="Aegis">🛡️</div>
+                    <div class="category-bubble" data-count="5" title="RAG">🔍</div>
+                    <div class="category-bubble" data-count="4" title="AI">🤖</div>
+                    <div class="category-bubble" data-count="3" title="Math">📐</div>
+                    <div class="category-bubble" data-count="2" title="Security">🔒</div>
+                    <div class="category-bubble" data-count="5" title="Other">📄</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-card" id="previewCard">
+        <div class="preview-header">
+            <div class="preview-icon" id="previewIcon">📄</div>
+            <div class="preview-title" id="previewTitle">File Preview</div>
+        </div>
+        <div class="preview-meta">
+            <div class="preview-meta-item">
+                <div class="preview-meta-value" id="previewSize">0KB</div>
+                <div class="preview-meta-label">Size</div>
+            </div>
+            <div class="preview-meta-item">
+                <div class="preview-meta-value" id="previewTime">0min</div>
+                <div class="preview-meta-label">Work Time</div>
+            </div>
+            <div class="preview-meta-item">
+                <div class="preview-meta-value" id="previewCreated">-</div>
+                <div class="preview-meta-label">Created</div>
+            </div>
+            <div class="preview-meta-item">
+                <div class="preview-meta-value" id="previewModified">-</div>
+                <div class="preview-meta-label">Modified</div>
+            </div>
+        </div>
+        <div class="preview-summary" id="previewSummary">
+            File summary will appear here...
+        </div>
+        <div class="preview-actions">
+            <button class="preview-btn" onclick="openCurrentFile()">📖 Open</button>
+            <button class="preview-btn" onclick="previewCurrentFile()">👁️ Preview</button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced mock data
+        const mockFiles = [
+            {
+                filename: "1 - Aegis Processed - Reference Manual- Ingestion Protocols.html",
+                display_name: "Aegis Reference Manual - Ingestion Protocols",
+                category: "aegis",
+                creation_time: "2024-07-03T09:25:00Z",
+                modified_time: "2024-07-03T09:25:00Z",
+                file_size: "11000",
+                work_time: "45min",
+                summary: "Comprehensive reference manual detailing ingestion protocols for the Aegis system, covering data processing workflows and implementation guidelines for enterprise deployment.",
+                words: 2500
+            },
+            {
+                filename: "2 - Aegis Processed - Foundational Architecture.html",
+                display_name: "Aegis Foundational Architecture",
+                category: "aegis",
+                creation_time: "2024-07-03T09:24:00Z",
+                modified_time: "2024-07-03T09:24:00Z",
+                file_size: "12000",
+                work_time: "32min",
+                summary: "Core architectural documentation outlining the foundational components and structural design principles of the Aegis processing system.",
+                words: 2800
+            },
+            {
+                filename: "AI Compute Hardware- Deep Dive Comparison.html",
+                display_name: "AI Compute Hardware - Deep Dive Comparison",
+                category: "ai",
+                creation_time: "2024-07-02T14:30:00Z",
+                modified_time: "2024-07-02T15:45:00Z",
+                file_size: "15000",
+                work_time: "75min",
+                summary: "Comprehensive analysis comparing AI compute hardware options including performance benchmarks, cost-effectiveness, and deployment considerations.",
+                words: 3200
+            },
+            {
+                filename: "RAG Implementation- Beyond Simple Chunking.html",
+                display_name: "RAG Implementation - Beyond Simple Chunking",
+                category: "rag",
+                creation_time: "2024-07-01T11:20:00Z",
+                modified_time: "2024-07-01T13:10:00Z",
+                file_size: "18000",
+                work_time: "110min",
+                summary: "Advanced RAG implementation strategies exploring sophisticated chunking techniques, optimization methods, and performance enhancement approaches.",
+                words: 4100
+            },
+            {
+                filename: "context degradation math.html",
+                display_name: "Context Degradation Mathematics",
+                category: "math",
+                creation_time: "2024-06-30T16:45:00Z",
+                modified_time: "2024-06-30T17:30:00Z",
+                file_size: "8500",
+                work_time: "45min",
+                summary: "Mathematical analysis of context degradation patterns in AI systems with theoretical frameworks, formulas, and empirical validation methods.",
+                words: 1900
+            },
+            {
+                filename: "Absolute security.html",
+                display_name: "Absolute Security Protocols",
+                category: "security",
+                creation_time: "2024-06-29T10:15:00Z",
+                modified_time: "2024-06-29T11:00:00Z",
+                file_size: "9200",
+                work_time: "45min",
+                summary: "Comprehensive security protocols and absolute security measures for system protection, data integrity, and threat mitigation strategies.",
+                words: 2100
+            }
+        ];
+
+        let currentFiles = [...mockFiles];
+        let currentFile = null;
+
+        function getFileIcon(filename) {
+            if (filename.includes('aegis') || filename.includes('Aegis')) return '🛡️';
+            if (filename.includes('rag') || filename.includes('RAG')) return '🔍';
+            if (filename.includes('ai') || filename.includes('AI')) return '🤖';
+            if (filename.includes('math') || filename.includes('Math')) return '📐';
+            if (filename.includes('security') || filename.includes('Security')) return '🔒';
+            return '📄';
+        }
+
+        function formatFileSize(bytes) {
+            const kb = bytes / 1024;
+            return kb < 1024 ? `${kb.toFixed(1)}KB` : `${(kb/1024).toFixed(1)}MB`;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function renderFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = currentFiles.map(file => `
+                <div class="file-item" data-filename="${file.filename}" onmouseenter="showPreview(this, '${file.filename}')" onmouseleave="hidePreview()">
+                    <div class="file-icon">${getFileIcon(file.filename)}</div>
+                    <div class="file-info">
+                        <div class="file-name">${file.display_name}</div>
+                        <div class="file-meta">
+                            <span>${formatFileSize(parseInt(file.file_size))}</span>
+                            <span>${file.work_time}</span>
+                            <span>${formatDate(file.modified_time)}</span>
+                        </div>
+                    </div>
+                    <div class="file-category">${file.category.toUpperCase()}</div>
+                </div>
+            `).join('');
+        }
+
+        function showPreview(element, filename) {
+            const file = mockFiles.find(f => f.filename === filename);
+            if (!file) return;
+
+            currentFile = file;
+            
+            const previewCard = document.getElementById('previewCard');
+            const rect = element.getBoundingClientRect();
+            
+            // Position preview card
+            previewCard.style.left = `${rect.right + 20}px`;
+            previewCard.style.top = `${Math.max(20, rect.top - 50)}px`;
+            
+            // Update preview content
+            document.getElementById('previewIcon').textContent = getFileIcon(file.filename);
+            document.getElementById('previewTitle').textContent = file.display_name;
+            document.getElementById('previewSize').textContent = formatFileSize(parseInt(file.file_size));
+            document.getElementById('previewTime').textContent = file.work_time;
+            document.getElementById('previewCreated').textContent = formatDate(file.creation_time);
+            document.getElementById('previewModified').textContent = formatDate(file.modified_time);
+            document.getElementById('previewSummary').textContent = file.summary;
+            
+            previewCard.classList.add('show');
+        }
+
+        function hidePreview() {
+            document.getElementById('previewCard').classList.remove('show');
+        }
+
+        function openCurrentFile() {
+            if (currentFile) {
+                window.open(`https://yourusername.github.io/OBDistGit/${currentFile.filename}`, '_blank');
+            }
+        }
+
+        function previewCurrentFile() {
+            if (currentFile) {
+                alert(`Preview functionality for ${currentFile.display_name} - Would open in modal/lightbox`);
+            }
+        }
+
+        function generateActivityChart() {
+            const chart = document.getElementById('activityChart');
+            const hours = Array.from({length: 24}, (_, i) => Math.random() * 100);
+            
+            chart.innerHTML = hours.map(height => 
+                `<div class="activity-bar" style="height: ${height}%" title="Activity at ${hours.indexOf(height)}:00"></div>`
+            ).join('');
+        }
+
+        function sortFiles(type) {
+            switch(type) {
+                case 'recent':
+                    currentFiles.sort((a, b) => new Date(b.modified_time) - new Date(a.modified_time));
+                    break;
+                case 'size':
+                    currentFiles.sort((a, b) => parseInt(b.file_size) - parseInt(a.file_size));
+                    break;
+                case 'category':
+                    currentFiles.sort((a, b) => a.category.localeCompare(b.category));
+                    break;
+                case 'name':
+                    currentFiles.sort((a, b) => a.display_name.localeCompare(b.display_name));
+                    break;
+            }
+            renderFileList();
+        }
+
+        function updateAnalytics(period) {
+            const stats = {
+                day: { words: '2.1K', time: '1.5h', files: 2, peak: '2PM' },
+                week: { words: '12.5K', time: '8.2h', files: 6, peak: '2PM' },
+                month: { words: '45.8K', time: '32.1h', files: 27, peak: '2PM' }
+            };
+            
+            const stat = stats[period];
+            document.getElementById('wordsWritten').textContent = stat.words;
+            document.getElementById('timeSpent').textContent = stat.time;
+            document.getElementById('filesCreated').textContent = stat.files;
+            document.getElementById('peakHour').textContent = stat.peak;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFileList();
+            generateActivityChart();
+            
+            // Sort controls
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    sortFiles(this.dataset.sort);
+                });
+            });
+            
+            // Time period controls
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateAnalytics(this.dataset.period);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

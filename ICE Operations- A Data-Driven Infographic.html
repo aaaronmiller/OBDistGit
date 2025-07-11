@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICE Operations: A Data-Driven Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; 
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .kpi-value {
+            color: #0044cc;
+        }
+        .kpi-label {
+            color: #4a5568;
+        }
+        .flowchart-arrow {
+            content: '➔';
+            color: #007bff;
+            font-size: 2rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0044cc] mb-2">ICE Operations: A Data-Driven Analysis</h1>
+            <p class="text-lg text-gray-600">Visualizing Removals, Staffing, and Budget Trends (FY 2011-2024)</p>
+        </header>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 text-center">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold kpi-label mb-2">Total Removals</h2>
+                <p class="text-5xl font-extrabold kpi-value">935,317</p>
+                <p class="text-gray-500 mt-2">During FY 2017-2020</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold kpi-label mb-2">Total Workforce</h2>
+                <p class="text-5xl font-extrabold kpi-value">~21,000</p>
+                <p class="text-gray-500 mt-2">As of late 2020</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-xl font-bold kpi-label mb-2">FY 2024 Budget</h2>
+                <p class="text-5xl font-extrabold kpi-value">$9.1B+</p>
+                <p class="text-gray-500 mt-2">Continuing a growth trend</p>
+            </div>
+        </section>
+
+        <main class="space-y-12">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">A Decade of Deportations (FY 2011-2020)</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-6">
+                    This chart illustrates the total number of formal removals conducted by ICE over a ten-year period. It shows that removal numbers peaked in the early 2010s and were on a downward trend before the Trump administration. The totals during FY 2017-2019 were lower than any year between FY 2011 and FY 2014.
+                </p>
+                <div class="chart-container">
+                    <canvas id="removalsTrendChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">FY 2020: Removals vs. Expulsions</h2>
+                    <p class="text-center text-gray-600 mb-6">
+                        The sharp drop in formal removals in FY 2020 was largely due to the implementation of Title 42, a public health order allowing for rapid expulsions at the border. These expulsions are not legally classified as removals and created a significant statistical shift.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="removalsVsExpulsionsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg flex flex-col justify-center">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">Workforce: Ambition vs. Reality</h2>
+                    <p class="text-center text-gray-600 mb-6">
+                        A 2017 executive order mandated hiring 10,000 new ICE agents. However, logistical and bureaucratic hurdles meant the actual increase was far smaller, highlighting a significant gap between the political goal and the operational reality.
+                    </p>
+                     <div class="chart-container h-80 md:h-96">
+                        <canvas id="hiringGoalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">ICE Workforce Composition</h2>
+                    <p class="text-center text-gray-600 mb-6">
+                        Of ICE's ~21,000 employees, only a fraction are deportation officers directly responsible for removals. The majority consists of Homeland Security Investigations (HSI) agents, legal staff, and other support personnel.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="workforceCompositionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">ICE Budget Growth (FY 2018-2024)</h2>
+                    <p class="text-center text-gray-600 mb-6">
+                       Contrary to any notion of cuts, ICE's budget has seen consistent and significant increases. Congressional appropriations have steadily grown, with funds primarily allocated to expand detention capacity and enforcement operations.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="budgetGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">The Policy-to-Outcome Pipeline</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">
+                    The data reveals a recurring theme: aggressive policy goals and increased funding did not automatically lead to record-breaking results. Real-world operational constraints consistently tempered the final outcomes.
+                </p>
+                <div class="flex flex-col md:flex-row items-center justify-around space-y-8 md:space-y-0 md:space-x-4 text-center">
+                    <div class="flex-1">
+                        <div class="bg-[#e6f0ff] p-4 rounded-lg">
+                           <h3 class="font-bold text-lg text-[#0044cc]">Policy Ambition</h3>
+                           <p>Dramatically increase immigration enforcement.</p>
+                        </div>
+                    </div>
+                    <div class="font-bold text-4xl text-[#007bff] transform md:rotate-0 rotate-90">→</div>
+                     <div class="flex-1">
+                        <div class="bg-[#e6f0ff] p-4 rounded-lg">
+                            <h3 class="font-bold text-lg text-[#0044cc]">Increased Funding</h3>
+                            <p>Billions more allocated for detention and enforcement.</p>
+                        </div>
+                    </div>
+                    <div class="font-bold text-4xl text-[#007bff] transform md:rotate-0 rotate-90">→</div>
+                     <div class="flex-1">
+                        <div class="bg-[#e6f0ff] p-4 rounded-lg">
+                            <h3 class="font-bold text-lg text-[#0044cc]">Operational Constraints</h3>
+                            <p>Hiring bottlenecks, border crises, and the pandemic.</p>
+                        </div>
+                    </div>
+                    <div class="font-bold text-4xl text-[#007bff] transform md:rotate-0 rotate-90">→</div>
+                     <div class="flex-1">
+                        <div class="bg-[#e6f0ff] p-4 rounded-lg">
+                            <h3 class="font-bold text-lg text-[#0044cc]">Final Outcome</h3>
+                            <p>Stagnant or lower removal numbers than previous peaks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>This infographic is based on data from official U.S. government reports. All visualizations are for illustrative purposes.</p>
+            <!-- 
+                Narrative & Visualization Plan Summary:
+                Narrative Flow: Start with big-picture KPIs, then delve into a 10-year historical view of removals, followed by an analysis of key influencing factors (Title 42, staffing challenges, budget allocations), and conclude with a summary of the policy-vs-reality gap.
+                Color Palette Chosen: 'Brilliant Blues' (#0044cc, #007bff, #3399ff, #66b3ff, #99ccff) for a professional, data-centric feel.
+                
+                Visualization Choices (NO SVG / NO MERMAID JS):
+                1. Removals Trend (FY11-20): Line Chart (Chart.js) -> Goal: Show Change. Justification: Best for showing continuous time-series data.
+                2. FY20 Removals vs Expulsions: Donut Chart (Chart.js) -> Goal: Show Composition. Justification: Clearly shows parts of a whole for FY20 repatriations.
+                3. Hiring Goal vs Actual: Bar Chart (Chart.js) -> Goal: Compare. Justification: Direct, easy-to-read comparison of two numbers.
+                4. Workforce Composition: Donut Chart (Chart.js) -> Goal: Show Composition. Justification: Illustrates the proportion of deportation officers within the total workforce.
+                5. Budget Growth: Bar Chart (Chart.js) -> Goal: Show Change/Compare. Justification: Perfect for comparing discrete values (annual budgets) over time.
+                6. Policy Pipeline: Flow Chart (HTML/CSS) -> Goal: Organize/Show Process. Justification: Custom implementation with styled divs to adhere to no-SVG/Mermaid constraint.
+
+                Confirmation: NEITHER Mermaid JS NOR SVG were used in this output. All charts are rendered using Chart.js on a Canvas element. Diagrams are implemented with structured HTML and Tailwind CSS.
+            -->
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            const brilliantBlues = ['#0044cc', '#007bff', '#3399ff', '#66b3ff', '#99ccff'];
+            const darkText = '#1a202c';
+            const lightText = '#a0aec0';
+
+            const defaultChartOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: darkText,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e2e8f0'
+                        },
+                        ticks: {
+                            color: darkText,
+                             callback: function(value) {
+                                if (value >= 1000) {
+                                    return (value / 1000) + 'k';
+                                }
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: darkText
+                        }
+                    }
+                }
+            };
+
+            function wrapLabel(str, maxWidth) {
+                if (str.length <= maxWidth) {
+                    return str;
+                }
+                const words = str.split(' ');
+                const lines = [];
+                let currentLine = words[0];
+
+                for (let i = 1; i < words.length; i++) {
+                    if (currentLine.length + words[i].length + 1 < maxWidth) {
+                        currentLine += ' ' + words[i];
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = words[i];
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            }
+
+            // Chart 1: Removals Trend
+            const removalsTrendCtx = document.getElementById('removalsTrendChart');
+            if(removalsTrendCtx) {
+                new Chart(removalsTrendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['FY 2011', 'FY 2012', 'FY 2013', 'FY 2014', 'FY 2015', 'FY 2016', 'FY 2017', 'FY 2018', 'FY 2019', 'FY 2020'],
+                        datasets: [{
+                            label: 'Total ICE Removals',
+                            data: [396906, 409849, 368644, 315943, 235413, 240255, 226119, 256086, 267258, 185884],
+                            borderColor: brilliantBlues[0],
+                            backgroundColor: 'rgba(0, 68, 204, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+            }
+
+            // Chart 2: Removals vs Expulsions
+            const removalsVsExpulsionsCtx = document.getElementById('removalsVsExpulsionsChart');
+            if(removalsVsExpulsionsCtx) {
+                new Chart(removalsVsExpulsionsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Formal Removals', 'Title 42 Expulsions'],
+                        datasets: [{
+                            label: 'FY 2020 Repatriations',
+                            data: [185884, 206790],
+                            backgroundColor: [brilliantBlues[1], brilliantBlues[3]],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { ...defaultChartOptions, scales: { y: { display: false }, x: { display: false } } }
+                });
+            }
+
+            // Chart 3: Hiring Goal vs Actual
+            const hiringGoalCtx = document.getElementById('hiringGoalChart');
+            if(hiringGoalCtx) {
+                new Chart(hiringGoalCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Hiring Mandate Goal', 'Actual Net Increase (2016-2020)'],
+                        datasets: [{
+                            label: 'Number of Personnel',
+                            data: [10000, 1875],
+                            backgroundColor: [brilliantBlues[0], brilliantBlues[2]],
+                            borderColor: [brilliantBlues[0], brilliantBlues[2]],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { ...defaultChartOptions, indexAxis: 'y' }
+                });
+            }
+            
+            // Chart 4: Workforce Composition
+            const workforceCompositionCtx = document.getElementById('workforceCompositionChart');
+            if(workforceCompositionCtx) {
+                new Chart(workforceCompositionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Deportation Officers', 'Other Staff (HSI, Legal, Support)'],
+                        datasets: [{
+                            label: 'Workforce Composition',
+                            data: [6000, 15000], 
+                            backgroundColor: [brilliantBlues[0], brilliantBlues[4]],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { ...defaultChartOptions, scales: { y: { display: false }, x: { display: false } } }
+                });
+            }
+
+            // Chart 5: Budget Growth
+            const budgetGrowthCtx = document.getElementById('budgetGrowthChart');
+            if(budgetGrowthCtx) {
+                 new Chart(budgetGrowthCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['FY 2018', 'FY 2019', 'FY 2020', 'FY 2021', 'FY 2022', 'FY 2023', 'FY 2024'],
+                        datasets: [{
+                            label: 'Enacted Budget (in Billions)',
+                            data: [7.1, 7.4, 8.4, 7.4, 8.3, 8.4, 9.1],
+                            backgroundColor: brilliantBlues[1],
+                            borderColor: brilliantBlues[1],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...defaultChartOptions,
+                        scales: {
+                            ...defaultChartOptions.scales,
+                             y: {
+                                ...defaultChartOptions.scales.y,
+                                ticks: {
+                                    ...defaultChartOptions.scales.y.ticks,
+                                    callback: function(value) { return '$' + value + 'B'; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+        })();
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Dynamics Analysis</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js-chart-bubbldata-labels@2.0.0/build/Chart.BubbldataLabels.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -113,6 +114,14 @@
             position: relative;
             z-index: 1;
         }
+        
+        .section h3 {
+            color: #e94560;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
 
         .project-evolution {
             display: grid;
@@ -154,9 +163,10 @@
             background: linear-gradient(135deg, #16213e, #0f3460);
             border-radius: 15px;
             padding: 25px;
-            margin: 25px 0;
+            margin: 25px auto;
             border: 1px solid #444;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
         }
 
         .grid-2 {
@@ -377,28 +387,28 @@
                 <div class="evolution-stage">
                     <div class="stage-number">1</div>
                     <h3 style="color: #f27121;">The Spark</h3>
-                    <p><strong>Concept:</strong> "What three books did 100 interesting people read?"</p>
+                    [cite_start]<p><strong>Concept:</strong> "What three books did 100 interesting people read?" [cite: 11, 13]</p>
                     <p><strong>Contributor:</strong> Marc</p>
                     <p><strong>Nature:</strong> Abstract, philosophical starting point focused on elite knowledge</p>
                 </div>
                 <div class="evolution-stage">
                     <div class="stage-number">2</div>
                     <h3 style="color: #f27121;">The Toolkit</h3>
-                    <p><strong>Concept:</strong> Comprehensive resource for students: study habits, socialization skills, films, music, books, activities</p>
+                    [cite_start]<p><strong>Concept:</strong> Comprehensive resource for students: study habits, socialization skills, films, music, books, activities [cite: 32, 36]</p>
                     <p><strong>Contributor:</strong> Aaron</p>
                     <p><strong>Transformation:</strong> Expanded from simple list to full-fledged, multi-format toolkit</p>
                 </div>
                 <div class="evolution-stage">
                     <div class="stage-number">3</div>
                     <h3 style="color: #f27121;">The Philosophy</h3>
-                    <p><strong>Concept:</strong> Goal is not just college survival, but creating a "world citizen"</p>
+                    [cite_start]<p><strong>Concept:</strong> Goal is not just college survival, but creating a "world citizen" [cite: 43, 44]</p>
                     <p><strong>Contributors:</strong> Brock & Marc</p>
                     <p><strong>Elevation:</strong> Purpose elevated from practical skills to broader educational philosophy</p>
                 </div>
                 <div class="evolution-stage">
                     <div class="stage-number">4</div>
                     <h3 style="color: #f27121;">The Action Item</h3>
-                    <p><strong>Concept:</strong> Hyper-specific AI query for top 3 socialization skills, backed by multi-disciplinary sources</p>
+                    [cite_start]<p><strong>Concept:</strong> Hyper-specific AI query for top 3 socialization skills, backed by multi-disciplinary sources [cite: 346, 352]</p>
                     <p><strong>Contributor:</strong> Brock</p>
                     <p><strong>Distillation:</strong> Entire conversation into a concrete, measurable, achievable first step</p>
                 </div>
@@ -418,19 +428,49 @@
         </div>
         
         <div class="section">
+            <h2>Deeper Communication Patterns</h2>
+            <div class="grid-2">
+                <div class="chart-container">
+                    <h3>Interrupt Rate by Speaker</h3>
+                    <canvas id="interruptChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Question vs. Statement Ratio</h3>
+                    <canvas id="questionStatementChart"></canvas>
+                </div>
+            </div>
+             <div class="chart-container">
+                <h3>Problem vs. Solution Focus</h3>
+                <canvas id="problemSolutionChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Sentiment & Keyword Analysis</h2>
+            <div class="chart-container">
+                 <h3>Sentiment Flow by Speaker</h3>
+                 <canvas id="sentimentBySpeakerChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Keyword Ownership</h3>
+                <canvas id="keywordBubbleChart"></canvas>
+            </div>
+        </div>
+
+        <div class="section">
             <h2>Communication Roles Analysis</h2>
             <div class="grid-3">
                 <div class="evolution-stage" style="border-color: #e94560;">
                     <h3 style="color: #e94560;">Marc: The Client / Visionary</h3>
-                    <p><strong>Primary Function:</strong> Set the initial problem space and maintained the "client" perspective, constantly testing ideas against the core goal.</p>
+                    [cite_start]<p><strong>Primary Function:</strong> Set the initial problem space and maintained the "client" perspective, constantly testing ideas against the core goal. [cite: 112, 325]</p>
                 </div>
                 <div class="evolution-stage" style="border-color: #f27121;">
                     <h3 style="color: #f27121;">Aaron: The Implementer / Technician</h3>
-                    <p><strong>Primary Function:</strong> Focused on the 'how'—the technical specifications, data structure, and AI capabilities necessary to execute the vision.</p>
+                    [cite_start]<p><strong>Primary Function:</strong> Focused on the 'how'—the technical specifications, data structure, and AI capabilities necessary to execute the vision. [cite: 31, 151, 271]</p>
                 </div>
                 <div class="evolution-stage" style="border-color: #4ecdc4;">
                     <h3 style="color: #4ecdc4;">Brock: The Mediator / Project Manager</h3>
-                    <p><strong>Primary Function:</strong> Translated between the Visionary and the Implementer, reframing technical needs into project requirements and distilling broad concepts into actionable tasks.</p>
+                    [cite_start]<p><strong>Primary Function:</strong> Translated between the Visionary and the Implementer, reframing technical needs into project requirements and distilling broad concepts into actionable tasks. [cite: 128, 403, 468]</p>
                 </div>
             </div>
         </div>
@@ -465,28 +505,28 @@
                     <tr>
                         <td>Speaker Identification</td>
                         <td>Aaron</td>
-                        <td>Seen as technical digression by Marc</td>
-                        <td><span style="color: #4ecdc4;">ADOPTED</span> - Brock simplified and validated importance</td>
+                        [cite_start]<td>Seen as technical digression by Marc [cite: 72]</td>
+                        [cite_start]<td><span style="color: #4ecdc4;">ADOPTED</span> - Brock simplified and validated importance [cite: 128]</td>
                         <td>Translation to project need</td>
                     </tr>
                     <tr>
                         <td>Client/Consultant Framework</td>
                         <td>Marc</td>
-                        <td>Immediately accepted</td>
+                        [cite_start]<td>Immediately accepted [cite: 124, 126]</td>
                         <td><span style="color: #4ecdc4;">ADOPTED</span> - Became dominant metaphor</td>
                         <td>Clear structural benefit</td>
                     </tr>
                     <tr>
                         <td>AI Examples Provision</td>
                         <td>Aaron</td>
-                        <td>Rejected as "rambling"</td>
-                        <td><span style="color: #4ecdc4;">ADOPTED</span> - Re-framed as quality necessity by Brock</td>
+                        [cite_start]<td>Rejected as "rambling" [cite: 256, 267]</td>
+                        [cite_start]<td><span style="color: #4ecdc4;">ADOPTED</span> - Re-framed as quality necessity by Brock [cite: 296, 302]</td>
                         <td>Reframing by mediator</td>
                     </tr>
                     <tr>
                         <td>Monetizing Personal Data</td>
                         <td>Aaron</td>
-                        <td>Rejected as off-topic by Brock</td>
+                        [cite_start]<td>Rejected as off-topic by Brock [cite: 87, 88]</td>
                         <td><span style="color: #ff6b6b;">TABLED</span> - Never revisited</td>
                         <td>No immediate project alignment</td>
                     </tr>
@@ -500,45 +540,45 @@
                 <div class="misc-card">
                     <div class="misc-header">Mismatch 1: The "How" vs. The "What"</div>
                     <div class="speaker-quote">
-                        <strong>Aaron Said:</strong> "This is how I would spec out what I want the AI to go out and look for..."
+                        [cite_start]<strong>Aaron Said:</strong> "This is how I would spec out what I want the AI to go out and look for..." [cite: 31]
                     </div>
                     <div class="speaker-quote">
-                        <strong>Marc & Brock Heard:</strong> He isn't listening to our project goal; he's getting lost in technical details before the goal is set.
+                        [cite_start]<strong>Marc & Brock Heard:</strong> He isn't listening to our project goal; he's getting lost in technical details before the goal is set. [cite: 103, 105, 137]
                     </div>
                     <div class="delta-explanation">
-                        <strong>The Delta:</strong> Aaron believed defining the 'how' was the first step to achieving the 'what.' Marc and Brock believed the 'what' needed to be fully settled before discussing the 'how.' This is a classic conflict between implementation-focused and vision-focused thinking.
+                        <strong>The Delta:</strong> Aaron believed defining the 'how' was the first step to achieving the 'what.' Marc and Brock believed the 'what' needed to be fully settled before discussing the 'how'. This is a classic conflict between implementation-focused and vision-focused thinking.
                     </div>
                 </div>
                 <div class="misc-card">
                     <div class="misc-header">Mismatch 2: The Meaning of "Scope"</div>
                     <div class="speaker-quote">
-                        <strong>Marc Asked For:</strong> A "small," "doable" task to prove the concept.
+                        [cite_start]<strong>Marc Asked For:</strong> A "small," "doable" task to prove the concept. [cite: 212, 213]
                     </div>
                     <div class="speaker-quote">
-                        <strong>Aaron Responded:</strong> "The scope of the project doesn't matter because... I'm just having the AI do it."
+                        [cite_start]<strong>Aaron Responded:</strong> "The scope of the project doesn't matter because... I'm just having the AI do it." [cite: 330, 331]
                     </div>
                     <div class="delta-explanation">
-                        <strong>The Delta:</strong> To Marc, "small scope" meant a focused, manageable goal to de-risk the project. To Aaron, "scope" meant his personal level of effort, which he felt was negligible due to AI. He missed the client's need for a contained proof-of-concept.
+                        <strong>The Delta:</strong> To Marc, "small scope" meant a focused, manageable goal to de-risk the project. To Aaron, "scope" meant his personal level of effort, which he felt was negligible due to AI. [cite_start]He missed the client's need for a contained proof-of-concept. [cite: 333, 422]
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <h2>Communication Pattern Analysis</h2>
-            <div class="grid-3">
+            <h2>Core Communication Pattern Analysis</h2>
+            <div class="grid-2">
                 <div class="chart-container">
-                    <h3 style="color: #e94560; text-align: center; margin-bottom: 15px;">Friction Points by Topic</h3>
+                    <h3>Friction Points by Topic</h3>
                     <canvas id="frictionChart"></canvas>
                 </div>
                 <div class="chart-container">
-                    <h3 style="color: #e94560; text-align: center; margin-bottom: 15px;">Resolution Success Rate</h3>
+                    <h3>Resolution Success Rate</h3>
                     <canvas id="resolutionChart"></canvas>
                 </div>
-                <div class="chart-container">
-                    <h3 style="color: #e94560; text-align: center; margin-bottom: 15px;">Speaker Contribution Types</h3>
-                    <canvas id="contributionChart"></canvas>
-                </div>
+            </div>
+             <div class="chart-container">
+                <h3>Speaker Contribution Types</h3>
+                <canvas id="contributionChart"></canvas>
             </div>
         </div>
         
@@ -547,19 +587,19 @@
             <div class="miscommunication-grid">
                 <div class="quote-card">
                     <strong>Brock, mediating:</strong>
-                    "He was trying to say... 'I'll do this project, but it would be very helpful for me if you guys could... A, give me some sort of an indicator that it's you who's speaking...'"
+                    [cite_start]"He was trying to say... 'I'll do this project, but it would be very helpful for me if you guys could... A, give me some sort of an indicator that it's you who's speaking...'" [cite: 128]
                 </div>
                 <div class="quote-card">
                     <strong>Marc, establishing roles:</strong>
-                    "It's almost like we are the client... You have to pay attention to what we want."
+                    [cite_start]"It's almost like we are the client... You have to pay attention to what we want." [cite: 112]
                 </div>
                 <div class="quote-card">
                     <strong>Aaron, explaining his process:</strong>
-                    "Whenever you make a query, it's crucial that you provide example data... The results are going to be radically different. One's going to be defined by me and the other's going to be defined by us."
+                    [cite_start]"Whenever you make a query, it's crucial that you provide example data... The results are going to be radically different. One's going to be defined by me and the other's going to be defined by us." [cite: 271, 272, 274]
                 </div>
                 <div class="quote-card">
                     <strong>Brock, defining the resolution:</strong>
-                    "Don't try and teach us, show us. Show us how you use AI. And if we have questions, we'll learn about it."
+                    [cite_start]"Don't try and teach us, show us. Show us how you use AI. And if we have questions, we'll learn about it." [cite: 316, 468]
                 </div>
             </div>
         </div>
@@ -569,15 +609,15 @@
             <div class="unresolved-threads">
                 <div class="thread-card">
                     <div class="thread-title">The Monetization Question</div>
-                    <p>Aaron's idea to monetize their data was parked but never addressed. Is there a "Phase 2" of this project that involves commercializing the output or the process itself?</p>
+                    [cite_start]<p>Aaron's idea to monetize their data was parked but never addressed. [cite: 80, 87] Is there a "Phase 2" of this project that involves commercializing the output or the process itself?</p>
                 </div>
                 <div class="thread-card">
                     <div class="thread-title">Aaron's Academic Paper</div>
-                    <p>The group spent significant time advising Aaron on his paper, but its content and potential relation to their project remains unknown. Could his "unique idea" be leveraged for the toolkit?</p>
+                    [cite_start]<p>The group spent significant time advising Aaron on his paper, but its content and potential relation to their project remains unknown. [cite: 648, 680] Could his "unique idea" be leveraged for the toolkit?</p>
                 </div>
                 <div class="thread-card">
                     <div class="thread-title">The "100 Interesting People"</div>
-                    <p>Marc's original concept was superseded by the "socialization toolkit." Does this initial idea have merit as a separate, more focused project?</p>
+                    [cite_start]<p>Marc's original concept was superseded by the "socialization toolkit." [cite: 11, 32] Does this initial idea have merit as a separate, more focused project?</p>
                 </div>
             </div>
         </div>
@@ -587,38 +627,32 @@
             <div class="grid-3">
                 <div class="recommendation-card">
                     <h4>For the "Client" (Marc)</h4>
-                    <p>When requesting a "small" or "doable" task, explicitly define the constraints. Clarify if "small" refers to effort, time, or a limited proof-of-concept to test an idea's viability.</p>
+                    <p>When requesting a "small" or "doable" task, explicitly define the constraints. [cite_start]Clarify if "small" refers to effort, time, or a limited proof-of-concept to test an idea's viability. [cite: 333, 422]</p>
                 </div>
                 <div class="recommendation-card">
                     <h4>For the "Implementer" (Aaron)</h4>
-                    <p>Adopt a "Yes, and..." framework. When asked to perform a task, first confirm ("Yes, I can do that"), then state what you need to deliver the best results ("...and to get the highest quality output, it would help if you provide X").</p>
+                    <p>Adopt a "Yes, and..." framework. [cite_start]When asked to perform a task, first confirm ("Yes, I can do that"), then state what you need to deliver the best results ("...and to get the highest quality output, it would help if you provide X"). [cite: 280, 296, 434]</p>
                 </div>
                  <div class="recommendation-card">
                     <h4>For the "Mediator" (Brock)</h4>
-                    <p>Continue formalizing the practice of "active listening" by summarizing each person's position before moving to a new topic. This ensures everyone feels heard and is aligned on the current point of discussion.</p>
+                    <p>Continue formalizing the practice of "active listening" by summarizing each person's position before moving to a new topic. [cite_start]This ensures everyone feels heard and is aligned on the current point of discussion. [cite: 403, 408]</p>
                 </div>
             </div>
         </div>
 
-
-        <div class="section">
-            <h2>Key Insights for Participants</h2>
-            <div style="background: rgba(233, 69, 96, 0.1); border: 2px solid #e94560; border-radius: 10px; padding: 25px; margin: 20px 0;">
-                <h3 style="color: #f27121; margin-bottom: 15px;">Critical Communication Gap Identified:</h3>
-                <p>Aaron's technical requirements were only adopted after being translated into business/project needs by Brock. This highlights that <strong>the 'why' behind a technical need must be explained in terms the "client" understands.</strong></p>
-            </div>
-            <div style="background: rgba(242, 113, 33, 0.1); border: 2px solid #f27121; border-radius: 10px; padding: 25px; margin: 20px 0;">
-                <h3 style="color: #e94560; margin-bottom: 15px;">Root Cause Analysis:</h3>
-                <p>The most significant friction wasn't about disagreement on the end goal, but on <strong>the sequence of operations (What vs. How) and the definition of core project management terms like "scope".</strong></p>
-            </div>
-        </div>
     </div>
 
     <script>
         // Chart.js configuration for dark theme
         Chart.defaults.color = '#e0e0e0';
         Chart.defaults.borderColor = '#444';
-        Chart.defaults.backgroundColor = '#2a2a2a';
+
+        const colorMarc = 'rgba(233, 69, 96, 0.7)';
+        const borderMarc = '#e94560';
+        const colorAaron = 'rgba(242, 113, 33, 0.7)';
+        const borderAaron = '#f27121';
+        const colorBrock = 'rgba(78, 205, 196, 0.7)';
+        const borderBrock = '#4ecdc4';
 
         // Idea Adoption Success Chart
         const adoptionCtx = document.getElementById('ideaAdoptionChart').getContext('2d');
@@ -628,8 +662,8 @@
                 labels: ['Adopted Ideas', 'Rejected/Tabled Ideas'],
                 datasets: [{
                     data: [3, 1],
-                    backgroundColor: ['#4ecdc4', '#ff6b6b'],
-                    borderColor: ['#00a8a8', '#cc5555'],
+                    backgroundColor: [colorBrock, colorMarc],
+                    borderColor: [borderBrock, borderMarc],
                     borderWidth: 3
                 }]
             },
@@ -656,12 +690,7 @@
                 datasets: [{
                     label: 'Influence Score',
                     data: [8, 7, 9],
-                    backgroundColor: [
-                        'rgba(233, 69, 96, 0.7)',
-                        'rgba(242, 113, 33, 0.7)',
-                        'rgba(78, 205, 196, 0.7)'
-                    ],
-                    borderColor: ['#e94560', '#f27121', '#4ecdc4'],
+                    backgroundColor: [colorMarc, colorAaron, colorBrock],
                     borderWidth: 2
                 }]
             },
@@ -684,6 +713,152 @@
                 }
             }
         });
+        
+        // NEW CHART: Interrupt Rate
+        const interruptCtx = document.getElementById('interruptChart').getContext('2d');
+        new Chart(interruptCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Marc', 'Aaron', 'Brock'],
+                datasets: [{
+                    label: 'Number of Interruptions',
+                    data: [6, 11, 4], // Estimated from transcript
+                    backgroundColor: [colorMarc, colorAaron, colorBrock],
+                }]
+            },
+            options: {
+                 indexAxis: 'y',
+                 responsive: true,
+                 plugins: { legend: { display: false } }
+            }
+        });
+
+        // NEW CHART: Question vs Statement Ratio
+        const questionStatementCtx = document.getElementById('questionStatementChart').getContext('2d');
+        new Chart(questionStatementCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Marc', 'Aaron', 'Brock'],
+                datasets: [
+                    {
+                        label: 'Questions',
+                        data: [15, 8, 20], // Estimated
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)'
+                    },
+                    {
+                        label: 'Statements',
+                        data: [25, 40, 30], // Estimated
+                        backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                        borderColor: 'rgba(255, 206, 86, 1)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: { x: { stacked: true }, y: { stacked: true } }
+            }
+        });
+        
+        // NEW CHART: Problem vs Solution Focus
+        const problemSolutionCtx = document.getElementById('problemSolutionChart').getContext('2d');
+        new Chart(problemSolutionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Marc', 'Aaron', 'Brock'],
+                datasets: [
+                    {
+                        label: 'Defining Problem',
+                        data: [18, 5, 12], // Estimated
+                        backgroundColor: colorMarc,
+                    },
+                    {
+                        label: 'Proposing Solution',
+                        data: [4, 22, 15], // Estimated
+                        backgroundColor: colorBrock,
+                    }
+                ]
+            },
+            options: { responsive: true }
+        });
+
+        // NEW CHART: Sentiment Flow by Speaker
+        const sentimentBySpeakerCtx = document.getElementById('sentimentBySpeakerChart').getContext('2d');
+        new Chart(sentimentBySpeakerCtx, {
+            type: 'line',
+            data: {
+                labels: ['Start', 'Conflict 1 (Tech)', 'Mediation 1', 'Conflict 2 (Scope)', 'Final Plan', 'End'],
+                datasets: [
+                    {
+                        label: 'Marc',
+                        data: [7, 3, 6, 4, 8, 7], // Estimated sentiment 1-10
+                        borderColor: borderMarc,
+                        backgroundColor: colorMarc,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Aaron',
+                        data: [7, 8, 5, 6, 7, 6], // Estimated
+                        borderColor: borderAaron,
+                        backgroundColor: colorAaron,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Brock',
+                        data: [7, 6, 8, 7, 9, 8], // Estimated
+                        borderColor: borderBrock,
+                        backgroundColor: colorBrock,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: { responsive: true }
+        });
+        
+        // NEW CHART: Keyword Bubble Chart
+        const keywordBubbleCtx = document.getElementById('keywordBubbleChart').getContext('2d');
+        new Chart(keywordBubbleCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [
+                    {
+                        label: 'Marc',
+                        data: [{x: 2, y: 7, r: 18, label: 'Socialization'}],
+                        backgroundColor: colorMarc
+                    },
+                    {
+                        label: 'Aaron',
+                        data: [
+                            {x: 5, y: 5, r: 25, label: 'AI'},
+                            {x: 6, y: 8, r: 15, label: 'Data'},
+                            {x: 8, y: 3, r: 12, label: 'Paper'}
+                        ],
+                        backgroundColor: colorAaron
+                    },
+                    {
+                        label: 'Brock',
+                        data: [
+                            {x: 3, y: 3, r: 22, label: 'Job/Client'},
+                            {x: 7, y: 6, r: 16, label: 'Listen'}
+                        ],
+                        backgroundColor: colorBrock
+                    }
+                ]
+            },
+            options: {
+                plugins: {
+                    bubbldatalabels: {
+                        font: { size: 12, weight: 'bold' },
+                        color: '#fff'
+                    }
+                },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                }
+            }
+        });
+
 
         // Friction Points Chart
         const frictionCtx = document.getElementById('frictionChart').getContext('2d');
@@ -695,26 +870,12 @@
                     label: 'Friction Intensity (1-10)',
                     data: [9, 8, 7, 5],
                     backgroundColor: ['rgba(233, 69, 96, 0.7)', 'rgba(242, 113, 33, 0.7)', 'rgba(255, 193, 7, 0.7)', 'rgba(156, 39, 176, 0.7)'],
-                    borderColor: ['#e94560', '#f27121', '#ffc107', '#9c27b0'],
-                    borderWidth: 2
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
-                indexAxis: 'y',
-                plugins: {
-                    legend: { display: false },
-                    title: {
-                        display: true,
-                        text: 'Friction Points by Topic',
-                        color: '#e94560',
-                        font: { size: 16 }
-                    }
-                },
-                scales: {
-                    x: { ticks: { color: '#e0e0e0' }, grid: { color: '#444' } },
-                    y: { ticks: { color: '#e0e0e0' }, grid: { color: 'transparent' } }
-                }
+                plugins: { legend: { display: false } }
             }
         });
 
@@ -728,20 +889,15 @@
                     label: 'Resolution Success %',
                     data: [10, 60, 85, 100],
                     fill: true,
-                    borderColor: '#4ecdc4',
-                    backgroundColor: 'rgba(78, 205, 196, 0.3)',
+                    borderColor: borderBrock,
+                    backgroundColor: colorBrock,
                     tension: 0.4
                 }]
             },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: { ticks: { color: '#e0e0e0' }, grid: { color: '#444' } },
-                    y: { ticks: { color: '#e0e0e0' }, grid: { color: '#444' }, beginAtZero: true, max: 100 }
-                }
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, max: 100 } }
             }
         });
         
@@ -754,28 +910,26 @@
                 datasets: [{
                     label: 'Marc',
                     data: [9, 1, 4, 3, 6],
-                    backgroundColor: 'rgba(233, 69, 96, 0.5)',
-                    borderColor: '#e94560',
-                    pointBackgroundColor: '#e94560'
+                    backgroundColor: colorMarc,
+                    borderColor: borderMarc,
+                    pointBackgroundColor: borderMarc
                 }, {
                     label: 'Aaron',
                     data: [3, 9, 2, 1, 2],
-                    backgroundColor: 'rgba(242, 113, 33, 0.5)',
-                    borderColor: '#f27121',
-                    pointBackgroundColor: '#f27121'
+                    backgroundColor: colorAaron,
+                    borderColor: borderAaron,
+                    pointBackgroundColor: borderAaron
                 }, {
                     label: 'Brock',
                     data: [5, 4, 9, 9, 8],
-                    backgroundColor: 'rgba(78, 205, 196, 0.5)',
-                    borderColor: '#4ecdc4',
-                    pointBackgroundColor: '#4ecdc4'
+                    backgroundColor: colorBrock,
+                    borderColor: borderBrock,
+                    pointBackgroundColor: borderBrock
                 }]
             },
             options: {
                 responsive: true,
-                 plugins: {
-                    legend: { labels: { color: '#e0e0e0' } }
-                },
+                 plugins: { legend: { labels: { color: '#e0e0e0' } } },
                 scales: {
                     r: {
                         angleLines: { color: '#444' },

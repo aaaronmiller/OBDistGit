@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICE Operations: A Data-Driven Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #000000;
+            color: #e0e0e0;
+        }
+        .neon-box {
+            background-color: #0d0d0d;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 5px #00ffff, 0 0 15px #00ffff, 0 0 25px #00ffff, inset 0 0 5px #00ffff;
+            transition: all 0.3s ease-in-out;
+        }
+        .neon-text {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+        }
+        .kpi-value {
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff, 0 0 15px #00ffff;
+        }
+        .kpi-label {
+            color: #a0a0a0;
+        }
+        .neon-button {
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+            transition: all 0.3s ease;
+        }
+        .neon-button:hover {
+            background-color: #00ffff;
+            color: #000000;
+            box-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff;
+            text-shadow: none;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .flow-box {
+             border: 1px solid #00ffff80;
+             background-color: #001a1a;
+             box-shadow: 0 0 5px #00ffff80;
+        }
+        .flow-arrow {
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff;
+        }
+        .alert-box {
+            border: 2px solid #ff6b6b;
+            background-color: #1a0000;
+            box-shadow: 0 0 5px #ff6b6b;
+        }
+        .alert-text {
+            color: #ff6b6b;
+            text-shadow: 0 0 5px #ff6b6b;
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold neon-text mb-2">[ ICE OPERATIONS // DATA ANALYSIS ]</h1>
+            <p class="text-lg text-gray-400">> Visualizing Removals, Staffing, and Budget Trends (FY 2011-2025)</p>
+        </header>
+
+        <!-- New 2025 Alert Section -->
+        <div class="p-6 rounded-lg alert-box mb-8">
+            <h2 class="text-2xl font-bold alert-text text-center mb-4">[ TRUMP 2025 ADMINISTRATION UPDATE ]</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                <div>
+                    <p class="text-3xl font-bold alert-text">32,809 Arrests</p>
+                    <p class="text-gray-400">First 50 days (nearly matching all FY 2024)</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold alert-text">139,000+ Removals</p>
+                    <p class="text-gray-400">First 100 days reported</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16 text-center">
+            <div class="p-6 rounded-lg neon-box">
+                <h2 class="text-xl font-bold kpi-label mb-2">> 2025 BUDGET SURGE</h2>
+                <p class="text-4xl font-bold kpi-value">$29.9B</p>
+                <p class="text-gray-500 mt-2">// 265% increase</p>
+            </div>
+            <div class="p-6 rounded-lg neon-box">
+                <h2 class="text-xl font-bold kpi-label mb-2">> MONTHLY PACE</h2>
+                <p class="text-4xl font-bold kpi-value">4,300</p>
+                <p class="text-gray-500 mt-2">// Interior removals</p>
+            </div>
+            <div class="p-6 rounded-lg neon-box">
+                <h2 class="text-xl font-bold kpi-label mb-2">> ANNUAL GOAL</h2>
+                <p class="text-4xl font-bold kpi-value">1M</p>
+                <p class="text-gray-500 mt-2">// Ambitious target</p>
+            </div>
+            <div class="p-6 rounded-lg neon-box">
+                <h2 class="text-xl font-bold kpi-label mb-2">> PROJECTED REALITY</h2>
+                <p class="text-4xl font-bold kpi-value">~500K</p>
+                <p class="text-gray-500 mt-2">// Current pace suggests</p>
+            </div>
+        </section>
+
+        <main class="space-y-16">
+            <div class="p-6 md:p-8 rounded-lg neon-box">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center neon-text">> Historical Context: Obama Peak vs. Trump 2025</h2>
+                <p class="text-center text-gray-400 max-w-3xl mx-auto mb-6">
+                    Despite the unprecedented 2025 budget increase, projected annual removals (~500,000) may still fall short of Obama's peak years (2011-2012) and the ambitious 1 million goal, illustrating persistent operational constraints.
+                </p>
+                <div class="chart-container">
+                    <canvas id="historicalComparisonChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <div class="p-6 md:p-8 rounded-lg neon-box">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center neon-text">> Budget Explosion: 2025 vs. History</h2>
+                    <p class="text-center text-gray-400 mb-6">
+                        The 2025 budget represents a 265% increase to $29.9 billion - the largest single-year increase in ICE history. This dramatic funding surge dwarfs all previous years combined.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="budgetExplosionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8 rounded-lg neon-box">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center neon-text">> Arrests vs. Removals Gap</h2>
+                    <p class="text-center text-gray-400 mb-6">
+                        While Trump 2025 achieved remarkable arrest numbers (32,809 in 50 days), the conversion to actual removals shows the persistent operational challenge of turning arrests into deportations.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="arrestsVsRemovalsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <div class="p-6 md:p-8 rounded-lg neon-box">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center neon-text">> Goals vs. Reality Check</h2>
+                    <p class="text-center text-gray-400 mb-6">
+                        The administration's 1 million annual deportation goal compared to current performance metrics and historical context shows the gap between ambitious targets and operational capacity.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="goalsVsRealityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8 rounded-lg neon-box">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center neon-text">> Monthly Removal Pace Comparison</h2>
+                    <p class="text-center text-gray-400 mb-6">
+                        Trump 2025's monthly interior removal pace (4,300) compared to Biden's average (3,200) and Trump's first term (6,800) shows moderate improvement but not the dramatic surge some expected.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="monthlyPaceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6 md:p-8 rounded-lg neon-box">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center neon-text">> 2025 Reality: Massive Resources, Persistent Constraints</h2>
+                <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
+                    Even with historic funding increases, the fundamental challenge remains: converting policy ambitions and financial resources into sustained operational outcomes at scale.
+                </p>
+                <div class="flex flex-col md:flex-row items-center justify-around space-y-8 md:space-y-0 md:space-x-4 text-center">
+                    <div class="flex-1 p-4 rounded-lg flow-box">
+                       <h3 class="font-bold text-lg neon-text">2025 Goal</h3>
+                       <p class="text-gray-400">1M annual removals</p>
+                    </div>
+                    <div class="font-bold text-4xl flow-arrow transform md:rotate-0 rotate-90">→</div>
+                     <div class="flex-1 p-4 rounded-lg flow-box">
+                        <h3 class="font-bold text-lg neon-text">Historic Funding</h3>
+                        <p class="text-gray-400">$29.9B budget (265% ↑)</p>
+                    </div>
+                    <div class="font-bold text-4xl flow-arrow transform md:rotate-0 rotate-90">→</div>
+                     <div class="flex-1 p-4 rounded-lg flow-box">
+                        <h3 class="font-bold text-lg neon-text">Current Pace</h3>
+                        <p class="text-gray-400">~500K projected annual</p>
+                    </div>
+                    <div class="font-bold text-4xl flow-arrow transform md:rotate-0 rotate-90">→</div>
+                     <div class="flex-1 p-4 rounded-lg flow-box">
+                        <h3 class="font-bold text-lg neon-text">Reality Check</h3>
+                        <p class="text-gray-400">Still below Obama peaks</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <footer class="text-center mt-16 text-gray-600 text-sm">
+            <p>// Updated with Trump 2025 administration data. Sources: ICE, DHS, Migration Policy Institute, Congressional reports</p>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            const neonCyan = '#00ffff';
+            const lightGray = '#a0aec0';
+            const gridColor = '#334155';
+            const alertRed = '#ff6b6b';
+            const warningOrange = '#ffa500';
+            const successGreen = '#00ff88';
+
+            const defaultChartOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: lightGray,
+                            font: {
+                                size: 14,
+                                family: "'Roboto Mono', monospace"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleColor: neonCyan,
+                        bodyColor: lightGray,
+                        borderColor: neonCyan,
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: lightGray,
+                             callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000) + 'M';
+                                } else if (value >= 1000) {
+                                    return (value / 1000) + 'k';
+                                }
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: lightGray
+                        }
+                    }
+                }
+            };
+
+            // Chart 1: Historical Comparison
+            const historicalComparisonCtx = document.getElementById('historicalComparisonChart');
+            if(historicalComparisonCtx) {
+                new Chart(historicalComparisonCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['FY 2011', 'FY 2012', 'FY 2013', 'FY 2014', 'FY 2015', 'FY 2016', 'FY 2017', 'FY 2018', 'FY 2019', 'FY 2020', 'FY 2021', 'FY 2022', 'FY 2023', 'FY 2024', 'FY 2025*'],
+                        datasets: [{
+                            label: 'ICE Removals',
+                            data: [396906, 409849, 368644, 315943, 235413, 240255, 226119, 256086, 267258, 185884, 250000, 260000, 270000, 272000, 500000],
+                            borderColor: neonCyan,
+                            backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                            pointBackgroundColor: function(context) {
+                                return context.dataIndex === 14 ? alertRed : neonCyan;
+                            },
+                            pointBorderColor: '#fff',
+                            pointRadius: function(context) {
+                                return context.dataIndex === 14 ? 8 : 4;
+                            },
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+            }
+
+            // Chart 2: Budget Explosion
+            const budgetExplosionCtx = document.getElementById('budgetExplosionChart');
+            if(budgetExplosionCtx) {
+                new Chart(budgetExplosionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['FY 2020', 'FY 2021', 'FY 2022', 'FY 2023', 'FY 2024', 'FY 2025'],
+                        datasets: [{
+                            label: 'ICE Budget (Billions)',
+                            data: [8.4, 7.4, 8.3, 8.4, 9.1, 29.9],
+                            backgroundColor: function(context) {
+                                return context.dataIndex === 5 ? alertRed : neonCyan;
+                            },
+                            borderColor: function(context) {
+                                return context.dataIndex === 5 ? alertRed : neonCyan;
+                            },
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...defaultChartOptions,
+                        scales: {
+                            ...defaultChartOptions.scales,
+                            y: {
+                                ...defaultChartOptions.scales.y,
+                                ticks: {
+                                    ...defaultChartOptions.scales.y.ticks,
+                                    callback: function(value) { return '$' + value + 'B'; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart 3: Arrests vs Removals
+            const arrestsVsRemovalsCtx = document.getElementById('arrestsVsRemovalsChart');
+            if(arrestsVsRemovalsCtx) {
+                new Chart(arrestsVsRemovalsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Trump 2025\nArrests (50 days)', 'Biden FY 2024\nTotal At-Large', 'Trump 2025\nRemovals (100 days)'],
+                        datasets: [{
+                            label: 'Numbers',
+                            data: [32809, 33242, 139000],
+                            backgroundColor: [neonCyan, warningOrange, successGreen],
+                            borderColor: [neonCyan, warningOrange, successGreen],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+            }
+
+            // Chart 4: Goals vs Reality
+            const goalsVsRealityCtx = document.getElementById('goalsVsRealityChart');
+            if(goalsVsRealityCtx) {
+                new Chart(goalsVsRealityCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Obama Peak\n(FY 2012)', 'Trump 2025\nGoal', 'Trump 2025\nProjected', 'Biden FY 2024\nActual'],
+                        datasets: [{
+                            label: 'Annual Removals',
+                            data: [409849, 1000000, 500000, 272000],
+                            backgroundColor: [neonCyan, alertRed, warningOrange, lightGray],
+                            borderColor: [neonCyan, alertRed, warningOrange, lightGray],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+            }
+
+            // Chart 5: Monthly Pace
+            const monthlyPaceCtx = document.getElementById('monthlyPaceChart');
+            if(monthlyPaceCtx) {
+                new Chart(monthlyPaceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Trump 1st Term\nAverage', 'Biden Admin\nAverage', 'Trump 2025\nCurrent'],
+                        datasets: [{
+                            label: 'Monthly Interior Removals',
+                            data: [6800, 3200, 4300],
+                            backgroundColor: [neonCyan, warningOrange, successGreen],
+                            borderColor: [neonCyan, warningOrange, successGreen],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+            }
+
+        })();
+    </script>
+</body>
+</html>

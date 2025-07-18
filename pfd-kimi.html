@@ -1,0 +1,1532 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI-Driven P&amp;ID Conversion and Generation for Refinery Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --navy: #1e293b;
+            --teal: #0d9488;
+            --slate: #475569;
+            --light: #f8fafc;
+            --accent: #f59e0b;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, #e2e8f0 100%);
+            color: var(--navy);
+            overflow-x: hidden;
+        }
+        
+        .serif {
+            font-family: 'Crimson Text', serif;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--navy) 0%, #334155 50%, var(--teal) 100%);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .toc-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: rgba(30, 41, 59, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        
+        .citation-link {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--teal);
+            transition: all 0.2s ease;
+        }
+        
+        .citation-link:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .bento-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, var(--teal), transparent);
+            margin: 4rem 0;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(245, 158, 11, 0.1));
+            border-left: 4px solid var(--teal);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .mermaid-container .mermaid:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-container.zoomed .mermaid {
+            height: 100%;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid-control-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            font-size: 14px;
+            min-width: 36px;
+            height: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .mermaid-control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Mermaid theme customization with improved contrast */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            stroke: var(--navy) !important;
+            stroke-width: 2px !important;
+        }
+        
+        .mermaid .node .label {
+            color: var(--navy) !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+        }
+        
+        .mermaid .edgePath .path {
+            stroke: var(--slate) !important;
+            stroke-width: 2px !important;
+        }
+        
+        .mermaid .arrowheadPath {
+            fill: var(--slate) !important;
+        }
+        
+        /* Ensure proper contrast for different node types */
+        .mermaid .node[class*="default"] rect {
+            fill: #ffffff !important;
+        }
+        
+        .mermaid .node[class*="primary"] rect {
+            fill: #f0f9ff !important;
+            stroke: #0369a1 !important;
+        }
+        
+        .mermaid .node[class*="primary"] .label {
+            color: #0c4a6e !important;
+            font-weight: 700 !important;
+        }
+        
+        .mermaid .node[class*="secondary"] rect {
+            fill: #f0fdf4 !important;
+            stroke: #16a34a !important;
+        }
+        
+        .mermaid .node[class*="secondary"] .label {
+            color: #14532d !important;
+            font-weight: 700 !important;
+        }
+        
+        @media (max-width: 1024px) {
+            .toc-fixed {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .toc-fixed.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mermaid-control-btn:not(.reset-zoom) {
+                display: none;
+            }
+            .mermaid-controls {
+                top: auto;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Small screen adjustments */
+        @media (max-width: 768px) {
+            .mermaid-container {
+                padding: 15px;
+                min-height: 200px;
+                max-height: 500px;
+            }
+            
+            .bento-item {
+                padding: 1rem;
+            }
+            
+            .hero-gradient h1 {
+                font-size: 1.75rem;
+            }
+            
+            .hero-gradient h1 span {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 640px) {
+            .hero-gradient .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .hero-gradient h1 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-gradient h1 span {
+                font-size: 1.25rem;
+            }
+            
+            .hero-gradient p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+  </head>
+
+  <body>
+    <!-- Mobile Menu Toggle -->
+    <button id="mobile-menu-toggle" class="lg:hidden fixed top-4 left-4 z-50 bg-slate-800 text-white p-2 rounded-lg">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Table of Contents -->
+    <nav class="toc-fixed" id="toc">
+      <div class="p-6">
+        <h3 class="text-white font-semibold text-lg mb-6 serif">Contents</h3>
+        <ul class="space-y-3 text-sm">
+          <li>
+            <a href="#hero" class="text-slate-300 hover:text-white transition-colors block py-1">Introduction</a>
+          </li>
+          <li>
+            <a href="#executive-summary" class="text-slate-300 hover:text-white transition-colors block py-1">Executive Summary</a>
+          </li>
+          <li>
+            <a href="#digitization" class="text-slate-300 hover:text-white transition-colors block py-1">1. Digitization &amp; Structuring</a>
+          </li>
+          <li class="ml-4">
+            <a href="#advanced-ocr" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">1.1 Advanced OCR</a>
+          </li>
+          <li class="ml-4">
+            <a href="#structured-formats" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">1.2 Structured Formats</a>
+          </li>
+          <li class="ml-4">
+            <a href="#quality-assurance" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">1.3 Quality Assurance</a>
+          </li>
+          <li>
+            <a href="#ai-creation" class="text-slate-300 hover:text-white transition-colors block py-1">2. AI-Powered Creation</a>
+          </li>
+          <li class="ml-4">
+            <a href="#component-database" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">2.1 Component Database</a>
+          </li>
+          <li class="ml-4">
+            <a href="#ai-assistance" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">2.2 AI Assistance</a>
+          </li>
+          <li class="ml-4">
+            <a href="#simulation-integration" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">2.3 Simulation Integration</a>
+          </li>
+          <li>
+            <a href="#standards-compliance" class="text-slate-300 hover:text-white transition-colors block py-1">3. Standards Compliance</a>
+          </li>
+          <li class="ml-4">
+            <a href="#industry-standards" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">3.1 Industry Standards</a>
+          </li>
+          <li class="ml-4">
+            <a href="#automated-checking" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">3.2 Automated Checking</a>
+          </li>
+          <li>
+            <a href="#commercialization" class="text-slate-300 hover:text-white transition-colors block py-1">4. Commercialization</a>
+          </li>
+          <li class="ml-4">
+            <a href="#user-interface" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">4.1 User Interface</a>
+          </li>
+          <li class="ml-4">
+            <a href="#professional-review" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">4.2 Professional Review</a>
+          </li>
+          <li class="ml-4">
+            <a href="#optimization" class="text-slate-400 hover:text-slate-200 transition-colors block py-1">4.3 Design Optimization</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section id="hero" class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+          <img src="https://kimi-web-img.moonshot.cn/img/contenthub.rosen-group.com/fbaf612ca161cece46dad24b0164151d5718a433" alt="Industrial refinery piping system" class="w-full h-full object-cover" size="wallpaper" aspect="wide" style="photo" query="industrial refinery piping system" referrerpolicy="no-referrer" data-modified="1" data-score="11598.00"/>
+        </div>
+        <div class="container mx-auto px-8 relative z-10">
+          <div class="bento-grid max-w-7xl">
+            <div class="bento-item">
+              <h1 class="text-5xl font-bold text-slate-800 mb-6 serif leading-tight">
+                <em class="text-teal-600">Transforming Legacy</em>
+                <br/>
+                P&amp;ID Documentation into
+                <br/>
+                <span class="text-slate-900">Intelligent Digital Assets</span>
+              </h1>
+              <p class="text-xl text-slate-600 leading-relaxed">
+                A comprehensive AI-driven methodology for converting scanned refinery P&amp;IDs into standards-compliant digital formats and generating new, optimized designs for multi-billion dollar facilities.
+              </p>
+            </div>
+            <div class="bento-item">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="text-center p-4 bg-teal-50 rounded-lg">
+                  <div class="text-3xl font-bold text-teal-600">90.5%</div>
+                  <div class="text-sm text-slate-600">Symbol Detection Accuracy</div>
+                </div>
+                <div class="text-center p-4 bg-amber-50 rounded-lg">
+                  <div class="text-3xl font-bold text-amber-600">0.998</div>
+                  <div class="text-sm text-slate-600">F1 Score Achieved</div>
+                </div>
+                <div class="text-center p-4 bg-slate-50 rounded-lg">
+                  <div class="text-3xl font-bold text-slate-600">API</div>
+                  <div class="text-sm text-slate-600">Standards Compliance</div>
+                </div>
+                <div class="text-center p-4 bg-rose-50 rounded-lg">
+                  <div class="text-3xl font-bold text-rose-600">ANSI</div>
+                  <div class="text-sm text-slate-600">Regulatory Adherence</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Executive Summary -->
+      <section id="executive-summary" class="py-16 bg-white">
+        <div class="container mx-auto px-8 max-w-6xl">
+          <div class="highlight-box">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6 serif">Executive Summary</h2>
+            <div class="prose prose-lg max-w-none">
+              <p class="text-slate-700 leading-relaxed mb-4">
+                This comprehensive methodology addresses the critical challenge of converting legacy scanned P&amp;IDs into accurate, standards-compliant digital formats while enabling the AI-powered creation of new, optimized designs for refinery projects. The approach encompasses four fundamental pillars:
+              </p>
+              <ul class="list-disc list-inside space-y-2 text-slate-700">
+                <li><strong>Advanced Digitization:</strong> Leveraging state-of-the-art OCR and symbol recognition technologies with <a href="#ref-112" class="citation-link">90.5% precision</a> in pipeline identification</li>
+                <li><strong>AI-Powered Design:</strong> Intelligent component selection and placement through parametric modeling and <a href="#ref-27" class="citation-link">generative design capabilities</a></li>
+                <li><strong>Standards Compliance:</strong> Embedded regulatory adherence to <a href="#ref-39" class="citation-link">API, ANSI, ISA, and OSHA standards</a> through automated validation</li>
+                <li><strong>Commercial Viability:</strong> Professional review frameworks and <a href="#ref-83" class="citation-link">human-in-the-loop systems</a> ensuring engineering integrity</li>
+              </ul>
+              <p class="text-slate-700 leading-relaxed mt-4">
+                The methodology transforms P&amp;IDs from static documentation into dynamic, data-driven engineering tools, enabling significant improvements in design efficiency, safety compliance, and operational optimization for high-consequence refinery facilities.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Section 1: Digitization and Structuring -->
+      <section id="digitization" class="py-16">
+        <div class="container mx-auto px-8 max-w-6xl">
+          <h2 class="text-4xl font-bold text-slate-800 mb-12 serif">1. Digitization and Structuring of Legacy Scanned P&amp;ID PDFs</h2>
+
+          <!-- Advanced OCR Subsection -->
+          <div id="advanced-ocr" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">1.1 Advanced OCR and Symbol Recognition</h3>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                  The initial phase leverages <strong>advanced Optical Character Recognition (OCR) and symbol recognition technologies</strong> to interpret complex visual elements in legacy P&amp;IDs. Standard OCR solutions often fail due to the &#34;messy&#34; nature of P&amp;IDs, with <a href="#ref-6" class="citation-link">overlapping lines, varied fonts, and inconsistent tag placements</a>.
+                </p>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                  <strong>Deep learning models, particularly YOLO variants, demonstrate significant promise</strong>. <a href="#ref-112" class="citation-link">YOLOv8 achieved 90.5% average precision and 88.5% recall</a> for pipeline identification when combined with split coordinate spatial attention and data augmentation.
+                </p>
+              </div>
+              <div>
+                <img src="https://kimi-web-img.moonshot.cn/img/user-images.githubusercontent.com/e872fd39f40e443d0d2a03de20f79ecada40a168.png" alt="YOLO deep learning model detecting symbols on P&amp;ID diagram" class="w-full rounded-lg shadow-lg" size="medium" aspect="wide" query="YOLO object detection P&amp;ID symbols" referrerpolicy="no-referrer" data-modified="1" data-score="11598.00"/>
+              </div>
+            </div>
+
+            <!-- Technology Comparison Table -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">Key Technologies for Advanced OCR and Symbol Recognition</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-slate-200">
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Technology/Approach</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Description</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Key Benefits</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Examples</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Deep Learning Symbol Detection</td>
+                      <td class="py-3 px-4 text-slate-600">Neural networks (YOLO variants) trained on P&amp;ID symbol datasets</td>
+                      <td class="py-3 px-4 text-slate-600">High accuracy, handles diverse symbols, robust to noise</td>
+                      <td class="py-3 px-4 text-slate-600">YOLOv2, YOLOv8, YOLOv11</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Advanced OCR Engines</td>
+                      <td class="py-3 px-4 text-slate-600">Specialized tools for technical drawings and complex layouts</td>
+                      <td class="py-3 px-4 text-slate-600">Improved text extraction, handles varied fonts</td>
+                      <td class="py-3 px-4 text-slate-600">KerasOCR, Azure AI, Amazon Textract</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Image Pre-processing</td>
+                      <td class="py-3 px-4 text-slate-600">Noise reduction, binarization, skew correction</td>
+                      <td class="py-3 px-4 text-slate-600">Enhances image quality, improves detection rates</td>
+                      <td class="py-3 px-4 text-slate-600">Grayscale conversion, thresholding</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Contextual Post-processing</td>
+                      <td class="py-3 px-4 text-slate-600">LMs/LLMs refine OCR output based on domain knowledge</td>
+                      <td class="py-3 px-4 text-slate-600">Corrects OCR errors, improves semantic understanding</td>
+                      <td class="py-3 px-4 text-slate-600">GPT models, BERT, custom rules</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Structured Formats Subsection -->
+          <div id="structured-formats" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">1.2 Conversion to Structured Digital Formats</h3>
+
+            <div class="bg-gradient-to-r from-teal-50 to-amber-50 rounded-lg p-6 mb-8">
+              <p class="text-slate-700 leading-relaxed mb-4">
+                Once basic entities are extracted, the next crucial step is converting raw data into <strong>structured digital formats</strong> suitable for reports, databases, and AI applications. <a href="#ref-23" class="citation-link">Graph-based representations, particularly Labeled Property Graphs (LPGs), are highly suitable</a> for capturing both topological relationships and domain-specific semantics.
+              </p>
+              <p class="text-slate-700 leading-relaxed">
+                The <strong>DEXPI (Data Exchange in the Process Industry) standard</strong> provides a standardized, machine-readable format, with <a href="#ref-39" class="citation-link">version 1.3 integrating ISO 15926 for data models and ISO 10628 for graphical symbols</a>.
+              </p>
+            </div>
+
+            <!-- Process Flow Diagram -->
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                flowchart LR
+                A[&#34;Scanned P&amp;ID&#34;] --&gt; B[&#34;Image Pre-processing&#34;]
+                B --&gt; C[&#34;Deep Learning Symbol Detection&#34;]
+                B --&gt; D[&#34;Advanced OCR&#34;]
+                C --&gt; E[&#34;Symbol Recognition&#34;]
+                D --&gt; F[&#34;Text Extraction&#34;]
+                E --&gt; G[&#34;Knowledge Graph Construction&#34;]
+                F --&gt; G
+                G --&gt; H[&#34;DEXPI Standard Format&#34;]
+                G --&gt; I[&#34;Labeled Property Graph&#34;]
+                H --&gt; J[&#34;Validation &amp; QA&#34;]
+                I --&gt; J
+                J --&gt; K[&#34;Intelligent Digital P&amp;ID&#34;]
+
+                style A fill:#ffffff,stroke:#1e293b,stroke-width:2px,color:#1e293b
+                style K fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d
+                style G fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e
+              </div>
+            </div>
+
+            <!-- Format Comparison Table -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">Structured Digital Formats for P&amp;ID Representation</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-slate-200">
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Format Type</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Description</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Key Advantages</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Common Tools</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Knowledge Graphs (LPGs)</td>
+                      <td class="py-3 px-4 text-slate-600">Graph structures representing components and relationships with semantic attributes</td>
+                      <td class="py-3 px-4 text-slate-600">Complex queries, AI applications, captures topology and semantics</td>
+                      <td class="py-3 px-4 text-slate-600">Neo4j, NetworkX, RDF</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">DEXPI Standard</td>
+                      <td class="py-3 px-4 text-slate-600">Open, vendor-independent standard based on XML integrating engineering standards</td>
+                      <td class="py-3 px-4 text-slate-600">Interoperability, standardized data model, facilitates exchange</td>
+                      <td class="py-3 px-4 text-slate-600">DEXPI XML Schema, pyDEXPI</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Proprietary Intelligent P&amp;ID</td>
+                      <td class="py-3 px-4 text-slate-600">Data-rich formats embedding information within drawing elements</td>
+                      <td class="py-3 px-4 text-slate-600">Data integration, automated drawing, validation capabilities</td>
+                      <td class="py-3 px-4 text-slate-600">SmartPlant P&amp;ID, AutoCAD Plant</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quality Assurance Subsection -->
+          <div id="quality-assurance" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">1.3 Quality Assurance and Validation</h3>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+              <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <div class="text-red-600 text-2xl mb-2">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4 class="font-semibold text-red-800 mb-2">The Challenge</h4>
+                <p class="text-red-700 text-sm">Even with advanced AI, <a href="#ref-58" class="citation-link">ML models might achieve only 60-75% initial accuracy</a> - insufficient for critical engineering applications.</p>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div class="text-blue-600 text-2xl mb-2">
+                  <i class="fas fa-users"></i>
+                </div>
+                <h4 class="font-semibold text-blue-800 mb-2">Human-in-the-Loop</h4>
+                <p class="text-blue-700 text-sm"><a href="#ref-83" class="citation-link">The ACPID copilot architecture</a> incorporates HITL for engineers to verify and adjust diagrams.</p>
+              </div>
+              <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <div class="text-green-600 text-2xl mb-2">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <h4 class="font-semibold text-green-800 mb-2">Automated Validation</h4>
+                <p class="text-green-700 text-sm">Rule-based checking verifies adherence to <a href="#ref-119" class="citation-link">drafting standards and logical consistency</a>.</p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">QA/QC Process Components</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-slate-200">
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">QA/QC Aspect</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Description</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Methods/Tools</th>
+                      <th class="text-left py-3 px-4 font-semibold text-slate-700">Importance</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Automated Rule-Based Checking</td>
+                      <td class="py-3 px-4 text-slate-600">Validating against predefined rules (standards compliance, logical consistency)</td>
+                      <td class="py-3 px-4 text-slate-600">Custom scripts, validation modules, schema validation</td>
+                      <td class="py-3 px-4 text-slate-600">Systematic error catching, basic compliance</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Human-in-the-Loop Review</td>
+                      <td class="py-3 px-4 text-slate-600">Manual verification by domain experts of AI-generated outputs</td>
+                      <td class="py-3 px-4 text-slate-600">Visual inspection, comparison tools, annotation</td>
+                      <td class="py-3 px-4 text-slate-600">Nuanced error catching, ensures high fidelity</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-medium text-slate-800">Cross-Referencing</td>
+                      <td class="py-3 px-4 text-slate-600">Verifying against existing databases (equipment lists, MTOs)</td>
+                      <td class="py-3 px-4 text-slate-600">Database queries, data comparison tools</td>
+                      <td class="py-3 px-4 text-slate-600">Data integrity and plant information alignment</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Section 2: AI-Powered Creation -->
+      <section id="ai-creation" class="py-16 bg-slate-50">
+        <div class="container mx-auto px-8 max-w-6xl">
+          <h2 class="text-4xl font-bold text-slate-800 mb-12 serif">2. AI-Powered Creation of New P&amp;IDs</h2>
+
+          <!-- Component Database Subsection -->
+          <div id="component-database" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">2.1 Component Database and Parametric Modeling</h3>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                  The development of new P&amp;IDs relies on a <strong>robust component database and parametric modeling principles</strong>. <a href="#ref-27" class="citation-link">&#34;Intelligent P&amp;ID&#34; systems treat each component as an asset</a>, linking it to essential engineering data including datasheets, manuals, and operational parameters.
+                </p>
+                <div class="bg-teal-50 border-l-4 border-teal-400 p-4 mb-4">
+                  <h4 class="font-semibold text-teal-800 mb-2">Component Attributes Include:</h4>
+                  <ul class="text-teal-700 text-sm space-y-1">
+                    <li>• Size, material, pressure rating</li>
+                    <li>• Temperature limits and cost data</li>
+                    <li>• Supplier information and standards compliance</li>
+                    <li>• Flow rates, head, NPSHr (for pumps)</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <img src="https://kimi-web-img.moonshot.cn/img/cdn.forumautomation.com/937bbd4873b533cade8fd98a2969570713541754.jpeg" alt="Industrial component library database interface" class="w-full rounded-lg shadow-lg" size="medium" aspect="wide" style="photo" query="industrial component database interface" referrerpolicy="no-referrer" data-modified="1" data-score="11598.00"/>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">Parametric Modeling Capabilities</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-medium text-slate-800 mb-2">Dynamic Adjustment</h5>
+                  <p class="text-slate-600 text-sm mb-3">Components adjust based on user-defined requirements or system-level constraints</p>
+
+                  <h5 class="font-medium text-slate-800 mb-2">Component Specification</h5>
+                  <p class="text-slate-600 text-sm">Defining metadata, interfaces, and implementation details for AI reasoning</p>
+                </div>
+                <div>
+                  <h5 class="font-medium text-slate-800 mb-2">Labeled Property Graphs</h5>
+                  <p class="text-slate-600 text-sm mb-3"><a href="#ref-23" class="citation-link">LPG structure serves as dynamic component database</a> with semantic attributes</p>
+
+                  <h5 class="font-medium text-slate-800 mb-2">Context-Aware Design</h5>
+                  <p class="text-slate-600 text-sm">AI recognizes component relationships for intelligent, compatible designs</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Assistance Subsection -->
+          <div id="ai-assistance" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">2.2 AI-Assisted Component Selection, Placement, and Connection</h3>
+
+            <div class="highlight-box mb-8">
+              <p class="text-slate-700 leading-relaxed">
+                The vision includes an interface where users select components, and <strong>AI places and connects them based on specific needs</strong>, moving towards AI-driven generative design. <a href="#ref-27" class="citation-link">IPS&#39;s iEng AI platform features &#34;Generative Design: AI recognizes component relationships to learn, optimize, and generate future process designs&#34;</a>.
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="text-lg font-semibold text-slate-700 mb-4">Neural Network Approaches</h4>
+                <div class="space-y-4">
+                  <div class="border-l-4 border-blue-400 pl-4">
+                    <h5 class="font-medium text-slate-800">Recurrent Neural Networks (RNNs)</h5>
+                    <p class="text-slate-600 text-sm"><a href="#ref-39" class="citation-link">95.2% accuracy for top-5 component suggestions</a> based on sequence of drawn elements</p>
+                  </div>
+                  <div class="border-l-4 border-green-400 pl-4">
+                    <h5 class="font-medium text-slate-800">Graph Neural Networks (GNNs)</h5>
+                    <p class="text-slate-600 text-sm">Learn plant topologies and perform consistency checks by understanding component context</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="text-lg font-semibold text-slate-700 mb-4">Design Considerations</h4>
+                <ul class="space-y-2 text-slate-600 text-sm">
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-green-500 mr-2"></i>
+                    Accessibility requirements
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-green-500 mr-2"></i>
+                    Safety clearances
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-green-500 mr-2"></i>
+                    Piping economy optimization
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-green-500 mr-2"></i>
+                    Common P&amp;ID pattern recognition
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-green-500 mr-2"></i>
+                    <a href="#ref-18" class="citation-link">Natural language to diagram conversion</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation Integration Subsection -->
+          <div id="simulation-integration" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">2.3 Integration of Process Simulation for Design Validation</h3>
+
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-8">
+              <p class="text-slate-700 leading-relaxed mb-4">
+                A cornerstone of creating reliable P&amp;IDs is <strong>integrating process simulation directly within the AI-driven design workflow</strong>. <a href="#ref-84" class="citation-link">AI-driven P&amp;IDs linked with simulation software can validate performance, optimize control logic, and automate design updates</a> based on simulation results.
+              </p>
+              <p class="text-slate-700 leading-relaxed">
+                <a href="#ref-45" class="citation-link">The Andritz case study demonstrated benefits of coupling P&amp;ID data with dynamic process simulation</a> to investigate designs, identify issues, and test control strategies using a &#34;Virtual Process Plant.&#34;
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+              <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl text-blue-600 mb-3">
+                  <i class="fas fa-cogs"></i>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">Equipment Sizing</h4>
+                <p class="text-slate-600 text-sm">AI assesses equipment sizing based on simulation results</p>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl text-green-600 mb-3">
+                  <i class="fas fa-sync-alt"></i>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">Control Loop Effectiveness</h4>
+                <p class="text-slate-600 text-sm">Validation of control strategies under various scenarios</p>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl text-purple-600 mb-3">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">Process Performance</h4>
+                <p class="text-slate-600 text-sm">Overall system performance assessment under different conditions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Section 3: Standards Compliance -->
+      <section id="standards-compliance" class="py-16">
+        <div class="container mx-auto px-8 max-w-6xl">
+          <h2 class="text-4xl font-bold text-slate-800 mb-12 serif">3. Standards Compliance and Regulatory Adherence</h2>
+
+          <!-- Industry Standards Subsection -->
+          <div id="industry-standards" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">3.1 Embedding Industry Standards into AI Models</h3>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                  A critical requirement is <strong>strict adherence to all relevant regulatory and industry standards</strong>. <a href="#ref-16" class="citation-link">IPS notes their AI can be &#34;fully customized based on customer&#39;s engineering standards&#34; and can &#34;unify multiple standards into a common standard&#34;</a>.
+                </p>
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <h4 class="font-semibold text-amber-800 mb-2">Key Standards Integration</h4>
+                  <ul class="text-amber-700 text-sm space-y-1">
+                    <li>• <strong>API Standards:</strong> API 610 for pumps</li>
+                    <li>• <strong>ANSI/ISA:</strong> ISA 5.1 for instrumentation symbols</li>
+                    <li>• <strong>OSHA:</strong> Safety and material handling requirements</li>
+                    <li>• <strong>ISO:</strong> 15926, 10628, IEC 62424 integration</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <img src="https://kimi-web-img.moonshot.cn/img/www.mimosa.org/d95581b7066d420829ffe6013dba85f54248c0a6.png" alt="Industrial standards documentation" class="w-full rounded-lg shadow-lg" size="medium" aspect="wide" style="photo" query="industrial standards documentation" referrerpolicy="no-referrer" data-modified="1" data-score="11595.00"/>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">DEXPI Standard Integration</h4>
+              <p class="text-slate-600 mb-4">
+                The <strong>DEXPI standard plays a pivotal role by integrating various international standards</strong>. <a href="#ref-39" class="citation-link">The DEXPI-2-graph converter extracts EquipmentClass and ComponentClass information directly from DEXPI files</a>, ensuring AI models work with standardized components.
+              </p>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="text-center p-3 bg-slate-50 rounded">
+                  <div class="font-medium text-slate-800">ISO 15926</div>
+                  <div class="text-sm text-slate-600">Data models</div>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded">
+                  <div class="font-medium text-slate-800">ISO 10628</div>
+                  <div class="text-sm text-slate-600">Graphical symbols</div>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded">
+                  <div class="font-medium text-slate-800">IEC 62424</div>
+                  <div class="text-sm text-slate-600">Process control engineering</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Automated Checking Subsection -->
+          <div id="automated-checking" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">3.2 Automated Rule-Based Checking and Consistency Validation</h3>
+
+            <div class="highlight-box mb-8">
+              <p class="text-slate-700 leading-relaxed">
+                Ensuring newly created P&amp;IDs adhere to standards necessitates <strong>automated rule-based checking and consistency validation</strong>. <a href="#ref-23" class="citation-link">By transforming P&amp;IDs into queryable knowledge graphs</a>, rules derived from standards can be encoded for automatic compliance checking.
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="text-lg font-semibold text-slate-700 mb-4">Graph Neural Network Validation</h4>
+                <div class="space-y-4">
+                  <div>
+                    <h5 class="font-medium text-slate-800 mb-2">Node Classification</h5>
+                    <p class="text-slate-600 text-sm mb-2">Predicting if components are in meaningful positions</p>
+                    <div class="bg-green-50 p-2 rounded text-sm text-green-700">
+                      <a href="#ref-39" class="citation-link">81.5% accuracy in predicting component classes</a>
+                    </div>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-slate-800 mb-2">Edge Classification</h5>
+                    <p class="text-slate-600 text-sm">Validating connection types and compatibility</p>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-slate-800 mb-2">Link Prediction</h5>
+                    <p class="text-slate-600 text-sm">Suggesting missing connections based on patterns</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="text-lg font-semibold text-slate-700 mb-4">Validation Performance</h4>
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center p-2 bg-blue-50 rounded">
+                    <span class="text-slate-700 text-sm">Process Control Equipment</span>
+                    <span class="font-semibold text-blue-700">96%</span>
+                  </div>
+                  <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                    <span class="text-slate-700 text-sm">Piping Components</span>
+                    <span class="font-semibold text-green-700">93%</span>
+                  </div>
+                  <div class="flex justify-between items-center p-2 bg-purple-50 rounded">
+                    <span class="text-slate-700 text-sm">Overall Component Classes</span>
+                    <span class="font-semibold text-purple-700">81.5%</span>
+                  </div>
+                </div>
+
+                <div class="mt-6 p-3 bg-slate-50 rounded">
+                  <p class="text-slate-600 text-sm">
+                    <a href="#ref-35" class="citation-link">Seevibes/Readimir solutions use AI algorithms to enhance P&amp;ID quality</a> by automatically identifying errors and validating against rules.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- Section 4: Commercialization -->
+      <section id="commercialization" class="py-16 bg-slate-50">
+        <div class="container mx-auto px-8 max-w-6xl">
+          <h2 class="text-4xl font-bold text-slate-800 mb-12 serif">4. Commercialization and User Interface</h2>
+
+          <!-- User Interface Subsection -->
+          <div id="user-interface" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">4.1 Development of an Intuitive User Interface</h3>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                  For commercial viability, the <strong>development of an intuitive user interface is paramount</strong>. The UI must bridge sophisticated AI capabilities with practical engineering needs through a highly interactive, graphical environment.
+                </p>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                  <h4 class="font-semibold text-blue-800 mb-2">Key UI Features</h4>
+                  <ul class="text-blue-700 text-sm space-y-1">
+                    <li>• Drag-and-drop component selection</li>
+                    <li>• Real-time AI suggestions and feedback</li>
+                    <li>• Context-sensitive help and tooltips</li>
+                    <li>• Multi-layer visualization capabilities</li>
+                    <li>• Collaborative project features</li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <img src="https://kimi-web-img.moonshot.cn/img/enginerio.com/44d290bfaf9e7f9779d8e89652beba27bf98f70d.png" alt="P&amp;ID software interface showing drag and drop functionality" class="w-full rounded-lg shadow-lg" size="medium" aspect="wide" style="photo" query="P&amp;ID software interface" referrerpolicy="no-referrer" data-modified="1" data-score="11597.00"/>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">Interface Design Principles</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-medium text-slate-800 mb-3">User Experience</h5>
+                  <ul class="space-y-2 text-slate-600 text-sm">
+                    <li class="flex items-start">
+                      <i class="fas fa-mouse-pointer text-teal-500 mr-2 mt-1"></i>
+                      <span>Drag-and-drop component placement</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fas fa-lightbulb text-amber-500 mr-2 mt-1"></i>
+                      <span>AI-powered design suggestions</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fas fa-eye text-blue-500 mr-2 mt-1"></i>
+                      <span>Visual feedback and conflict highlighting</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-medium text-slate-800 mb-3">Professional Features</h5>
+                  <ul class="space-y-2 text-slate-600 text-sm">
+                    <li class="flex items-start">
+                      <i class="fas fa-file-export text-green-500 mr-2 mt-1"></i>
+                      <span>Standard report generation</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fas fa-layer-group text-purple-500 mr-2 mt-1"></i>
+                      <span>Information layer visualization</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fas fa-users text-rose-500 mr-2 mt-1"></i>
+                      <span>Multi-user collaboration</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-6">
+              <p class="text-slate-700 leading-relaxed">
+                <a href="#ref-83" class="citation-link">The ACPID copilot generates P&amp;IDs from natural language prompts</a>, providing an intuitive model for engineers with subsystem-level generation and iterative refinement capabilities.
+              </p>
+            </div>
+          </div>
+
+          <!-- Professional Review Subsection -->
+          <div id="professional-review" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">4.2 Framework for Professional Review and Approval</h3>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="text-red-600 text-3xl mb-4 text-center">
+                  <i class="fas fa-user-shield"></i>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-3 text-center">Licensed Oversight</h4>
+                <p class="text-slate-600 text-sm text-center">
+                  Ultimate responsibility for safety and integrity rests with qualified human engineers
+                </p>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="text-blue-600 text-3xl mb-4 text-center">
+                  <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-3 text-center">Review Framework</h4>
+                <p class="text-slate-600 text-sm text-center">
+                  Clear highlighting of AI-generated elements with detailed decision logs
+                </p>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="text-green-600 text-3xl mb-4 text-center">
+                  <i class="fas fa-stamp"></i>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-3 text-center">Approval Process</h4>
+                <p class="text-slate-600 text-sm text-center">
+                  Formal approval workflows with audit trails for regulatory compliance
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h4 class="text-lg font-semibold text-slate-700 mb-4">Professional Review Features</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h5 class="font-medium text-slate-800 mb-3">Review Interface</h5>
+                  <ul class="space-y-2 text-slate-600 text-sm">
+                    <li>• Highlighted AI-generated elements</li>
+                    <li>• Detailed decision logs and rule applications</li>
+                    <li>• Side-by-side comparison with original documents</li>
+                    <li>• Comment and annotation capabilities</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-medium text-slate-800 mb-3">Approval Workflow</h5>
+                  <ul class="space-y-2 text-slate-600 text-sm">
+                    <li>• Section-level approval/rejection</li>
+                    <li>• Audit trail of all changes</li>
+                    <li>• Authorization checks for licensed personnel</li>
+                    <li>• Version control and documentation</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optimization Subsection -->
+          <div id="optimization" class="mb-16">
+            <h3 class="text-2xl font-semibold text-slate-700 mb-8">4.3 AI-Driven Design Optimization and Decision Support</h3>
+
+            <div class="highlight-box mb-8">
+              <p class="text-slate-700 leading-relaxed">
+                Beyond core conversion and creation, the method offers <strong>significant potential for AI-driven design optimization</strong>. <a href="#ref-27" class="citation-link">IPS&#39;s AI &#34;recognizes component relationships to learn, optimize, and generate future process designs&#34;</a>, essential for machine learning-driven generative design.
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="text-lg font-semibold text-slate-700 mb-4">Optimization Capabilities</h4>
+                <div class="space-y-4">
+                  <div class="border-l-4 border-green-400 pl-4">
+                    <h5 class="font-medium text-slate-800">Efficiency Analysis</h5>
+                    <p class="text-slate-600 text-sm">Reduce piping complexity and minimize fittings</p>
+                  </div>
+                  <div class="border-l-4 border-blue-400 pl-4">
+                    <h5 class="font-medium text-slate-800">Cost Optimization</h5>
+                    <p class="text-slate-600 text-sm">Utilize more cost-effective equipment while meeting requirements</p>
+                  </div>
+                  <div class="border-l-4 border-red-400 pl-4">
+                    <h5 class="font-medium text-slate-800">Safety Enhancement</h5>
+                    <p class="text-slate-600 text-sm">Recommend instrument types based on process conditions</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="text-lg font-semibold text-slate-700 mb-4">Simulation Integration Benefits</h4>
+                <p class="text-slate-600 text-sm mb-4">
+                  <a href="#ref-84" class="citation-link">AI-driven P&amp;IDs linked with simulation software enable &#34;what-if&#34; analyses</a>, simulating design choice impacts on key performance indicators.
+                </p>
+                <div class="space-y-3">
+                  <div class="flex items-center text-sm text-slate-600">
+                    <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                    <span>Performance validation against KPIs</span>
+                  </div>
+                  <div class="flex items-center text-sm text-slate-600">
+                    <i class="fas fa-cogs text-blue-500 mr-2"></i>
+                    <span>Control logic optimization</span>
+                  </div>
+                  <div class="flex items-center text-sm text-slate-600">
+                    <i class="fas fa-sync text-green-500 mr-2"></i>
+                    <span>Automated design updates from results</span>
+                  </div>
+                  <div class="flex items-center text-sm text-slate-600">
+                    <i class="fas fa-search text-amber-500 mr-2"></i>
+                    <span>Root Cause Analysis capabilities</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6">
+              <h4 class="text-lg font-semibold text-slate-700 mb-3">Transformation Impact</h4>
+              <p class="text-slate-700 leading-relaxed">
+                This approach transforms P&amp;IDs from static documents into <strong>dynamic tools for engineering analysis and continuous improvement</strong>, enabling automatic generation of process calculations, equipment sizing, and control logic from PFDs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- References Section -->
+      <section class="py-16 bg-slate-100">
+        <div class="container mx-auto px-8 max-w-6xl">
+          <h2 class="text-3xl font-bold text-slate-800 mb-8 serif">References</h2>
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="grid gap-4 text-sm">
+              <div id="ref-1" class="border-l-4 border-slate-200 pl-4">
+                <strong>[1]</strong>
+                <a href="https://azati.ai/blog/piping-instrumentation-ocr/" class="citation-link" target="_blank">Azati.ai - Piping Instrumentation OCR</a>
+              </div>
+              <div id="ref-3" class="border-l-4 border-slate-200 pl-4">
+                <strong>[3]</strong>
+                <a href="https://www.symphonyai.com/industrial/piping-instrumentation-diagrams-ingestion/" class="citation-link" target="_blank">SymphonyAI - Piping Instrumentation Diagrams Ingestion</a>
+              </div>
+              <div id="ref-6" class="border-l-4 border-slate-200 pl-4">
+                <strong>[6]</strong>
+                <a href="https://www.linkedin.com/pulse/how-we-validate-pid-ocr-scale-why-ml-alone-falls-short-anand-george-5s8if" class="citation-link" target="_blank">LinkedIn - PID OCR Validation at Scale</a>
+              </div>
+              <div id="ref-16" class="border-l-4 border-slate-200 pl-4">
+                <strong>[16]</strong>
+                <a href="https://ips-ai.com/ips-released-new-version-of-idrawings-pid-solution/" class="citation-link" target="_blank">IPS - iDrawings P&amp;ID Solution</a>
+              </div>
+              <div id="ref-18" class="border-l-4 border-slate-200 pl-4">
+                <strong>[18]</strong>
+                <a href="https://arxiv.org/html/2412.12898v1" class="citation-link" target="_blank">arXiv - P&amp;ID Generation Research</a>
+              </div>
+              <div id="ref-23" class="border-l-4 border-slate-200 pl-4">
+                <strong>[23]</strong>
+                <a href="https://www.mdpi.com/2504-4990/7/2/39" class="citation-link" target="_blank">MDPI - PIDQA Framework</a>
+              </div>
+              <div id="ref-27" class="border-l-4 border-slate-200 pl-4">
+                <strong>[27]</strong>
+                <a href="https://ips-ai.com/resource-centre/blogs/future-of-pampid-management-from-engineering-document-to-process-intelligence/" class="citation-link" target="_blank">IPS - Future of P&amp;ID Management</a>
+              </div>
+              <div id="ref-35" class="border-l-4 border-slate-200 pl-4">
+                <strong>[35]</strong>
+                <a href="https://www.bricsys.com/ru-uz/cad-software/cad-ai-software" class="citation-link" target="_blank">Bricsys - CAD AI Software</a>
+              </div>
+              <div id="ref-39" class="border-l-4 border-slate-200 pl-4">
+                <strong>[39]</strong>
+                <a href="https://www.sciencedirect.com/science/article/pii/S2772508122000291" class="citation-link" target="_blank">ScienceDirect - DEXPI and GNN Research</a>
+              </div>
+              <div id="ref-45" class="border-l-4 border-slate-200 pl-4">
+                <strong>[45]</strong>
+                <a href="https://www.andritz.com/resource/blob/69930/bfc8f6738dc1e585ae1cd78a4cfe79a3/aa-automation-simulation-plantdesign-p-id-validation-data.pdf" class="citation-link" target="_blank">Andritz - Virtual Process Plant Case Study</a>
+              </div>
+              <div id="ref-58" class="border-l-4 border-slate-200 pl-4">
+                <strong>[58]</strong>
+                <a href="https://www.linkedin.com/pulse/how-we-validate-pid-ocr-scale-why-ml-alone-falls-short-anand-george-5s8if" class="citation-link" target="_blank">LinkedIn - PID OCR Validation Challenges</a>
+              </div>
+              <div id="ref-83" class="border-l-4 border-slate-200 pl-4">
+                <strong>[83]</strong>
+                <a href="https://arxiv.org/html/2412.12898v1" class="citation-link" target="_blank">arXiv - ACPID Copilot Architecture</a>
+              </div>
+              <div id="ref-84" class="border-l-4 border-slate-200 pl-4">
+                <strong>[84]</strong>
+                <a href="https://ips-ai.com/resource-centre/blogs/future-of-pampid-management-from-engineering-document-to-process-intelligence/" class="citation-link" target="_blank">IPS - Simulation Integration</a>
+              </div>
+              <div id="ref-107" class="border-l-4 border-slate-200 pl-4">
+                <strong>[107]</strong>
+                <a href="https://github.com/Azure-Samples/digitization-of-piping-and-instrument-diagrams/blob/main/docs/architecture.md" class="citation-link" target="_blank">Azure - P&amp;ID Digitization Architecture</a>
+              </div>
+              <div id="ref-112" class="border-l-4 border-slate-200 pl-4">
+                <strong>[112]</strong>
+                <a href="https://ieeexplore.ieee.org/document/10467037/" class="citation-link" target="_blank">IEEE - YOLOv8 P&amp;ID Recognition</a>
+              </div>
+              <div id="ref-119" class="border-l-4 border-slate-200 pl-4">
+                <strong>[119]</strong>
+                <a href="https://tecsurge.com/work-examples/508-intergraph-smart-p-amp-id-conversion" class="citation-link" target="_blank">Tecsurge - Smart P&amp;ID Conversion</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+        // Initialize Mermaid with custom configuration
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ffffff',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#1e293b',
+                lineColor: '#475569',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#fef3c7',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                secondBkg: '#f8fafc',
+                tertiaryBkg: '#fef3c7'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Initialize Mermaid Controls for zoom and pan
+        function initializeMermaidControls() {
+            const containers = document.querySelectorAll('.mermaid-container');
+
+            containers.forEach(container => {
+            const mermaidElement = container.querySelector('.mermaid');
+            let scale = 1;
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            // 触摸相关状态
+            let isTouch = false;
+            let touchStartTime = 0;
+            let initialDistance = 0;
+            let initialScale = 1;
+            let isPinching = false;
+
+            // Zoom controls
+            const zoomInBtn = container.querySelector('.zoom-in');
+            const zoomOutBtn = container.querySelector('.zoom-out');
+            const resetBtn = container.querySelector('.reset-zoom');
+            const fullscreenBtn = container.querySelector('.fullscreen');
+
+            function updateTransform() {
+                mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+                if (scale > 1) {
+                container.classList.add('zoomed');
+                } else {
+                container.classList.remove('zoomed');
+                }
+
+                mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
+            }
+
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener('click', () => {
+                scale = Math.min(scale * 1.25, 4);
+                updateTransform();
+                });
+            }
+
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener('click', () => {
+                scale = Math.max(scale / 1.25, 0.3);
+                if (scale <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateTransform();
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform();
+                });
+            }
+
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', () => {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+                });
+            }
+
+            // Mouse Events
+            mermaidElement.addEventListener('mousedown', (e) => {
+                if (isTouch) return; // 如果是触摸设备，忽略鼠标事件
+
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                mermaidElement.style.cursor = 'grabbing';
+                updateTransform();
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && !isTouch) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateTransform();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging && !isTouch) {
+                isDragging = false;
+                mermaidElement.style.cursor = 'grab';
+                updateTransform();
+                }
+            });
+
+            document.addEventListener('mouseleave', () => {
+                if (isDragging && !isTouch) {
+                isDragging = false;
+                mermaidElement.style.cursor = 'grab';
+                updateTransform();
+                }
+            });
+
+            // 获取两点之间的距离
+            function getTouchDistance(touch1, touch2) {
+                return Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+                );
+            }
+
+            // Touch Events - 触摸事件处理
+            mermaidElement.addEventListener('touchstart', (e) => {
+                isTouch = true;
+                touchStartTime = Date.now();
+
+                if (e.touches.length === 1) {
+                // 单指拖动
+                isPinching = false;
+                isDragging = true;
+
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+
+                } else if (e.touches.length === 2) {
+                // 双指缩放
+                isPinching = true;
+                isDragging = false;
+
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                initialDistance = getTouchDistance(touch1, touch2);
+                initialScale = scale;
+                }
+
+                e.preventDefault();
+            }, { passive: false });
+
+            mermaidElement.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isDragging && !isPinching) {
+                // 单指拖动
+                const touch = e.touches[0];
+                translateX = touch.clientX - startX;
+                translateY = touch.clientY - startY;
+                updateTransform();
+
+                } else if (e.touches.length === 2 && isPinching) {
+                // 双指缩放
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = getTouchDistance(touch1, touch2);
+
+                if (initialDistance > 0) {
+                    const newScale = Math.min(Math.max(
+                    initialScale * (currentDistance / initialDistance),
+                    0.3
+                    ), 4);
+                    scale = newScale;
+                    updateTransform();
+                }
+                }
+
+                e.preventDefault();
+            }, { passive: false });
+
+            mermaidElement.addEventListener('touchend', (e) => {
+                // 重置状态
+                if (e.touches.length === 0) {
+                isDragging = false;
+                isPinching = false;
+                initialDistance = 0;
+
+                // 延迟重置isTouch，避免鼠标事件立即触发
+                setTimeout(() => {
+                    isTouch = false;
+                }, 100);
+                } else if (e.touches.length === 1 && isPinching) {
+                // 从双指变为单指，切换为拖动模式
+                isPinching = false;
+                isDragging = true;
+
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+                }
+
+                updateTransform();
+            });
+
+            mermaidElement.addEventListener('touchcancel', (e) => {
+                isDragging = false;
+                isPinching = false;
+                initialDistance = 0;
+
+                setTimeout(() => {
+                isTouch = false;
+                }, 100);
+
+                updateTransform();
+            });
+
+            // Enhanced wheel zoom with better center point handling
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+
+                // Adjust translation to zoom towards center
+                if (newScale !== scale) {
+                const scaleDiff = newScale / scale;
+                translateX = translateX * scaleDiff;
+                translateY = translateY * scaleDiff;
+                scale = newScale;
+
+                if (scale <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+
+                updateTransform();
+                }
+            });
+
+            // Initialize display
+            updateTransform();
+            });
+        }
+
+        // Initialize the mermaid controls when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMermaidControls();
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const toc = document.getElementById('toc');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            toc.classList.toggle('open');
+        });
+
+        // Close mobile menu when clicking on a TOC link
+        const tocLinks = document.querySelectorAll('#toc a');
+        tocLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    toc.classList.remove('open');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight current section in TOC
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -70% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocLinks.forEach(link => {
+                        link.classList.remove('text-white');
+                        link.classList.add('text-slate-300');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.remove('text-slate-300');
+                            link.classList.add('text-white');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section[id]').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+  
+
+</body></html>

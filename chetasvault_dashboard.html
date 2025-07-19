@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChetasVault – Live Analytics</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1 class="glitch">🔥 CHETASVAULT</h1>
+    <p>Real-time productivity pulse</p>
+  </header>
+
+  <section id="spotlight">
+    <h2>Spotlight</h2>
+    <div id="spotlightCard" class="card">
+      <span id="spotlightTitle">Loading…</span>
+      <small id="spotlightTime">0 min</small>
+    </div>
+  </section>
+
+  <section id="timeControls">
+    <button class="btn active" data-range="7d">7 Days</button>
+    <button class="btn" data-range="30d">30 Days</button>
+    <button class="btn" data-range="all">All Time</button>
+  </section>
+
+  <section id="metrics">
+    <div class="chart-wrapper">
+      <canvas id="workChart"></canvas>
+    </div>
+    <div class="chart-wrapper">
+      <canvas id="contentChart"></canvas>
+    </div>
+  </section>
+
+  <section id="files">
+    <input id="search" type="search" placeholder="Search files…" />
+    <div id="fileList"></div>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

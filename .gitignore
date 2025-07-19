@@ -1,305 +1,43 @@
-
-
- The following document is provided for you to modify , instructions follow after the markdown
-
-
-
-```
-
-
-
-# Detailed Comparison of AI Compute Hardware in 2025
-
-### Key Points
-
-
-
-<  This section is left unfinished until the completion of the rest of the document, then the relevant conclusions can be displayed here as a highlight and introduction to the article. >
-
-
-
-### Survey Note: Detailed Comparison of AI Compute Hardware in 2025
-
-
-
-This survey note provides an in-depth analysis of AI compute hardware systems available in 2025, focusing on performance, cost, speed, and accuracy. The systems examined include Apple M4 Pro Max, NVIDIA DGX Spark, NVIDIA DGX Station, Ryzen AI Laptop with RTX 5090, Custom-Built High-End Systems with 4x RTX PRO 6000 Blackwell, and Google Cloud TPUs (v5e and v6e/Trillium). The analysis is based on official specifications, technical reports, and expert analyses, ensuring a comprehensive overview for researchers, developers, and enterprises.
-
-
-
- ( Additional systems have been added since the generation of the above text block. It may need refinement to include additional systems not present during its creation to reflect the current status of this paper. )
-
-#### Background and Context
-
-
-
-The rapid advancement of AI, particularly large language models (LLMs) and advanced AI agents, has driven demand for specialized hardware. In 2025, companies like Apple, NVIDIA, AMD, and Google offer diverse solutions, each optimized for specific use cases. This report synthesizes data from multiple sources, including manufacturer announcements, performance benchmarks, and industry analyses, to provide a detailed comparison.
-
-
-
-### System Overview
-
-
-
-Each system is designed for different AI workloads, from on-device efficiency to large-scale training. They have been configured to reflect the absolute maximum possible configuration for each platform.
-
-
-
-### Systems considered:
-
-
-
-- **Apple M4 Pro Max**:
-
-    - AI Compute Power: Features a 16-core Neural Engine delivering 38 TOPS, with a GPU offering approximately 34 TFLOPS in FP16, as per [Apple's announcement](https://www.apple.com/newsroom/2024/10/apple-introduces-m4-pro-and-m4-max/).
-
-    - Memory: 128GB unified memory with 546GB/s bandwidth, ideal for integrated workflows.
-
-    - Model Handling: Can handle 32B FP16 models entirely, but larger models (70B, 98B) require quantization or offloading, which may slow performance. It excels in Parameter-Efficient Fine-Tuning (PEFT) for models up to 13B parameters.
-
-    - Strengths: Unified memory reduces latency, energy-efficient for on-device AI.
-
-    - Limitations: Lower raw compute throughput compared to discrete GPUs, less suitable for large-scale training.
-
-- **NVIDIA DGX Spark**:
-
-    - AI Compute Power: Powered by the NVIDIA GB10 Grace Blackwell Superchip, offering up to 1 Petaflop (1000 TFLOPS) in FP4 precision, as detailed in [NVIDIA's product page](https://www.nvidia.com/en-us/data-center/dgx-spark/).
-
-    - Memory: 128GB LPDDR5X with 273GB/s bandwidth.
-
-    - Model Handling: Comfortably handles 32B FP16 models and possibly 70B with quantization, suitable for prototyping and fine-tuning smaller to medium models.
-
-    - Strengths: Compact, high AI compute for individual developers.
-
-    - Limitations: Memory bandwidth (273GB/s) is lower than Apple's M4 Max (546GB/s), impacting performance for memory-bound tasks.
-
-- **NVIDIA DGX Station**:
-
-    - AI Compute Power: Features the NVIDIA GB300 Grace Blackwell Ultra Desktop Superchip, delivering up to 20 Petaflops, as per [NVIDIA's specifications](https://www.nvidia.com/en-us/data-center/dgx-station/).
-
-    - Memory: 784GB coherent unified system memory, with advanced networking (800Gb/s ConnectX-8 SuperNIC).
-
-    - Model Handling: Designed for large-scale training and inference, easily handling 32B, 70B, and 98B FP16 models with ample headroom. Shows a 2.5x performance boost for Llama 2 70B LoRA fine-tuning over previous generations.
-
-    - Strengths: Enterprise-grade performance, ideal for teams needing on-premises solutions.
-
-    - Limitations: High cost, not general-purpose, tailored for AI developers.
-
-- **Ryzen AI Laptop (with RTX 5090)**:
-
-    - AI Compute Power: Combines AMD Ryzen AI 9 HX 370 CPU (12 cores, 24 threads) with XDNA 2 NPU (50 TOPS INT8) and NVIDIA GeForce RTX 5090 Laptop GPU (31.8 TFLOPS FP16/FP32), as per [LaptopMedia rankings](https://laptopmedia.com/ai-hardware-performance-rankings/).
-
-    - Memory: Up to 64GB DDR5/LPDDR5X, with GPU VRAM of 24GB GDDR7 and 896GB/s bandwidth.
-
-    - Model Handling: Handles 32B models on the GPU, especially with quantization; larger models (70B, 98B) require offloading, best for PEFT of 32B-70B models.
-
-    - Strengths: Portability, significant AI acceleration with discrete GPU and NPU.
-
-    - Limitations: VRAM capacity (24GB) is a bottleneck for very large models, impacts battery life.
-
-- **Custom-Built High-End System (4x RTX PRO 6000 Blackwell)**:
-
-    - AI Compute Power: Utilizes four NVIDIA RTX PRO 6000 Blackwell Server Edition GPUs, each with 125 TFLOPS FP32 and 4000 AI TOPS (FP4), totaling ~500 TFLOPS FP32 and 16000 AI TOPS (FP4), as per [NVIDIA's product details](https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000/).
-
-    - Memory: 384GB total VRAM (96GB per GPU, GDDR7), aggregate bandwidth ~7.168 TB/s.
-
-    - Model Handling: Swallows 32B, 70B, and 98B FP16 models with ease, offering extremely high inference tokens per second and efficient full fine-tuning.
-
-    - Strengths: Pinnacle of local compute power, full control over hardware, avoids cloud fees, addresses data sovereignty.
-
-    - Limitations: High upfront cost ($69,800-$74,800), significant power consumption, cooling needs, requires technical expertise.
-
-- **Google Cloud TPUs (v5e and v6e/Trillium)**:
-
-    - AI Compute Power: TPU v5e offers 197 TFLOPS BF16 per chip, scalable to 256 chips; v6e (anticipated 2025) offers 918 TFLOPS BF16 per chip, up to 234.9 PFLOPS BF16 per pod, as per [Google Cloud TPU docs](https://cloud.google.com/tpu/docs).
-
-    - Memory: v5e: 16GB HBM2 per chip (819 GBps bandwidth); v6e: 32GB HBM per chip (1640 GBps bandwidth).
-
-    - Model Handling: Highly efficient for LLM training and inference; v5e handles 32B models with quantization, v6e improves suitability for larger models, full fine-tuning of 70B FP16 in ~1.3 days per chip.
-
-    - Strengths: Specialized for AI, cost-efficient at scale, energy-efficient, integrated with Google Cloud.
-
-    - Limitations: Vendor lock-in to Google Cloud, less versatile for general computing, may require software adaptations.
-
-( The above listing of systems is intended to be a max configuration for each of the applicable options, i.e. an MX4 Pro Max with all the goodies. Every option selected to be maximum size, the rising system with the maximum available memory, and the maximum number of... GPU's. Potentially, this should be maybe a system that has two RX5090s, RTX5090s in it. I think you can do two with consumer hardware. Three is kind of pushing it, i don't know if that's 18, there's 32 lanes. What is a PCI channel quantity for the new Ryzen AI chips? Are they only available in laptop configurations or desktop available? I'm thinking like the HX and the AI Pro chips. I'm only interested in the very top end models which have unified memories. I need to know how many PCI slots are available for that. Also I need to know how many are present if any on the NVIDIA DGX workstation, the little handheld DGX system. I'm not sure what they call that, the spark or something. The one's like three or four grand that hasn't come out yet. The number for a Apple M4 Ultra, do they have PCI on those? I'm not even sure but I feel like there should be something. What about also for a top configured Ryzen setup? What's for the high end biggest Ryzen chip and then the smallest item? I mean Threadripper and Epic. I want to know what the current PCI size is for the latest generation of epic chips. I want to know for the top end model and for the lowest model and then also for the Threadripper chips top and bottom, just to know if there's a difference between the many PCI lanes are available for each of those. I guess you might just give that to me as, it references the motherboard, not necessarily the chip because it's going to be motherboard dependent. Also, if you can find the information on the Google Tensor Core systems, I would love to know that as well. And if there's any other AI based use case that we can pair here, I would love to know about that one too. We're looking to do basically maxed out Mac and Tasha's maxed out, rising AI machines, maxed out epic and Threadripper style machines. I
-
-- `Intel Xeon Platinum 8592+ PCIe lanes` (High-end)
-
-    
-
-- `Intel Xeon Bronze 3508U PCIe lanes` (Entry-level)
-
-    
-
-- `AMD EPYC 9754 PCIe lanes` (High-end)
-
-    
-
-- `AMD EPYC 9124 PCIe lanes` (Entry-level)
-
-    guess we could throw an Intel maxed out Xeon based machine in here too. And then the DGX workstation and the mini one from Nvidia and then the Google Tensor product. And also for the machines, we will want to have the number of video cards that could be placed in each system. And so give me a description of basically all these systems options. And if they would have like, you'd have a desktop that would have 24 PCI lanes, so maybe it would have two 50 90s or it would have two a 6000s. And you obviously the difference would be 96 memory versus 284 or whatever. And then for the Xeon systems, it would be the Xeon system that's the very entry level one, how many lanes would that get you? And then the top of the line Xeon system or I mean Threadripper and Ryzen for those as well. And then do the Nvidia DGX solutions even offer GPU inference, like can you throw a PCI card in there too? Because maybe people would want to do that despite having so much compute right integrated. If there is more compute that you could offload to a GPU, I can see people doing it. So yeah, give me all that data.  
-
-
-
-Show thinking)
-
-
-
-Below, we break down the comparison into key areas to help you understand the trade-offs for each AI compute hardware system in 2025.
-
-#### Performance / Cost Analysis
-
-
-
-Performance is evaluated based on AI compute power, memory capacity, memory bandwidth, and the ability to handle LLMs of varying sizes. These metrics are critical for both inference (real-time predictions) and training (model development). 
-
-
-
-Cost is a critical factor, with options ranging from initial purchase prices for local systems to hourly rates for cloud solutions.
-
-
-
-|**System**|**Initial Purchase Price**|**Hourly Rate (Cloud)**|**Notes**|
-
-|---|---|---|---|
-
-|**Apple M4 Pro Max**|$5,899 (Mac Studio) - $7,199 (MacBook Pro)|N/A|Secondhand market offers savings|
-
-|**NVIDIA DGX Spark**|$3,999|N/A|Compact, accessible for individuals|
-
-|**NVIDIA DGX Station**|$150,000 - $200,000|N/A|Enterprise-grade, high cost|
-
-|**Ryzen AI Laptop (RTX 5090)**|$4,599.99 - $4,899.99|N/A|Portable, mid-range cost|
-
-|**Custom-Built (4x RTX PRO 6000)**|$69,800 - $74,800|N/A|High upfront cost, server-grade|
-
-|**Google Cloud TPUs**|N/A|v5e: $1.20 - $1.56, v6e: $2.70 per chip-hour|Scalable, cost-efficient at scale|
-
- ( The price data for each model should accompany its description above. And this table above should actually be a price versus performance visualization, which shows the price of the system on one side and the tokens per second for a model size that's generalized that all the models can produce, say, a q4 13b model And the 7B model. Obviously, again, the NVIDIA and the Tensor solutions will display the unquantized speed of the same model being run. And the Ryzen system will have two entries for inference and dedicated speed. This will, be the same throughout this document, always when present, the Ryzen will be displayed with both configuration listed as if they're separate machines, essentially. )
-
-#### Speed Analysis
-
-
-
-Speed is measured by inference tokens per second and training times, reflecting how quickly systems can process AI workloads.
-
-
-
-- **Inference Speed**:
-
-    - Apple M4 Pro Max: ~4.26 tokens/second for 32B FP16 model, suitable for on-device real-time AI.
-
-    - NVIDIA DGX Spark: ~2.13 tokens/second for 32B FP16, lower due to memory bandwidth constraints.
-
-    - NVIDIA DGX Station: Not specified, but expected to be significantly higher given 20 Petaflops compute.
-
-    - Ryzen AI Laptop: Not specified, but RTX 5090's 31.8 TFLOPS suggests strong performance for its class.
-
-    - Custom-Built: Extremely high, minimal inference times due to 384GB VRAM and ~7.168 TB/s bandwidth.
-
-    - Google TPU v5e: ~2,175 tokens/second for Llama2-70B on 8-chip slice, highly efficient for cloud inference.
-
-
-
- (   The above data should be displayed in a table, not as text. Additionally, it should display a unified form of data. All the machines should be shown, and their tokens per second should be shown as a graph based on the model size D. Size used for each. So, for instance, the use of a 4 gigabyte, locally quantized for INT, GGUF file, or on the... NVIDIA and tensor machines, this would be for a version of the file, but not quantized, obviously. For machines which possess both options, which is only the Ryzen, the metric would show integrated graphics and dedicated graphics, inference speeds. And then this whole graph would need to be done again with time till first... Character, and then should also be done on 7B models, 13B models, 28B models, 70B models, 120B models, and 240B models. Each of those with the quantized version appropriate for the machine. So, Q4 quantizations for the machines that run quantized versions, and obviously the unquantized versions on the others, where that machine is unable to load into RAM would indicate a no data. It does not need a CPU inference rate as... That's just ridiculous at that point. Essentially, it's a null point, but the graph will show the 5, 6 graph points for each of those. So, it should be just a table of, you know, 6 times 5 or 6 times 6, however many different model sizes end up being, and then compress so that you can just see all that real easily. It's tokens per second on the left and model type on the bottom. Then after that, the next table would be done just the same, but time to first token with the exact same model selections. )
-
-
-
-
-
-- **Training Time**:
-
-    - Apple M4 Pro Max: Impractical for full fine-tuning of large models (70B, 98B), better for PEFT.
-
-    - NVIDIA DGX Station: Highly efficient for large-scale training, leveraging 20 Petaflops.
-
-    - Google TPU v6e: Full fine-tuning of 70B FP16 in ~1.3 days per chip, optimized for cloud-native training.
-
-
-
-
-
-( The analysis would then be also performed with the above system configurations and training time metrics would be displayed for the exact same models used above. Fine tuning would be the primary usage here. If train time could be performed for a model size entirely locally include that time as well. Although it's an unlikely scenario, it is potentially of use. Although that might only be capable on the NVIDIA and Google GPUs due to the tensor requirements. Obviously, if the entire operation is not contained within an accelerated environment, it's not worthy of displaying our data because we're only looking for optimal actual use cases here not for things that people play with. Even if it took a while, if the 128GB of unified system memory is sufficient to do a full on training of a model on an informed laptop or a unified Ryzen, it would be interesting to know what the limitations are on the size of the models that could be trained and what the time it takes to train a model like that on that kind of hardware. Also, we next get to fine tuning. We want the exact same thing, but for fine tuning. And then we also want the exact same thing, but for quantization of the models. Obviously, this is only for the models that are the applications that utilize quantization. But a time it takes to process a file for quantization is a useful metric for people are just getting into this chosen how much time it takes to specify specialized their accounts for their machines.  
-
-
-
-)
-
-#### Accuracy and Precision
-
-
-
-Accuracy is primarily model-dependent, but hardware precision (e.g., FP16, BF16, FP4) impacts computational fidelity. All systems support high-precision computations, with the following notes:
-
-
-
-- Apple M4 Pro Max: Supports FP16, optimized for mobile and edge AI tasks, ensuring accuracy for on-device applications.
-
-- NVIDIA Systems: Support FP16, TF32, BF16, and FP4, industry standard for AI research, ensuring high accuracy for large models.
-
-- Google TPUs: Optimized for BF16, offering high efficiency and accuracy for neural network training, powering services like Google Search and Translate.
-
-- Ryzen AI Laptop and Custom-Built: Leverage NVIDIA GPU precisions, ensuring compatibility with high-accuracy AI workflows.
-
-(  - Fuck.   This section is just a visual representation of the different computation capabilities of the systems. Obviously the rise in gets to here as well. The integrated and discrete GPU options. For display of this information, I feel almost like a Venn diagram would work, but that's not quite it. We have a collection of, say, ten different computational... file types, and then we've got six different systems. We want to show how each system can use each file type in an effective visual manner. I think Venn diagram almost does it, but that's specific to each. It only works with like three items, I think. So there's got to be something right similar to that, but that's specialized for this kind of visual distribution that would just be perfect for this. Use that. )
-
-
-
-#### Use Case Suitability
-
-
-
-Each system is tailored for specific use cases, as outlined in the document:
-
-
-
-- **Individual Developers & Local Prototyping**: Apple M4 Pro Max ($5,899-$7,199, secondhand savings), NVIDIA DGX Spark ($3,999), Ryzen AI Laptop ($4,599.99-$4,899.99) are ideal for on-device AI and light training.
-
-- **Small to Medium Teams & Dedicated Workstations**: NVIDIA DGX Station ($150,000-$200,000), Custom-Built Systems ($69,800-$74,800, scaled down) offer on-premises solutions for larger models.
-
-- **Large Enterprises & Cutting-Edge Research**: Custom-Built Systems (multiple GPUs), Google Cloud TPUs (hourly rates, scalable) excel for massive training and high-throughput inference.
-
-- **Cost-Sensitive Projects**: Leverage secondhand Apple M4 Pro Max, NVIDIA DGX Spark, or cloud spot instances for intermittent workloads.
-
-- **Data Sovereignty & Privacy**: Custom-Built Systems provide on-premises control, addressing regulatory and privacy concerns.
-
-
-
-( This information should accompany the system configuration details in the first portion of this document. )
-
-#### Future Trends and Considerations
-
-
-
-The AI hardware landscape in 2025 is evolving, with trends including:
-
-
-
-- Continued specialization of AI accelerators (NPUs, Tensor Cores, custom ASICs).
-
-- Memory innovation, with higher bandwidth and capacity remaining critical.
-
-- Software-hardware co-design, enhancing performance through integrated stacks.
-
-- Growth in edge AI, enabling on-device processing and reducing cloud reliance.
-
-- Sustainability, with energy efficiency (performance per watt) becoming increasingly important.
-
-- Hybrid cloud/on-prem deployments, balancing scale with data control.
-
-
-
-This detailed comparison aims to equip you with the information needed to select the optimal AI compute hardware for your specific needs, considering performance, cost, speed, and accuracy.
-
-
-
-
-
-``` 
-
-
-
-
-
-  Please update the provided document with the information requested in the parentheses below each section. I have already done my analysis of the version I present to you and my comments are provided for you to take action upon. With a detailed description and analysis of how to make each section exactly how I want it to be done. Upon completion of the text portion of the document and updating it, the key takeaways at the beginning of the document can be found and then written down. Those are just four or five single-spentance evaluations of the findings from this paperd. Do not remove the text describing how the visualizations should be done until after you have implemented said visualizations, my notes, which is specifically the content bound by parentheses, should remain until the final phase of the document, whereas after my approval, those comments can be removed and their context will no longer be necessary. You will need to perform some additional research to determine the data for the metrics I have requested. When requesting a model of a certain size, make sure you specify an exact model being used. I did not do that, but whatever you can find the data on is fine for the size, trying to use most recent current model you can find to look smart like we are using really good models, not some two month old bullshit. And then beyond that, if anything I've said makes a, you think there's a better way to do it, like my, the choice of either hardware or model, there's an obvious superior version, go with the superior version, you can make the decision that this is just a better option in every way. Make sure it's essentially an upgrade and a strict upgrade for the device. For the given cost tier, you know, when we replace something that's $500 with $20,000 solution, but if you know about a $400 solution, that would be an acceptable substitution. Similarly, equivalent cost item that provided enhanced performance would also be a good substitution. And like I said, there's no rigorous, defined model that makes up the data comparison sections, but I think you can find a model that's in very wide use and find the appropriate data as necessary. xx
-
-
+# === Secrets & Environment ===
+.env
+.env.local
+.env.*.local
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+.venv.bak/
+
+# === Node (if you ever add JS tooling) ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === OS & Editor cruft ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === Logs & scratch ===
+logs/
+*.log
+tmp/
+scratch/
+
+# === Auto-generated files (keep them local) ===
+file_metadata.json
+history/
+history/*.json
+
+# === Temporary / cache folders ===
+.bizyair_cache/

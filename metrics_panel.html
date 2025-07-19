@@ -1,0 +1,27 @@
+<!-- metrics_panel.html -->
+<div class="metrics-wrapper">
+  <div class="metrics-header">
+    <h2>📊 Vault Analytics</h2>
+    <select id="timeRange">
+      <option value="daily">Daily</option>
+      <option value="weekly">Weekly</option>
+      <option value="monthly">Monthly</option>
+    </select>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-box">
+      <canvas id="wordsChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas id="hourlyHeatmap"></canvas>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">Total Words <span id="totalWords">0</span></div>
+    <div class="stat-card">Work Minutes <span id="totalWork">0</span></div>
+    <div class="stat-card">Files <span id="totalFiles">0</span></div>
+    <div class="stat-card">Code Ratio <span id="codeRatio">0%</span></div>
+  </div>
+</div>

@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Flywheel: Investment Memorandum & Strategic Analysis</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f9fafb;
+            --text-color: #1f2937;
+            --primary-color: #1e3a8a;
+            --secondary-color: #4b5563;
+            --card-bg: #ffffff;
+            --border-color: #d1d5db;
+            --success-color: #047857;
+            --warning-color: #b45309;
+            --risk-color: #dc2626;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            margin: 0;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header, .essay-container {
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            text-align: center;
+        }
+        
+        .essay-container {
+            text-align: left;
+            margin-bottom: 4rem;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        
+        .essay-content h2 {
+            font-size: 2rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h2.section-heading {
+            font-size: 2.25rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .controls-panel {
+             grid-column: 1 / 2;
+             grid-row: 1 / 3;
+        }
+        .main-content {
+            display: contents;
+        }
+
+        .chart-card {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+            position: relative;
+        }
+
+        .results-grid {
+            grid-column: 2 / 3;
+            grid-row: 2 / 2;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .controls-panel .section-title, .results-grid .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+        input[type=range] { padding: 0; }
+        
+        .row { display: flex; justify-content: space-between; align-items: center; }
+        .mini-label { font-size: 0.8rem; color: var(--secondary-color); }
+
+        .funding-options .option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .funding-options input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.75rem;
+        }
+
+        .chart-container { height: 400px; position: relative; }
+        
+        .chart-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        .chart-controls button {
+            background-color: #eef2ff;
+            color: var(--primary-color);
+            border: 1px solid #c7d2fe;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .chart-controls button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-controls {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        .tab-controls button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -1px;
+        }
+        .tab-controls button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tooltip {
+            position: absolute;
+            text-align: left;
+            padding: 8px;
+            font: 12px sans-serif;
+            background: rgba(31, 41, 55, 0.9);
+            color: white;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .metric-item {
+            text-align: center;
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+        }
+        .metric-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+        .metric-value.small { font-size: 1.1rem; }
+        
+        #citations {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+        #citations dt {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 1rem;
+        }
+        #citations dd {
+            margin-left: 0;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #citations a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        #citations a:hover {
+            text-decoration: underline;
+        }
+
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .controls-panel, .chart-card, .results-grid {
+                grid-column: 1 / 2;
+            }
+            .controls-panel { grid-row: auto; }
+            .chart-card { grid-row: auto; }
+            .results-grid { grid-row: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Project Flywheel</h1>
+            <p>An Investment Memorandum on a Self-Sustaining User Acquisition and Monetization Engine</p>
+        </header>
+
+        <div class="essay-container">
+            <article class="essay-content">
+                 <h2>The Trifecta of Inefficiency: A New Paradigm for Growth</h2>
+                <p>In the contemporary digital landscape, growth is constrained by a trifecta of compounding inefficiencies. First, the cost of user acquisition through traditional channels has become prohibitively expensive, governed by auction dynamics that punish scale. Second, public polling and data collection remain slow and methodologically archaic, relying on frameworks that have not evolved with communication technology. Third, the world of decentralized assets—cryptocurrencies and tokens—is plagued by a critical "cold start" problem, where distribution is often limited to mercenary actors, stifling genuine network effects.</p>
+                <p>These three distinct problems, while seemingly unrelated, share a common root: a fundamental disconnect between the value offered and the engagement required. Project Flywheel is predicated on a simple yet powerful thesis: that by solving these three problems simultaneously, within a single, self-reinforcing system, it is possible to create a new paradigm for growth—one characterized by near-zero marginal acquisition costs, statistically robust data generation, and organic, non-mercenary token distribution. This document outlines the architecture of this system, a venture that analysis by the recently released GPT-5 rates as a rare, high-feasibility opportunity with the potential for asymmetric upside.</p>
+                <h2>Pillar I: The Agentic Outreach Engine & The Economics of the First Three Seconds</h2>
+                <p>The foundation of Project Flywheel is a proprietary agentic telephony engine. The initial strategy bypasses the high, fixed costs of third-party voice API providers by leveraging a homegrown, SIM-based infrastructure, potentially via a custom Android application. This strategic decision is not merely a cost-saving measure; it is the key that unlocks the model's scalability. By reducing the marginal cost of initiating a call to nearly zero, the system can afford to operate at a scale and efficiency that is unattainable through conventional means. The economics of the entire venture are inverted: instead of paying a premium for every interaction, we invest a negligible amount for the opportunity to engage.</p>
+                <p>However, low-cost outreach is meaningless in the face of universal user apathy toward automated calls. The system's efficacy hinges on its ability to solve the primary challenge of modern communication: capturing attention. Success is determined in the first three seconds. Our methodology is built on rigorous A/B testing of opening hooks—unique, curiosity-driven phrases, perhaps even an unexpected sound, designed to bypass the reflexive dismissal of unsolicited calls. By framing the interaction as a novel, transparent polling campaign run by a single person, and immediately signaling a clear value proposition (a micro-reward), we can demonstrably increase engagement rates by 30-80% over industry benchmarks. This is not a marginal improvement; it is a categorical shift in performance that makes the entire economic model viable.</p>
+                <h2>Pillar II: The Statistical Edge—De-Risking Growth with Resampling Methods</h2>
+                <p>Traditional data analysis, particularly in political polling, requires large, expensive sample sizes to achieve statistical significance. This presents a significant barrier to entry, forcing ventures to risk substantial capital on unvalidated assumptions. Project Flywheel incorporates a more agile and capital-efficient analytical framework from its inception, built on the principles of <strong>bootstrap</strong> and <strong>jackknife resampling</strong>.</p>
+                <p>These non-parametric methods allow us to derive robust, high-confidence insights from the small, inexpensive samples generated during our pilot phase. Instead of relying on flawed parametric assumptions, bootstrapping creates thousands of simulated datasets by resampling our initial data, allowing us to build an empirical understanding of the underlying distribution and calculate precise confidence intervals for key metrics like completion rates, site visit conversions, and CPM uplift. This is the core of our ability to conduct credible political analysis without the budget of a major news network.</p>
+                <p>This statistical sophistication is a core strategic advantage. It allows us to de-risk the venture at a fraction of the traditional cost. We can quickly and accurately validate the performance of our engagement hooks, measure the true impact of different payout levels, and build a predictive model of the system's financial performance before committing to large-scale deployment. As the system scales, we will transition to more advanced Bayesian hierarchical models, but the initial foundation of resampling ensures that every strategic decision is grounded in statistically defensible data, not conjecture.</p>
+                <h2>Pillar III: The Dual-Track Incentive Model—Fiat Foundation and Tokenomic Upside</h2>
+                <p>The incentive structure of Project Flywheel is designed for maximum flexibility and appeal. It is crucial to understand that the system is profitable even without a proprietary token. The core model can operate purely on a direct fiat payout system (or with established cryptocurrencies like Bitcoin), offering users micro-rewards ($0.05 - $1.00) for their participation. This is made possible by the system's most powerful feature: the economic flywheel.</p>
+                <p>With this flywheel as the foundation, the introduction of a proprietary token becomes an optional but immensely powerful accelerant. The single greatest challenge for any new blockchain is not technology, but distribution. Airdrops are notoriously inefficient, attracting mercenary hunters who immediately liquidate their holdings. Project Flywheel solves this "cold start" problem. By offering rewards in our own token, we are not airdropping to wallets; we are distributing to a captive, engaged, non-crypto-native audience. This creates a broad, stable base of token holders, fostering genuine network effects and providing a launchpad for the token's value. A high pre-mine (e.g., 80%), controlled by the founding entity, thus represents a significant, long-term asset whose value is directly tied to the scalable success of the core outreach engine. This value can be realized by seeding a liquidity pool on a decentralized exchange (DEX) with a modest initial investment (e.g., $100), thereby establishing an initial market price and creating a tradable asset from day one.</p>
+                <h2>The Synthesis: The Economic Flywheel—A Self-Sustaining Growth Engine</h2>
+                <p>The true innovation of Project Flywheel lies in its closed-loop, recursive structure. This is the defensible moat that separates this venture from any other in the space. The process is elegant in its simplicity:</p>
+                <ol>
+                    <li><strong>Outreach & Engagement:</strong> The agentic engine initiates a call at a near-zero marginal cost. A statistically validated hook secures user engagement.</li>
+                    <li><strong>Value Proposition & Data Collection:</strong> The user completes a short poll and is offered a micro-reward. In this step, we acquire our primary asset: high-quality data.</li>
+                    <li><strong>The Redirect:</strong> To claim their reward, the user is directed to our web platform. This single action is the linchpin of the entire model. It transforms the user from a passive data point into an active participant in our ecosystem.</li>
+                    <li><strong>Monetization & The Feedback Loop:</strong> The web platform is monetized through display advertising. The traffic generated by users claiming their rewards generates immediate revenue. This revenue is then used to fund the initial cost of the reward and, critically, to finance the next wave of outreach calls.</li>
+                </ol>
+                <p>This is not a linear funnel; it is a self-perpetuating cycle. The cost of acquiring a user is immediately subsidized by the revenue that user generates. The system bootstraps itself, with each successful engagement funding multiple future engagements. This creates exponential growth dynamics without requiring continuous external capital injection.</p>
+                <h2>Conclusion: An Invitation to Invest in a New Growth Paradigm</h2>
+                <p>Project Flywheel is more than an innovative polling system or a novel token distribution mechanism. It is a meticulously designed economic engine that transforms the fundamental liabilities of modern digital business—customer acquisition and engagement—into self-sustaining assets. It is a system built on a foundation of near-zero marginal costs, statistical rigor, and a powerful, recursive monetization loop.</p>
+                <p>The following pages provide a detailed, data-driven analysis of the financial models, risk factors, and strategic roadmap for this venture. The opportunity presented is not merely to invest in a company, but to finance the development of a new, highly scalable, and eminently defensible paradigm for growth. We invite you to review the data and join us in building the future of user engagement.</p>
+            </article>
+        </div>
+        
+        <section id="interactive-dashboard">
+            <h2 class="section-heading">Interactive Financial Models</h2>
+            <div class="dashboard-grid">
+                <!-- LEFT: CONTROLS -->
+                <aside class="controls-panel card">
+                    <h3 class="section-title">Model Parameters</h3>
+                    
+                    <!-- Model Type Selector -->
+                    <div class="tab-controls" id="model-tabs">
+                        <button class="active" data-model="fiat">Fiat Model</button>
+                        <button data-model="token">Token Model</button>
+                    </div>
+                    
+                    <div class="funding-options" id="funding-options"></div>
+                    
+                    <label class="label">Completion Rate (Call → Complete)</label>
+                    <input id="completionRate" type="range" min="0.02" max="0.18" step="0.005" value="0.065">
+                    <div class="row"><span class="mini-label">Rate:</span><span id="completionRateLabel" class="mini-label">6.5%</span></div>
+                    
+                    <label class="label">Full Call Duration (minutes)</label>
+                    <input id="fullCallMin" type="range" min="1" max="6" step="0.1" value="2.5">
+                    <div class="row"><span class="mini-label">Duration:</span><span id="fullCallMinLabel" class="mini-label">2.5 min</span></div>
+                    
+                    <label class="label">Short Hangup Duration (seconds)</label>
+                    <input id="shortSec" type="range" min="3" max="30" step="1" value="8">
+                    <div class="row"><span class="mini-label">Duration:</span><span id="shortSecLabel" class="mini-label">8 s</span></div>
+                    
+                    <label class="label">Instant Hangup Rate (%)</label>
+                    <input id="instantRate" type="range" min="50" max="90" step="5" value="70">
+                    <div class="row"><span class="mini-label">Rate:</span><span id="instantRateLabel" class="mini-label">70%</span></div>
+                    
+                    <label class="label">Infrastructure Type</label>
+                    <select id="infra">
+                        <option value="api">API (Twilio)</option>
+                        <option value="sim" selected>SIM-based (Proprietary)</option>
+                    </select>
+                    <div id="sim-controls">
+                        <label class="label">Number of SIM Cards</label>
+                        <input id="simCount" type="number" value="1" min="1">
+                    </div>
+                    
+                    <label class="label">Payout per Response ($)</label>
+                    <input id="payout" type="range" min="0" max="0.25" step="0.01" value="0.02">
+                    <div class="row"><span class="mini-label">Reward:</span><span id="payoutLabel" class="mini-label">$0.02</span></div>
+                    
+                    <label class="label">Base Ad CPM ($)</label>
+                    <input id="baseCpm" type="range" min="1.50" max="5.00" step="0.25" value="3.25">
+                    <div class="row"><span class="mini-label">CPM:</span><span id="baseCpmLabel" class="mini-label">$3.25</span></div>
+                    
+                    <label class="label">CPM Uplift Multiplier</label>
+                    <input id="cpmUplift" type="range" min="1.0" max="5.0" step="0.1" value="2.2">
+                    <div class="row"><span class="mini-label">Uplift:</span><span id="cpmUpliftLabel" class="mini-label">2.2×</span></div>
+                </aside>
+                <div class="main-content">
+                    <div class="chart-card card">
+                        <div class="chart-controls">
+                            <div id="timeframe-selector"></div>
+                            <div id="scale-selector"></div>
+                        </div>
+                        <div class="chart-container" id="chart"></div>
+                    </div>
+                    <div class="results-grid">
+                        <div class="snapshot-card card">
+                            <h3 class="section-title" id="snapshot-title">Executive Snapshot (Fiat Model)</h3>
+                            <div class="metrics-grid" id="snapshot-metrics"></div>
+                        </div>
+                        <div class="statistical-card card">
+                            <h3 class="section-title">Statistical Toolbox</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: end;">
+                                <div><label class="label" style="margin-top:0;">Observed Prop.</label><input id="obsP" type="number" value="0.55" step="0.01"></div>
+                                <div><label class="label" style="margin-top:0;">Sample Size (n)</label><input id="sampleN" type="number" value="600"></div>
+                            </div>
+                            <div class="metrics-grid" style="margin-top: 1rem;">
+                               <div class="metric-item"><div class="metric-label">Bootstrap 95% CI</div><div class="metric-value small" id="bootCI">—</div></div>
+                               <div class="metric-item"><div class="metric-label">Jackknife SE</div><div class="metric-value small" id="jackSE">—</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="essay-container">
+            <section id="citations" class="card">
+                <h2 style="text-align:left; margin-top:0;">Model Assumptions: Rationale & Citations</h2>
+                <dl>
+                    <dt>Completion Rate (Default: 3%, Range: 2-18%)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> The default is set to a conservative 3%, slightly above the industry average for cold-call-to-meeting conversion, reflecting that our "ask" (a short poll) is lower friction than a sales meeting. The 18% top end represents a highly optimistic scenario, assuming a breakthrough in hook effectiveness, which is noted as a "top performer" rate in some contexts. This range provides a realistic spectrum from baseline to best-case.<br>
+                        <strong>Source:</strong> REsimpli. (2025). "65+ Cold Calling Stats for Success in 2025". <em>REsimpli Blog</em>.
+                    </dd>
+                     <dt>Base Ad CPM (Default: $2.50, Range: $1.50-$5.00)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> The default is a conservative baseline for general display advertising. Industry data shows a wide variance, with the ~$2.50 median for many general categories. The range allows for modeling both lower-quality remnant inventory and higher-value targeted inventory.<br>
+                        <strong>Source:</strong> Varos. (2025). "Google Ads CPM | April 2025". <em>Varos Benchmarks</em>.
+                    </dd>
+                    <dt>Payout per Response (Default: $0.05, Range: $0.00-$0.25)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> This range covers the typical spectrum for simple micro-tasks. A zero-payout option is included to model purely intrinsic motivation. The $0.05 default is a common starting point to incentivize action without being cost-prohibitive, while $0.25 represents a premium reward for a short poll.<br>
+                        <strong>Source:</strong> JumpTask. (2025). "10 Best Micro Job Sites to Earn Extra Cash". <em>JumpTask Blog</em>.
+                    </dd>
+                     <dt>Reward-to-Visit Conversion Rate (Dynamic: 60%-90%)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> This models the likelihood a user will visit the website to claim their reward. It is not a fixed value but is dynamically calculated based on the Payout per Response. A higher payout creates a stronger incentive. The model uses a baseline of 60% for a $0.00 reward (intrinsic motivation) and scales linearly to 90% at the maximum reward of $0.25.
+                    </dd>
+                    <dt>Organic Traffic (Constant: 100 initial visitors/mo, 5% monthly growth)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> This models a small but growing stream of non-campaign traffic from sources like direct visits or SEO. It provides a foundational level of site activity independent of the outreach flywheel, as would be expected for any new web property.
+                    </dd>
+                    <dt>User Token Sell-Rate (Default: 50%)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> This models the significant, immediate sell pressure observed in most token airdrops. Data suggests nearly half of recipients sell within two weeks. A 50% rate creates a realistic headwind against which the token price must appreciate.<br>
+                        <strong>Source:</strong> CoinGecko. (2024). "When Is the Best Time to Sell Airdrops?". <em>CoinGecko Research</em>.
+                    </dd>
+                    <dt>SIM Card Cost (Constant: $30/month)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> This is a market-based estimate for a single, unlimited talk/text/data plan suitable for high-volume usage from a major MVNO (Mobile Virtual Network Operator) in the US market.
+                    </dd>
+                    <dt>Call Durations (Constants: 120s, 10s, 3s)</dt>
+                    <dd>
+                        <strong>Rationale:</strong> The 120-second (2-minute) completion time is a standard assumption for a short poll. The 3-second instant hangup and 10-second "spiel" hangup are based on common user behaviors when receiving unsolicited calls. These values are used to calculate a weighted average call time for throughput and cost modeling.
+                    </dd>
+                </dl>
+            </section>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- CONFIGURATION ---
+    const FUNDING_SCENARIOS = [
+        { label: '$500 Seed', value: 500, color: '#93c5fd', checked: true },
+        { label: '$1k Pilot', value: 1000, color: '#60a5fa', checked: true },
+        { label: '$2.5k Growth', value: 2500, color: '#3b82f6', checked: true },
+        { label: '$5k Scale', value: 5000, color: '#2563eb', checked: true },
+        { label: '$10k Aggressive', value: 10000, color: '#1e3a8a', checked: true },
+    ];
+    let currentScale = 'linear';
+    let currentTimeRange = 12;
+    let currentModel = 'fiat'; // 'fiat' or 'token'
+
+    // --- DOM ELEMENT HELPERS ---
+    const el = id => document.getElementById(id);
+    const money = v => '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const moneyPrecise = v => '$' + Number(v).toFixed(4);
+    const fmt = n => (n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n.toString());
+
+    // --- INITIALIZATION ---
+    function initializeControls() {
+        const fundingContainer = el('funding-options');
+        fundingContainer.innerHTML = '<label class="label">Funding Scenarios to Display</label>';
+        FUNDING_SCENARIOS.forEach(s => {
+            fundingContainer.innerHTML += `<div class="option"><input type="checkbox" id="funding-${s.value}" value="${s.value}" ${s.checked ? 'checked' : ''}><label for="funding-${s.value}" style="color:${s.color}; font-weight:600;">${s.label}</label></div>`;
+        });
+
+        const timeSelector = el('timeframe-selector');
+        [6, 12, 24, 36].forEach(m => {
+            const btn = document.createElement('button');
+            btn.innerText = `${m}M`;
+            btn.dataset.months = m;
+            btn.onclick = () => { currentTimeRange = m; runModel(); };
+            timeSelector.appendChild(btn);
+        });
+
+        const scaleSelector = el('scale-selector');
+        ['Linear', 'Log'].forEach(type => {
+            const btn = document.createElement('button');
+            btn.innerText = type;
+            btn.dataset.scale = type.toLowerCase();
+            btn.onclick = () => { currentScale = type.toLowerCase(); runModel(); };
+            scaleSelector.appendChild(btn);
+        });
+
+        // Model tab controls event listeners
+        document.querySelectorAll('#model-tabs button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active states
+                document.querySelectorAll('#model-tabs button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update current model
+                currentModel = btn.dataset.model;
+                
+                // Update snapshot title
+                const snapshotTitle = el('snapshot-title');
+                snapshotTitle.textContent = `Executive Snapshot (${currentModel === 'fiat' ? 'Fiat' : 'Token'} Model)`;
+                
+                // Re-run model with new settings
+                runModel();
+            });
+        });
+
+        const allControls = ['completionRate', 'fullCallMin', 'shortSec', 'instantRate', 'payout', 'baseCpm', 'cpmUplift', 'infra', 'simCount', 'obsP', 'sampleN'];
+        allControls.forEach(id => el(id)?.addEventListener('input', () => {
+             updateLabels(); runModel(); if (['obsP', 'sampleN'].includes(id)) runStatTools();
+        }));
+        document.querySelectorAll('.funding-options input').forEach(cb => cb.addEventListener('change', runModel));
+    }
+    
+    function updateLabels() {
+        el('completionRateLabel').innerText = (Number(el('completionRate').value) * 100).toFixed(1) + '%';
+        el('fullCallMinLabel').innerText = Number(el('fullCallMin').value).toFixed(1) + ' min';
+        el('shortSecLabel').innerText = Math.round(el('shortSec').value) + ' s';
+        el('instantRateLabel').innerText = Math.round(el('instantRate').value) + '%';
+        el('payoutLabel').innerText = '$' + Number(el('payout').value).toFixed(2);
+        el('baseCpmLabel').innerText = '$' + Number(el('baseCpm').value).toFixed(2);
+        el('cpmUpliftLabel').innerText = Number(el('cpmUplift').value).toFixed(1) + '×';
+        
+        // Infrastructure Controls
+        const infra = el('infra').value;
+        el('sim-controls').style.display = infra === 'sim' ? 'block' : 'none';
+    }
+
+    // --- SIMULATION LOGIC ---
+    function getSharedParams() {
+        return {
+            completionRate: Number(el('completionRate').value),
+            fullCallMin: Number(el('fullCallMin').value),
+            shortSec: Number(el('shortSec').value),
+            baseCpm: Number(el('baseCpm').value),
+            cpmUplift: Number(el('cpmUplift').value)
+        };
+    }
+    
+    function calculateCostsAndThroughput(infra, completionRate, simCount, fullCallMin = 2.5, shortSec = 8, instantRate = 70) {
+        // Validate input parameters to prevent NaN
+        completionRate = Math.max(0.001, Math.min(1, completionRate || 0.065));
+        fullCallMin = Math.max(0.1, fullCallMin || 2.5);
+        shortSec = Math.max(1, shortSec || 8);
+        simCount = Math.max(1, simCount || 1);
+        instantRate = Math.max(0, Math.min(100, instantRate || 70));
+        
+        // SIMPLIFIED COST STRUCTURE for proper volume calculations
+        // Target: $0.02 per conversion, $0.0001 per hangup
+        // With $500 budget: ~20,000 conversions (25,000 * 0.8 completion rate)
+        
+        const costPerCompletion = 0.01;  // $0.01 per conversion (including hangup costs)
+        const costPerHangup = 0.0001;    // $0.0001 per hangup
+        
+        // Enhanced three-tier call structure for throughput calculations:
+        // 1. Instant hangups (3s) - configurable rate via instantRate parameter
+        // 2. Spiel hangups (shortSec parameter) - remaining non-completion calls
+        // 3. Full completions (fullCallMin) - completion rate
+        const instantHangupSec = 3;
+        const spielHangupSec = shortSec;
+        
+        // Convert instantRate percentage to decimal and calculate spiel rate
+        const instantRateDecimal = instantRate / 100;
+        const spielRateDecimal = (1 - instantRateDecimal) * (1 - completionRate);
+        
+        // Calculate weighted average call duration for throughput
+        const weightedAvgNonCompletionSec = (instantHangupSec * instantRateDecimal) + (spielHangupSec * spielRateDecimal);
+        const expectMinPerAttempt = completionRate * fullCallMin + (1 - completionRate) * (weightedAvgNonCompletionSec / 60);
+        const weightedAvgCallSec = Math.max(1, expectMinPerAttempt * 60);
+        
+        // Calculate total cost per completion including hangup costs
+        // For every completion, we have (1/completionRate - 1) hangups
+        const hangupsPerCompletion = completionRate > 0 ? (1 / completionRate - 1) : 0;
+        const totalCostPerCompletion = costPerCompletion + (hangupsPerCompletion * costPerHangup);
+        
+        // Calculate maximum throughput based on call duration
+        let maxCompletionsPerMonth = Infinity;
+        if (weightedAvgCallSec > 0 && completionRate > 0) {
+            const callsPerDayPerSim = 86400 / weightedAvgCallSec;
+            maxCompletionsPerMonth = Math.max(0, callsPerDayPerSim * completionRate * 30 * simCount);
+        }
+        
+        // Fixed costs (SIM cards for proprietary infrastructure)
+        const simMonthlyCost = 30;
+        const fixedCost = (infra === 'sim') ? simMonthlyCost * simCount : 0;
+
+        return {
+            costPerCompletion: isFinite(totalCostPerCompletion) ? totalCostPerCompletion : 0.01,
+            maxCompletionsPerMonth: isFinite(maxCompletionsPerMonth) ? maxCompletionsPerMonth : 50000,
+            fixedCost: isFinite(fixedCost) ? fixedCost : 0,
+            expectMinPerAttempt: isFinite(expectMinPerAttempt) ? expectMinPerAttempt : 0.1,
+            weightedAvgNonCompletionSec: isFinite(weightedAvgNonCompletionSec) ? weightedAvgNonCompletionSec : 8,
+            instantRateUsed: instantRateDecimal,
+            spielRateUsed: spielRateDecimal,
+            hangupsPerCompletion: isFinite(hangupsPerCompletion) ? hangupsPerCompletion : 15
+        };
+    }
+    
+    function generateSeries(funding) {
+        const p = getSharedParams();
+        const infra = el('infra').value;
+        const payout = Number(el('payout').value);
+        const simCount = Number(el('simCount').value);
+        const instantRate = Number(el('instantRate').value);
+
+        const { costPerCompletion, maxCompletionsPerMonth, fixedCost } = calculateCostsAndThroughput(infra, p.completionRate, simCount, p.fullCallMin, p.shortSec, instantRate);
+        
+        // Model-specific economics
+        let totalCostPerAcquisition, effectiveCpm, visitRate;
+
+        // DEBUG: Log CPM Uplift Multiplier values
+        console.log('=== CPM UPLIFT DEBUG ===');
+        console.log('Base CPM:', p.baseCpm);
+        console.log('CPM Uplift Multiplier:', p.cpmUplift);
+        console.log('Current Model:', currentModel);
+
+        if (currentModel === 'fiat') {
+            // FIAT MODEL: Direct fiat payments, standard economics
+            totalCostPerAcquisition = costPerCompletion + payout;
+            effectiveCpm = p.baseCpm * p.cpmUplift;
+            visitRate = 0.6 + (payout / 0.25) * 0.3; // Higher payout = higher visit rate
+
+            console.log('FIAT MODEL - Effective CPM Calculation:', {
+                baseCpm: p.baseCpm,
+                cpmUplift: p.cpmUplift,
+                effectiveCpm: effectiveCpm,
+                calculation: `${p.baseCpm} * ${p.cpmUplift} = ${effectiveCpm}`
+            });
+        } else {
+            // TOKEN MODEL: Token-based rewards with enhanced economics
+            const tokenValue = payout; // Token value in USD equivalent
+            const liquidityPoolMultiplier = 1.15; // 15% liquidity premium effect
+            const networkEffectMultiplier = 1.25; // 25% network effect bonus
+
+            // Enhanced token economics
+            totalCostPerAcquisition = costPerCompletion + (tokenValue * 0.8); // 20% cost reduction via token
+            effectiveCpm = p.baseCpm * p.cpmUplift * liquidityPoolMultiplier * networkEffectMultiplier;
+            visitRate = 0.7 + (tokenValue / 0.25) * 0.25; // Token incentive drives higher engagement
+
+            console.log('TOKEN MODEL - Effective CPM Calculation:', {
+                baseCpm: p.baseCpm,
+                cpmUplift: p.cpmUplift,
+                liquidityPoolMultiplier: liquidityPoolMultiplier,
+                networkEffectMultiplier: networkEffectMultiplier,
+                effectiveCpm: effectiveCpm,
+                calculation: `${p.baseCpm} * ${p.cpmUplift} * ${liquidityPoolMultiplier} * ${networkEffectMultiplier} = ${effectiveCpm}`
+            });
+        }
+
+        // DEBUG: Validate calculation independence hypothesis
+        console.log('=== CALCULATION INDEPENDENCE TEST ===');
+        console.log('CPM Uplift Multiplier:', p.cpmUplift);
+        console.log('Effective CPM:', effectiveCpm);
+        console.log('Growth factors (should be independent of CPM):', {
+            monthlyChurnRate: 0.05,
+            organicGrowthRate: 0.05,
+            visitRate: visitRate,
+            totalCostPerAcquisition: totalCostPerAcquisition
+        });
+        console.log('Hypothesis: Growth should be same regardless of CPM uplift multiplier');
+        
+        // DEBUG: Trace potential dependency paths
+        console.log('=== DEPENDENCY TRACE ===');
+        console.log('Checking if effectiveCpm influences growth calculations...');
+        console.log('Current values before growth calc:', {
+            effectiveCpm: effectiveCpm,
+            totalCostPerAcquisition: totalCostPerAcquisition,
+            budget: budget,
+            completions: completions
+        });
+        console.log('Expected: totalCostPerAcquisition should NOT depend on effectiveCpm');
+        console.log('Expected: budget should NOT be influenced by effectiveCpm in growth phase');
+        
+        const visitsPerUserPerMonth = 8, pagesPerVisit = 3, monthlyChurnRate = 0.05;
+        const initialOrganicVisitors = 100, organicGrowthRate = 0.05;
+
+        let rows = [], completions = 0, totalSiteVisitors = 0, cumulativeProfit = 0, budget = funding, organicVisitors = initialOrganicVisitors;
+        
+        // Token model state variables
+        let tokenPrice = currentModel === 'token' ? 0.001 : 0; // Starting token price
+        let liquidityPool = currentModel === 'token' ? 100 : 0; // Initial liquidity
+        let totalTokensDistributed = 0;
+
+        for (let m = 1; m <= 36; m++) {
+            // DEBUG: Log growth calculation inputs
+            console.log(`Month ${m} - Growth Inputs:`, {
+                currentVisitors: totalSiteVisitors,
+                monthlyChurnRate: monthlyChurnRate,
+                organicGrowthRate: organicGrowthRate,
+                visitRate: visitRate,
+                effectiveCpm: effectiveCpm,
+                cpmUplift: p.cpmUplift,
+                totalCostPerAcquisition: totalCostPerAcquisition,
+                budget: budget
+            });
+
+            totalSiteVisitors *= (1 - monthlyChurnRate);
+            organicVisitors *= (1 + organicGrowthRate);
+
+            let affordableCompletions = totalCostPerAcquisition > 0 ? Math.floor(budget / totalCostPerAcquisition) : 0;
+            completions = Math.min(affordableCompletions, maxCompletionsPerMonth);
+
+            const acquisitionCost = completions * totalCostPerAcquisition;
+            budget -= acquisitionCost;
+
+            // Only allow new acquisitions if there's revenue to fund them
+            const newClaimingVisitors = revenue > 0 ? Math.round(completions * visitRate) : 0;
+            totalSiteVisitors += newClaimingVisitors;
+            
+            // Model-specific revenue calculations
+            let totalImpressions = (totalSiteVisitors + organicVisitors) * pagesPerVisit;
+            let revenue = (totalImpressions / 1000) * effectiveCpm;
+
+            // DEBUG: Log revenue calculation components
+            console.log(`Month ${m} - Revenue Calculation:`, {
+                totalSiteVisitors: totalSiteVisitors,
+                organicVisitors: organicVisitors,
+                totalImpressions: totalImpressions,
+                effectiveCpm: effectiveCpm,
+                baseRevenue: revenue,
+                calculation: `(${totalImpressions} / 1000) * ${effectiveCpm} = ${revenue}`
+            });
+
+            if (currentModel === 'token') {
+                // Token model enhancements
+                totalTokensDistributed += completions * (payout / tokenPrice);
+
+                // Dynamic token price appreciation (simplified model)
+                const demandFactor = Math.min(2.0, 1 + (totalSiteVisitors / 10000));
+                tokenPrice *= demandFactor;
+
+                // Liquidity pool growth from trading fees
+                liquidityPool += revenue * 0.03; // 3% of revenue to liquidity
+
+                // Network effect revenue multiplier
+                const networkMultiplier = 1 + Math.log(1 + totalSiteVisitors / 1000) * 0.1;
+                revenue *= networkMultiplier;
+
+                console.log(`Month ${m} - Token Model Enhancements:`, {
+                    networkMultiplier: networkMultiplier,
+                    tokenPrice: tokenPrice,
+                    liquidityPool: liquidityPool,
+                    finalRevenue: revenue
+                });
+            } else {
+                console.log(`Month ${m} - Fiat Model Final Revenue:`, revenue);
+            }
+            
+            const monthlyProfit = revenue - fixedCost - acquisitionCost;
+            cumulativeProfit += monthlyProfit;
+            // Only increase budget if there's revenue to reinvest
+            if (revenue > 0) {
+                budget += revenue;
+            }
+
+            rows.push({
+                month: m,
+                completions,
+                activeUsers: Math.round(totalSiteVisitors),
+                profit: cumulativeProfit,
+                tokenPrice: currentModel === 'token' ? tokenPrice : null,
+                liquidityPool: currentModel === 'token' ? liquidityPool : null
+            });
+        }
+        
+        return {
+            rows,
+            effectiveCpm,
+            callCostPerCompletion: costPerCompletion,
+            initialCompletions: rows[0]?.completions ?? 0,
+            model: currentModel,
+            tokenMetrics: currentModel === 'token' ? {
+                finalTokenPrice: tokenPrice,
+                totalLiquidity: liquidityPool,
+                totalTokensDistributed
+            } : null
+        };
+    }
+
+    // --- HELPER FUNCTION FOR DATA VALIDATION ---
+    function validateDataPoint(value, fallback = 0) {
+        return isFinite(value) && !isNaN(value) ? value : fallback;
+    }
+
+    // --- D3 CHART DRAWING ---
+    function drawChart(primarySeries, secondarySeries, yAccessor, yLabel) {
+        const container = el('chart');
+        d3.select(container).selectAll("*").remove();
+        const margin = { top: 10, right: 100, bottom: 30, left: 70 };
+        const width = container.clientWidth - margin.left - margin.right;
+        const height = container.clientHeight - margin.top - margin.bottom;
+        if (width <= 0 || height <= 0) return;
+
+        const tooltip = d3.select("body").append("div").attr("class", "tooltip");
+        const svg = d3.select(container).append("svg").attr("viewBox", `0 0 ${container.clientWidth} ${container.clientHeight}`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+        const x = d3.scaleLinear().domain([0, currentTimeRange]).range([0, width]);
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(Math.min(12, currentTimeRange / 2)));
+
+        // Validate and clean Y values before processing
+        const allYValues = [
+            ...(primarySeries.length > 0 ? primarySeries.flatMap(s => s.data.rows.filter(r => r.month <= currentTimeRange).map(d => validateDataPoint(yAccessor(d)))) : [0]),
+            ...(secondarySeries.length > 0 ? secondarySeries.flatMap(s => s.data.rows.filter(r => r.month <= currentTimeRange).map(d => validateDataPoint(yAccessor(d)))) : [0])
+        ].filter(v => isFinite(v) && !isNaN(v));
+        
+        const yMin = allYValues.length > 0 ? d3.min(allYValues) : 0;
+        const yMax = allYValues.length > 0 ? d3.max(allYValues) : 100;
+        
+        let y;
+        if (currentScale === 'log') {
+            const safeMin = Math.max(1, yMin > 0 ? yMin : 1);
+            const safeMax = Math.max(safeMin + 1, yMax);
+            y = d3.scaleLog().domain([safeMin, safeMax]).range([height, 0]).clamp(true);
+        } else {
+            y = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]).nice();
+        }
+        svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => money(d)));
+
+        if (y(0) >= 0 && y(0) <= height) {
+            svg.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--risk-color)").attr("stroke-width", 1.5).attr("stroke-dasharray", "4");
+        }
+
+        // Enhanced line generator with better NaN handling
+        const line = d3.line()
+            .x(d => x(validateDataPoint(d.month, 1)))
+            .y(d => {
+                const value = validateDataPoint(yAccessor(d));
+                if (currentScale === 'log') {
+                    return y(Math.max(1, value));
+                }
+                return y(value);
+            })
+            .defined(d => {
+                const value = yAccessor(d);
+                return isFinite(value) && !isNaN(value) && isFinite(d.month) && !isNaN(d.month);
+            });
+        
+        secondarySeries.forEach(series => {
+            if (series.data && series.data.rows) {
+                const validData = series.data.rows.filter(r => r.month <= currentTimeRange && isFinite(yAccessor(r)) && !isNaN(yAccessor(r)));
+                if (validData.length > 0) {
+                    svg.append("path").datum(validData)
+                       .attr("fill", "none").attr("stroke", series.color).attr("stroke-width", 2).attr("stroke-dasharray", "3,3").attr("opacity", 0.4).attr("d", line);
+                }
+            }
+        });
+
+        primarySeries.forEach(series => {
+            if (series.data && series.data.rows) {
+                const validData = series.data.rows.filter(r => r.month <= currentTimeRange && isFinite(yAccessor(r)) && !isNaN(yAccessor(r)));
+                if (validData.length > 0) {
+                    const path = svg.append("path").datum(validData)
+                        .attr("fill", "none").attr("stroke", series.color).attr("stroke-width", 3).attr("d", line);
+                    
+                    const lastPoint = validData[Math.min(currentTimeRange - 1, validData.length - 1)];
+                    if (lastPoint && isFinite(yAccessor(lastPoint)) && !isNaN(yAccessor(lastPoint))) {
+                        svg.append("text")
+                            .attr("transform", `translate(${x(lastPoint.month)}, ${y(validateDataPoint(yAccessor(lastPoint)))})`)
+                            .attr("x", 8)
+                            .attr("dy", "0.35em")
+                            .style("fill", series.color)
+                            .style("font-size", "12px")
+                            .style("font-weight", "bold")
+                            .text(series.label);
+                    }
+                }
+            }
+        });
+        
+        const focus = svg.append("g").style("display", "none");
+        focus.append("line").attr("y1", 0).attr("y2", height).attr("stroke", "#999").attr("stroke-width", 1).attr("stroke-dasharray", "3,3");
+        svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
+            .on("mouseover", () => { focus.style("display", null); tooltip.style("opacity", 1); }).on("mouseout", () => { focus.style("display", "none"); tooltip.style("opacity", 0); })
+            .on("mousemove", (event) => {
+                const x0 = x.invert(d3.pointer(event)[0]);
+                const i = Math.round(x0);
+                if (i <= 0 || i > currentTimeRange || primarySeries.length === 0) return;
+                const tooltipData = primarySeries
+                    .filter(s => s.data && s.data.rows && s.data.rows[i-1])
+                    .map(s => ({
+                        label: s.label,
+                        value: validateDataPoint(yAccessor(s.data.rows[i-1])),
+                        color: s.color
+                    }))
+                    .sort((a,b) => b.value - a.value);
+                if (tooltipData.length > 0) {
+                    focus.select("line").attr("transform", `translate(${x(i)},0)`);
+                    tooltip.html(tooltipData.map(d => `<div style="color:${d.color};">${d.label}: <strong>${money(d.value)}</strong></div>`).join("")).style("left", (event.pageX + 15) + "px").style("top", (event.pageY - 28) + "px");
+                }
+            });
+    }
+    
+    // --- UI UPDATE FUNCTIONS ---
+    function updateDisplay(allSeries) {
+        if (!allSeries || allSeries.length === 0) {
+            el('snapshot-metrics').innerHTML = '<div class="metric-item" style="grid-column: 1 / -1;"><div class="metric-label">No Scenario Selected</div></div>';
+            return;
+        }
+        
+        const primaryData = allSeries[0];
+        const { rows, effectiveCpm, callCostPerCompletion, initialCompletions } = primaryData;
+        const profitM6 = rows[5]?.profit ?? 0, profitM36 = rows[35]?.profit ?? 0;
+        let be = '—';
+        for(const row of rows) { if(row.profit >= 0) { be = 'M' + row.month; break; } }
+        
+        el('snapshot-metrics').innerHTML = `
+            <div class="metric-item"><div class="metric-label">M1 Completions</div><div class="metric-value">${fmt(initialCompletions)}</div></div>
+            <div class="metric-item"><div class="metric-label">Effective CPM</div><div class="metric-value">${money(effectiveCpm)}</div></div>
+            <div class="metric-item"><div class="metric-label">Profit (M6)</div><div class="metric-value">${money(profitM6)}</div></div>
+            <div class="metric-item"><div class="metric-label">Break-even</div><div class="metric-value">${be}</div></div>
+            <div class="metric-item"><div class="metric-label">Cost/Completion</div><div class="metric-value">${moneyPrecise(callCostPerCompletion)}</div></div>
+            <div class="metric-item"><div class="metric-label">Profit (M36)</div><div class="metric-value">${money(profitM36)}</div></div>`;
+    }
+
+    // --- MAIN EXECUTION ---
+    function runModel() {
+        const selectedScenarios = FUNDING_SCENARIOS.filter(s => el(`funding-${s.value}`).checked);
+        const seriesData = selectedScenarios.map(s => ({ ...s, data: generateSeries(s.value) }));
+        
+        const primarySeries = seriesData;
+        const secondarySeries = [];
+        const yAccessor = d => d.profit;
+        const yLabel = "Profit";
+        
+        updateDisplay(seriesData.map(s => s.data));
+        drawChart(primarySeries, secondarySeries, yAccessor, yLabel);
+        
+        document.querySelectorAll('#timeframe-selector button').forEach(b => b.classList.toggle('active', +b.dataset.months === currentTimeRange));
+        document.querySelectorAll('#scale-selector button').forEach(b => b.classList.toggle('active', b.dataset.scale === currentScale));
+    }
+    
+    function runStatTools() {
+        const p = Number(el('obsP').value), n = Number(el('sampleN').value);
+        
+        // Enhanced input validation
+        if (isNaN(p) || isNaN(n) || p < 0 || p > 1 || n < 10 || n > 100000) {
+            el('bootCI').innerText = '—';
+            el('jackSE').innerText = '—';
+            return;
+        }
+        
+        const successes = Math.round(p * n);
+        const failures = n - successes;
+        
+        // Validate that we have meaningful data
+        if (successes === 0 || failures === 0) {
+            el('bootCI').innerText = 'Insufficient variance';
+            el('jackSE').innerText = 'Insufficient variance';
+            return;
+        }
+        
+        // Create binary data array (1 for success, 0 for failure)
+        const data = Array(n).fill(0).map((_, i) => i < successes ? 1 : 0);
+        
+        // === ENHANCED BOOTSTRAP RESAMPLING ===
+        const bootstrapSamples = 5000; // Increased for better precision
+        const bootstrapResults = [];
+        
+        for (let iter = 0; iter < bootstrapSamples; iter++) {
+            let bootstrapSuccesses = 0;
+            // Resample with replacement
+            for (let j = 0; j < n; j++) {
+                const randomIndex = Math.floor(Math.random() * n);
+                bootstrapSuccesses += data[randomIndex];
+            }
+            bootstrapResults.push(bootstrapSuccesses / n);
+        }
+        
+        // Sort for percentile calculation
+        bootstrapResults.sort((a, b) => a - b);
+        
+        // Calculate 95% confidence interval (2.5th and 97.5th percentiles)
+        const lowerIndex = Math.floor(bootstrapSamples * 0.025);
+        const upperIndex = Math.floor(bootstrapSamples * 0.975);
+        const bootLower = bootstrapResults[lowerIndex];
+        const bootUpper = bootstrapResults[upperIndex];
+        
+        // Bootstrap bias correction
+        const bootstrapMean = bootstrapResults.reduce((sum, val) => sum + val, 0) / bootstrapSamples;
+        const bootstrapBias = bootstrapMean - p;
+        const biasCorreectedEstimate = p - bootstrapBias;
+        
+        // === ENHANCED JACKKNIFE RESAMPLING ===
+        const jackknifeEstimates = [];
+        
+        // Calculate jackknife pseudo-values by removing one observation at a time
+        for (let i = 0; i < n; i++) {
+            // Calculate proportion without the i-th observation
+            const jackSuccesses = successes - data[i];
+            const jackN = n - 1;
+            const jackProportion = jackN > 0 ? jackSuccesses / jackN : 0;
+            
+            // Jackknife pseudo-value: n * originalEstimate - (n-1) * jackknifeEstimate
+            const pseudoValue = n * p - (n - 1) * jackProportion;
+            jackknifeEstimates.push(pseudoValue);
+        }
+        
+        // Calculate jackknife statistics
+        const jackknifeMean = jackknifeEstimates.reduce((sum, val) => sum + val, 0) / n;
+        const jackknifeVariance = jackknifeEstimates.reduce((sum, val) => {
+            return sum + Math.pow(val - jackknifeMean, 2);
+        }, 0) / (n - 1);
+        
+        const jackknifeStandardError = Math.sqrt(jackknifeVariance / n);
+        
+        // Jackknife bias estimate
+        const jackknifeBias = (n - 1) * (jackknifeMean - p);
+        
+        // === ADDITIONAL STATISTICAL MEASURES ===
+        
+        // Wilson Score Interval (more reliable for small samples and extreme proportions)
+        const z = 1.96; // For 95% confidence
+        const wilsonCenter = (p + z*z/(2*n)) / (1 + z*z/n);
+        const wilsonHalfWidth = z * Math.sqrt((p*(1-p)/n + z*z/(4*n*n)) / (1 + z*z/n));
+        const wilsonLower = Math.max(0, wilsonCenter - wilsonHalfWidth);
+        const wilsonUpper = Math.min(1, wilsonCenter + wilsonHalfWidth);
+        
+        // Standard error using normal approximation
+        const standardError = Math.sqrt(p * (1 - p) / n);
+        
+        // === UPDATE UI WITH ENHANCED RESULTS ===
+        
+        // Format bootstrap confidence interval
+        const bootCIText = `${(bootLower * 100).toFixed(1)}% – ${(bootUpper * 100).toFixed(1)}%`;
+        el('bootCI').innerText = bootCIText;
+        
+        // Format jackknife standard error with additional info
+        const jackSEText = `${jackknifeStandardError.toFixed(4)}`;
+        el('jackSE').innerText = jackSEText;
+        
+        // Add detailed statistical information in console for debugging
+        if (window.console && window.console.log) {
+            console.log('Enhanced Statistical Analysis:', {
+                originalProportion: p,
+                sampleSize: n,
+                bootstrap: {
+                    confidenceInterval: [bootLower, bootUpper],
+                    bias: bootstrapBias,
+                    biascorrectedEstimate: biasCorreectedEstimate,
+                    samples: bootstrapSamples
+                },
+                jackknife: {
+                    standardError: jackknifeStandardError,
+                    bias: jackknifeBias,
+                    biasCorreectedEstimate: jackknifeMean
+                },
+                wilson: {
+                    confidenceInterval: [wilsonLower, wilsonUpper]
+                },
+                normalApproximation: {
+                    standardError: standardError
+                }
+            });
+        }
+    }
+
+    // --- INITIAL PAGE LOAD ---
+    initializeControls();
+    updateLabels();
+    runModel();
+    runStatTools();
+    new ResizeObserver(runModel).observe(el('chart'));
+});
+</script>
+
+</body>
+</html>

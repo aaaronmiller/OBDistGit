@@ -15,7 +15,7 @@ a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;t
 .layout{display:grid;grid-template-columns:minmax(230px,16vw) minmax(0,1fr);gap:clamp(24px,4vw,64px);width:min(92vw,1760px);margin:0 auto;padding:32px 0 80px}
 .sidebar{position:sticky;top:20px;height:calc(100vh - 40px);overflow:auto;border:1px solid var(--line);background:linear-gradient(180deg,rgba(16,24,39,.92),rgba(7,13,22,.74));backdrop-filter:blur(14px);border-radius:24px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.34)}
 .brand{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:16px}
-nav a{display:block;padding:7px 8px;border-radius:10px;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.35;border:0;transition:background var(--duration-enter) var(--ease-enter),color var(--duration-enter) var(--ease-enter),transform var(--duration-enter) var(--ease-spring)}
+nav a{display:block;padding:6px 8px;border-radius:6px;color:var(--muted);font:12px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;border:0;transition:background .15s,color .15s}
 nav a:hover,nav a.active{background:rgba(119,240,198,.09);color:var(--ink);transform:translateX(3px)} .nav-l3{padding-left:20px;opacity:.86}
 .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--hot),var(--violet));width:0;z-index:20;transition:width var(--duration-fast) linear}
 main{max-width:82vw}
@@ -41,42 +41,40 @@ p{max-width:84ch;color:#cbd7e6;font-size:18px} li{margin:8px 0;color:#cbd7e6} co
 .mermaid-render-card figcaption{position:relative;z-index:1;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-top:16px;color:#cbd5e1}.mermaid-render-card figcaption strong{color:#eef6ff}.mermaid-render-card figcaption span{color:#94a3b8}.mermaid-source{position:relative;z-index:1;margin-top:16px}.mermaid-source summary{cursor:pointer;color:#67e8f9;font-weight:700}.mermaid-source pre{margin-top:12px;max-height:360px;overflow:auto;border:1px solid rgba(148,163,184,.2);border-radius:16px;background:rgba(2,6,23,.72);padding:16px;color:#dbeafe}.mermaid-card{display:none}
 
 </style>
-<style>.nav-tip{position:fixed;z-index:50;max-width:420px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(11,17,28,.96);color:var(--ink);font:12px/1.45 ui-sans-serif,system-ui,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.45);pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .15s,transform .15s}.nav-tip.show{opacity:1;transform:none}</style>
 </head>
 <body>
 <div class="progress" id="progress"></div>
 <div class="layout">
 <aside class="sidebar"><div class="brand">Spec Design Atlas</div><nav id="toc">
-<a class="nav-l1" href="#spec-driven-design-systems-ghost-ai-spec-kit-openspec-kiro-and-strata"><span>Spec-Driven Design Systems</span></a>
-<a class="nav-l2" href="#executive-conclusion"><span>Executive conclusion</span></a>
-<a class="nav-l2" href="#method-and-evidence"><span>Method and evidence</span></a>
-<a class="nav-l3" href="#cloned-sources"><span>Cloned sources</span></a>
-<a class="nav-l2" href="#feature-scoring-matrix"><span>Feature scoring matrix</span></a>
-<a class="nav-l2" href="#capability-comparison-table"><span>Capability comparison table</span></a>
-<a class="nav-l2" href="#structural-model-of-spec-driven-design"><span>Structural model of spec-driven design</span></a>
-<a class="nav-l2" href="#what-the-tables-show"><span>What the tables show</span></a>
-<a class="nav-l1" href="#ghost-ai-system-audit-for-comparative-analysis" data-tip="Ghost AI - Real-time collaborative system design workspace with React Flow canvas and AI-generated specs."><span>Ghost AI</span></a>
-<a class="nav-l1" href="#spec-kit-github-system-audit-for-comparative-analysis" data-tip="Spec Kit - Open-source toolkit implementing spec-driven development; specs become the executable artifact."><span>Spec Kit</span></a>
-<a class="nav-l1" href="#openspec-comprehensive-system-audit" data-tip="OpenSpec - Spec-driven dev framework via npm; layers on top of existing AI coding tools with propose/explore/verify/archive workflow."><span>OpenSpec</span></a>
-<a class="nav-l1" href="#kiro-cli-kiro-repository-spec-design-process-system-audit" data-tip="Kiro CLI - IDE-first spec system with requirements/design/tasks documents; strong productized UX."><span>Kiro</span></a>
-<a class="nav-l1" href="#strata-audit-prior-spec-design-process-system-audit" data-tip="Strata - Seven-phase deliberative spec discipline with governance gates, continuity ledger, and layered artifact separation."><span>Strata</span></a>
-<a class="nav-l2" href="#feature-by-feature-analysis"><span>Feature-by-feature analysis</span></a>
-<a class="nav-l3" href="#intent-capture"><span>Intent capture</span></a>
-<a class="nav-l3" href="#requirements-artifacts"><span>Requirements artifacts</span></a>
-<a class="nav-l3" href="#design-artifacts"><span>Design artifacts</span></a>
-<a class="nav-l3" href="#task-decomposition"><span>Task decomposition</span></a>
-<a class="nav-l3" href="#governance-and-constitution"><span>Governance and constitution</span></a>
-<a class="nav-l3" href="#traceability"><span>Traceability</span></a>
-<a class="nav-l3" href="#validation-gates"><span>Validation gates</span></a>
-<a class="nav-l3" href="#change-lifecycle"><span>Change lifecycle</span></a>
-<a class="nav-l3" href="#agent-portability"><span>Agent portability</span></a>
-<a class="nav-l3" href="#extensibility"><span>Extensibility</span></a>
-<a class="nav-l3" href="#human-review-cadence"><span>Human review cadence</span></a>
-<a class="nav-l2" href="#which-system-is-best"><span>Which system is best</span></a>
-<a class="nav-l2" href="#can-strata-become-better-than-all-of-them"><span>Can Strata become better than all of them?</span></a>
-<a class="nav-l2" href="#proposed-better-system-strataspec"><span>Proposed better system: StrataSpec</span></a>
-<a class="nav-l2" href="#final-recommendation"><span>Final recommendation</span></a>
-<a class="nav-l2" href="#appendix-full-audit-artifact-paths"><span>Appendix: full audit artifact paths</span></a>
+<a class="nav-l1" href="#spec-driven-design-systems-ghost-ai-spec-kit-openspec-kiro-and-strata">Spec-Driven Design Systems</a>
+<a class="nav-l2" href="#executive-conclusion">Executive conclusion</a>
+<a class="nav-l2" href="#method-and-evidence">Method and evidence</a>
+<a class="nav-l2" href="#feature-scoring-matrix">Feature scoring matrix</a>
+<a class="nav-l2" href="#capability-comparison-table">Capability comparison table</a>
+<a class="nav-l2" href="#structural-model-of-spec-driven-design">Structural model of spec-driven design</a>
+<a class="nav-l2" href="#what-the-tables-show">What the tables show</a>
+<a class="nav-l1" href="#ghost-ai-system-audit-for-comparative-analysis">Ghost AI</a>
+<a class="nav-l1" href="#spec-kit-github-system-audit-for-comparative-analysis">Spec Kit</a>
+<a class="nav-l1" href="#openspec-comprehensive-system-audit">OpenSpec</a>
+<a class="nav-l1" href="#kiro-cli-kiro-repository-spec-design-process-system-audit">Kiro</a>
+<a class="nav-l1" href="#strata-audit-prior-spec-design-process-system-audit">Strata</a>
+<a class="nav-l2" href="#feature-by-feature-analysis">Feature-by-feature analysis</a>
+<a class="nav-l3" href="#intent-capture">Intent capture</a>
+<a class="nav-l3" href="#requirements-artifacts">Requirements artifacts</a>
+<a class="nav-l3" href="#design-artifacts">Design artifacts</a>
+<a class="nav-l3" href="#task-decomposition">Task decomposition</a>
+<a class="nav-l3" href="#governance-and-constitution">Governance and constitution</a>
+<a class="nav-l3" href="#traceability">Traceability</a>
+<a class="nav-l3" href="#validation-gates">Validation gates</a>
+<a class="nav-l3" href="#change-lifecycle">Change lifecycle</a>
+<a class="nav-l3" href="#agent-portability">Agent portability</a>
+<a class="nav-l3" href="#extensibility">Extensibility</a>
+<a class="nav-l3" href="#human-review-cadence">Human review cadence</a>
+<a class="nav-l2" href="#which-system-is-best">Which system is best</a>
+<a class="nav-l2" href="#can-strata-become-better-than-all-of-them">Can Strata become better than all of them?</a>
+<a class="nav-l2" href="#proposed-better-system-strataspec">Proposed better system: StrataSpec</a>
+<a class="nav-l2" href="#final-recommendation">Final recommendation</a>
+<a class="nav-l2" href="#appendix-full-audit-artifact-paths">Appendix: full audit artifact paths</a>
 </nav></aside>
 <main>
 <article id="content">
@@ -264,6 +262,5 @@ function drawScores(){
 }
 drawScores();
 </script>
-<script>document.querySelectorAll('#toc a[data-tip]').forEach(a=>{const t=document.createElement('div');t.className='nav-tip';t.textContent=a.dataset.tip;document.body.appendChild(t);a.addEventListener('mouseenter',e=>{const r=a.getBoundingClientRect();t.style.left=(r.left+window.scrollX)+'px';t.style.top=(r.bottom+window.scrollY+8)+'px';t.classList.add('show')});a.addEventListener('mouseleave',()=>t.classList.remove('show'));a.addEventListener('click',e=>{e.preventDefault();t.classList.toggle('show');if(t.classList.contains('show')){const r=a.getBoundingClientRect();t.style.left=(r.left+window.scrollX)+'px';t.style.top=(r.bottom+window.scrollY+8)+'px';}})});</script>
 </body>
 </html>

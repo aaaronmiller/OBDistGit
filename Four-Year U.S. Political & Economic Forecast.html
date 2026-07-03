@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Four-Year U.S. Political & Economic Forecast, May 30 2026</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #141b2f;
+      --panel-2: #101728;
+      --ink: #eef3ff;
+      --muted: #aeb8d0;
+      --soft: #d8e0f4;
+      --line: #2b3653;
+      --accent: #7dd3fc;
+      --accent-2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --blue: #60a5fa;
+      --red: #f87171;
+      --purple: #c084fc;
+      --orange: #fb923c;
+      --green: #4ade80;
+      --shadow: rgba(0,0,0,.35);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(96,165,250,.22), transparent 28%), radial-gradient(circle at 85% 6%, rgba(251,113,133,.13), transparent 26%), linear-gradient(180deg, #070b16 0%, #0b1020 44%, #0f172a 100%);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.58;
+    }
+    a { color: #bae6fd; text-decoration: none; border-bottom: 1px solid rgba(186,230,253,.35); }
+    a:hover { color: white; border-bottom-color: white; }
+    .page { max-width: 1240px; margin: 0 auto; padding: 36px 22px 80px; }
+    .hero {
+      border: 1px solid rgba(125,211,252,.22);
+      background: linear-gradient(135deg, rgba(20,27,47,.94), rgba(17,24,39,.82));
+      border-radius: 28px;
+      padding: 34px;
+      box-shadow: 0 24px 80px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero:after {
+      content: "";
+      position: absolute;
+      right: -180px;
+      top: -120px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(125,211,252,.2), transparent 70%);
+      pointer-events: none;
+    }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .13em; font-size: 12px; font-weight: 800; }
+    h1 { font-size: clamp(34px, 5vw, 66px); line-height: .98; margin: 10px 0 16px; letter-spacing: -0.055em; }
+    h2 { font-size: clamp(26px, 3.5vw, 42px); margin: 44px 0 18px; letter-spacing: -0.035em; }
+    h3 { font-size: clamp(20px, 2vw, 27px); margin: 30px 0 12px; letter-spacing: -0.02em; }
+    h4 { font-size: 17px; margin: 20px 0 8px; color: #dbeafe; }
+    p { margin: 10px 0 14px; color: var(--soft); }
+    .lede { max-width: 1000px; font-size: 20px; color: #e5ecff; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .pill {
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.055);
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    @media (max-width: 900px) { .grid.two, .grid.three, .grid.four { grid-template-columns: 1fr; } .hero { padding: 24px; } }
+    .card {
+      background: linear-gradient(180deg, rgba(20,27,47,.94), rgba(15,23,42,.94));
+      border: 1px solid rgba(148,163,184,.18);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 12px 38px rgba(0,0,0,.22);
+    }
+    .card.subtle { background: rgba(15,23,42,.64); }
+    .stat {
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-weight: 850;
+      margin: 6px 0 4px;
+    }
+    .label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .09em; font-weight: 750; }
+    .note { color: var(--muted); font-size: 13px; }
+    .tag { display:inline-flex; align-items:center; gap:6px; border-radius: 999px; padding: 4px 9px; font-size: 12px; font-weight: 800; }
+    .tag.high { background: rgba(52,211,153,.14); color: #bbf7d0; }
+    .tag.med { background: rgba(251,191,36,.15); color: #fde68a; }
+    .tag.low { background: rgba(251,113,133,.13); color: #fecdd3; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 22px; overflow: hidden; border-radius: 14px; }
+    th, td { padding: 12px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid rgba(148,163,184,.15); }
+    th { color: #dbeafe; background: rgba(125,211,252,.08); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    tr:last-child td { border-bottom: none; }
+    .barrow { display: grid; grid-template-columns: 180px 1fr 54px; gap: 10px; align-items: center; margin: 10px 0; }
+    .barlabel { color: #e5ecff; font-weight: 720; font-size: 14px; }
+    .bartrack { height: 15px; background: rgba(148,163,184,.18); border-radius: 999px; overflow:hidden; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+    .barfill { height:100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    .barfill.bad { background: linear-gradient(90deg, var(--orange), var(--bad)); }
+    .barfill.good { background: linear-gradient(90deg, var(--blue), var(--good)); }
+    .barfill.redblue { background: linear-gradient(90deg, var(--red), var(--blue)); }
+    .barvalue { font-family: var(--mono); color: #e0f2fe; font-size: 13px; text-align: right; }
+    .svg-card { padding: 18px; overflow-x: auto; }
+    svg { max-width: 100%; height: auto; display:block; }
+    .axis { stroke: rgba(226,232,240,.35); stroke-width: 1; }
+    .gridline { stroke: rgba(226,232,240,.11); stroke-width: 1; }
+    .charttext { fill: #cbd5e1; font-size: 12px; font-family: var(--sans); }
+    .charttitle { fill: #f8fafc; font-size: 16px; font-weight: 800; font-family: var(--sans); }
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: rgba(125,211,252,.08);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+    .danger { border-left-color: var(--bad); background: rgba(251,113,133,.08); }
+    .success { border-left-color: var(--good); background: rgba(52,211,153,.08); }
+    .warn { border-left-color: var(--warn); background: rgba(251,191,36,.08); }
+    .mini { font-size: 13px; color: var(--muted); }
+    .toc { columns: 2; column-gap: 34px; padding-left: 18px; }
+    .toc li { break-inside: avoid; margin: 6px 0; color: #dbeafe; }
+    @media (max-width: 760px) { .toc { columns: 1; } .barrow { grid-template-columns: 1fr; } .barvalue { text-align:left; } }
+    .section { margin-top: 28px; }
+    .thesis { display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: start; }
+    .score {
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 12px;
+      text-align:center;
+      font-family: var(--mono);
+      color: #f8fafc;
+      font-weight: 900;
+    }
+    .score span { display:block; font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing:.08em; text-transform: uppercase; }
+    .confidence { font-family: var(--mono); color: #bae6fd; }
+    .timeline { position: relative; padding-left: 22px; border-left: 2px solid rgba(125,211,252,.28); }
+    .timeline .item { position: relative; padding: 4px 0 18px 16px; }
+    .timeline .item:before { content:""; position:absolute; left:-25px; top:9px; width:12px; height:12px; border-radius:50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(125,211,252,.11); }
+    .item strong { color: #f8fafc; }
+    .source-list li { margin: 8px 0; color: var(--soft); }
+    .smallcaps { text-transform: uppercase; letter-spacing: .09em; font-size: 12px; color: var(--muted); font-weight: 850; }
+    .print-note { display:none; }
+    @media print {
+      body { background: white; color: #111827; }
+      .page { max-width: none; padding: 0; }
+      .hero, .card { box-shadow:none; background:white; color:#111827; border-color:#d1d5db; }
+      p, .note, .mini, td { color:#1f2937; }
+      a { color:#075985; }
+      .print-note { display:block; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Strategic Forecast • baseline date: May 30, 2026</div>
+      <h1>Four-Year U.S. Political & Economic Forecast</h1>
+      <p class="lede">A defensible, confidence-scored forecast for U.S. politics, macroeconomics, inflation, fiscal risk, elections, energy, housing, markets, and institutional stability through mid-2030. This report treats the current environment as a <strong>stagflation-lite political economy</strong>: growth has not broken, but consumer psychology, inflation expectations, energy costs, and presidential approval are already flashing election-grade danger.</p>
+      <div class="meta">
+        <span class="pill">Prepared for: Ice-Ninja</span>
+        <span class="pill">Prepared by: SignalSmith</span>
+        <span class="pill">Scope: U.S.-centered, global spillovers included</span>
+        <span class="pill">Forecast horizon: May 2026 to May 2030</span>
+        <span class="pill">Format: standalone HTML + inline charts</span>
+      </div>
+    </section>
+
+    <section class="section card subtle">
+      <h2>Executive Summary</h2>
+      <p><strong>Base-case forecast:</strong> the next four years are most likely to be defined by a clash between <strong>hard-but-not-yet-recessionary macro data</strong> and <strong>terrible household sentiment</strong>. Inflation and gasoline prices have become the political master variable. The economy is still expanding, labor markets are still intact, and AI/business investment remains a support beam, but the ordinary voter experiences the economy through gas, groceries, rent, debt service, and insurance. That gap is the whole beast.</p>
+      <div class="grid two">
+        <div>
+          <h3>Most likely political path</h3>
+          <p>Democrats are favored to win the House in 2026. The Senate is genuinely competitive but remains harder because Democrats need a net four-seat gain from a 53-47 Republican majority. If inflation and Iran remain salient through October, the GOP faces a broad anti-incumbent wave. If energy prices ease rapidly by late summer, Republicans can blunt the wave but probably not erase it.</p>
+        </div>
+        <div>
+          <h3>Most likely economic path</h3>
+          <p>Growth slows without immediately collapsing. Inflation remains stickier than the Federal Reserve wants because the shock is not just monetary: tariffs, energy, immigration/labor supply, insurance, shelter, defense spending, and supply-chain fragmentation all push in the same bad direction. The Fed is boxed in: cutting too early risks re-anchoring inflation upward, while holding too long risks recession.</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <strong>Core thesis:</strong> 2026 is not yet a classic recession environment. It is a <strong>political recession environment</strong>: voters feel worse than the headline GDP/labor data would imply, and that matters more for elections than technical macro categories.
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Baseline Dashboard</h2>
+      <div class="grid four">
+        <div class="card">
+          <div class="label">Trump job approval</div>
+          <div class="stat">39.7%</div>
+          <p class="note">RCP average; disapproval 58.2%, net -18.5.</p>
+        </div>
+        <div class="card">
+          <div class="label">Generic ballot</div>
+          <div class="stat">D +8.1</div>
+          <p class="note">RCP: D 48.8 / R 40.7; Silver Bulletin recently D +6.6 to +7-ish.</p>
+        </div>
+        <div class="card">
+          <div class="label">Real GDP</div>
+          <div class="stat">+1.6%</div>
+          <p class="note">Q1 2026 annualized, second BEA estimate; final sales to private domestic purchasers +2.4%.</p>
+        </div>
+        <div class="card">
+          <div class="label">CPI inflation</div>
+          <div class="stat">3.8%</div>
+          <p class="note">April 2026 12-month CPI; energy +17.9%, gasoline +28.4% year-over-year.</p>
+        </div>
+        <div class="card">
+          <div class="label">Unemployment</div>
+          <div class="stat">4.3%</div>
+          <p class="note">April 2026; nonfarm payrolls +115,000, federal employment still declining.</p>
+        </div>
+        <div class="card">
+          <div class="label">Fed funds target</div>
+          <div class="stat">3.50–3.75%</div>
+          <p class="note">Fed held steady at April 29, 2026 meeting; easing bias contested.</p>
+        </div>
+        <div class="card">
+          <div class="label">FY2026 deficit</div>
+          <div class="stat">$1.9T</div>
+          <p class="note">CBO baseline; 5.8% of GDP, rising to $3.1T by 2036.</p>
+        </div>
+        <div class="card">
+          <div class="label">30-year mortgage</div>
+          <div class="stat">6.37%</div>
+          <p class="note">Freddie Mac PMMS, May 7, 2026.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section grid two">
+      <div class="card svg-card">
+        <svg viewBox="0 0 760 390" role="img" aria-label="Approval snapshots chart">
+          <text x="20" y="28" class="charttitle">Trump approval snapshots: downward tide, noisy surface</text>
+          <line x1="70" y1="320" x2="710" y2="320" class="axis" />
+          <line x1="70" y1="70" x2="70" y2="320" class="axis" />
+          <g>
+            <line x1="70" y1="70" x2="710" y2="70" class="gridline"/><text x="24" y="75" class="charttext">50%</text>
+            <line x1="70" y1="132" x2="710" y2="132" class="gridline"/><text x="24" y="137" class="charttext">45%</text>
+            <line x1="70" y1="195" x2="710" y2="195" class="gridline"/><text x="24" y="200" class="charttext">40%</text>
+            <line x1="70" y1="257" x2="710" y2="257" class="gridline"/><text x="24" y="262" class="charttext">35%</text>
+            <line x1="70" y1="320" x2="710" y2="320" class="gridline"/><text x="24" y="325" class="charttext">30%</text>
+          </g>
+          <polyline points="90,107 250,195 410,270 545,245 690,199" fill="none" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="#7dd3fc" stroke="#0f172a" stroke-width="3">
+            <circle cx="90" cy="107" r="7"/><circle cx="250" cy="195" r="7"/><circle cx="410" cy="270" r="7"/><circle cx="545" cy="245" r="7"/><circle cx="690" cy="199" r="7"/>
+          </g>
+          <g class="charttext">
+            <text x="68" y="346">Jan 2025</text><text x="84" y="363">47</text>
+            <text x="213" y="346">Pre-Iran war</text><text x="248" y="363">40</text>
+            <text x="372" y="346">Late Apr</text><text x="409" y="363">34</text>
+            <text x="512" y="346">May 11</text><text x="544" y="363">36</text>
+            <text x="650" y="346">RCP avg</text><text x="682" y="363">39.7</text>
+          </g>
+          <text x="20" y="382" class="charttext">Mixed-source snapshots, not a single continuous pollster series. Use for directional structure, not model-grade precision.</text>
+        </svg>
+      </div>
+      <div class="card svg-card">
+        <svg viewBox="0 0 760 390" role="img" aria-label="Debt trajectory chart">
+          <text x="20" y="28" class="charttitle">Federal debt path: no crisis today, worsening gravity</text>
+          <line x1="70" y1="320" x2="710" y2="320" class="axis" />
+          <line x1="70" y1="70" x2="70" y2="320" class="axis" />
+          <g>
+            <line x1="70" y1="295" x2="710" y2="295" class="gridline"/><text x="18" y="300" class="charttext">100%</text>
+            <line x1="70" y1="245" x2="710" y2="245" class="gridline"/><text x="18" y="250" class="charttext">105%</text>
+            <line x1="70" y1="195" x2="710" y2="195" class="gridline"/><text x="18" y="200" class="charttext">110%</text>
+            <line x1="70" y1="145" x2="710" y2="145" class="gridline"/><text x="18" y="150" class="charttext">115%</text>
+            <line x1="70" y1="95" x2="710" y2="95" class="gridline"/><text x="18" y="100" class="charttext">120%</text>
+          </g>
+          <polyline points="110,285 360,215 690,95" fill="none" stroke="#fb7185" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="#fb7185" stroke="#0f172a" stroke-width="3"><circle cx="110" cy="285" r="7"/><circle cx="360" cy="215" r="7"/><circle cx="690" cy="95" r="7"/></g>
+          <g class="charttext">
+            <text x="86" y="346">2026</text><text x="92" y="363">101</text>
+            <text x="336" y="346">2030</text><text x="344" y="363">108</text>
+            <text x="666" y="346">2036</text><text x="674" y="363">120</text>
+          </g>
+          <text x="20" y="382" class="charttext">CBO projects debt held by the public from 101% of GDP in 2026 to 120% in 2036; CRFB reads the path near 108% by 2030.</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Base-Case Scenario Probabilities</h2>
+      <p>These are analytic probabilities, not market prices. They combine current polling, historical midterm patterns, macro conditions, and the policy constraints visible as of May 30, 2026. Confidence reflects the evidence quality and forecast distance.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Political outcomes</h3>
+          <div class="barrow"><div class="barlabel">Democrats win House 2026</div><div class="bartrack"><div class="barfill" style="width:72%"></div></div><div class="barvalue">72%</div></div>
+          <div class="barrow"><div class="barlabel">Democrats win Senate 2026</div><div class="bartrack"><div class="barfill" style="width:43%"></div></div><div class="barvalue">43%</div></div>
+          <div class="barrow"><div class="barlabel">2028 Democratic presidency</div><div class="bartrack"><div class="barfill" style="width:55%"></div></div><div class="barvalue">55%</div></div>
+          <div class="barrow"><div class="barlabel">Post-2026 divided government</div><div class="bartrack"><div class="barfill" style="width:64%"></div></div><div class="barvalue">64%</div></div>
+          <div class="barrow"><div class="barlabel">GOP cleanly de-MAGA-fies by 2030</div><div class="bartrack"><div class="barfill bad" style="width:22%"></div></div><div class="barvalue">22%</div></div>
+        </div>
+        <div class="card">
+          <h3>Economic outcomes</h3>
+          <div class="barrow"><div class="barlabel">Sticky inflation through 2027</div><div class="bartrack"><div class="barfill bad" style="width:60%"></div></div><div class="barvalue">60%</div></div>
+          <div class="barrow"><div class="barlabel">Recession by end-2027</div><div class="bartrack"><div class="barfill bad" style="width:35%"></div></div><div class="barvalue">35%</div></div>
+          <div class="barrow"><div class="barlabel">Fed cuts aggressively in 2026</div><div class="bartrack"><div class="barfill" style="width:18%"></div></div><div class="barvalue">18%</div></div>
+          <div class="barrow"><div class="barlabel">Debt-risk premium rises</div><div class="bartrack"><div class="barfill bad" style="width:65%"></div></div><div class="barvalue">65%</div></div>
+          <div class="barrow"><div class="barlabel">AI productivity upside visible by 2030</div><div class="bartrack"><div class="barfill good" style="width:45%"></div></div><div class="barvalue">45%</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Methodology: How to Read the Scores</h2>
+      <p>Confidence scores are not moral certainty. They represent <strong>forecast defensibility</strong>: data quality, historical precedent, institutional constraints, and how many independent indicators point the same way. A 70% confidence claim means the forecast is materially more likely than alternatives, not that it is immune to shocks.</p>
+      <table>
+        <thead><tr><th>Score band</th><th>Meaning</th><th>Examples in this report</th></tr></thead>
+        <tbody>
+          <tr><td><span class="confidence">80–90</span></td><td>Strong near-term evidence, low ambiguity.</td><td>Inflation is politically central; federal debt path worsens without major policy changes.</td></tr>
+          <tr><td><span class="confidence">65–79</span></td><td>Likely, but sensitive to shocks or candidate quality.</td><td>Democrats favored for House; Fed constrained; housing remains affordability-bound.</td></tr>
+          <tr><td><span class="confidence">50–64</span></td><td>Lean, but alternatives are plausible.</td><td>2028 presidential tilt; AI productivity timing; Senate control.</td></tr>
+          <tr><td><span class="confidence">Below 50</span></td><td>Scenario worth tracking, not base case.</td><td>Acute fiscal crisis before 2030; immediate GOP ideological reset.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>Key rule:</strong> where official macro data and voter sentiment diverge, elections usually follow voter sentiment. People vote on experienced price pressure and household stress, not BEA tables.
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Defensible Theses</h2>
+      <div class="grid two">
+        <div class="card thesis"><div class="score">86<span>conf.</span></div><div><h3>1. Cost-of-living dominates all other political variables.</h3><p>Iran, tariffs, immigration, insurance, shelter, groceries, and interest rates all collapse into one voter perception: life got more expensive. Trump won in 2024 on prices; that same issue now turns against his party. Energy is the accelerant, but the fuel pile existed before Iran.</p></div></div>
+        <div class="card thesis"><div class="score">78<span>conf.</span></div><div><h3>2. Trump approval is not stable; it is weak with a partisan floor.</h3><p>The RCP average near 40 is defensible, but Reuters/Ipsos, Pew, and YouGov-style readings in the mid-30s are not outliers to ignore. The apparent stability is base rigidity plus pollster/sample effects. Persuadables are not being won over.</p></div></div>
+        <div class="card thesis"><div class="score">74<span>conf.</span></div><div><h3>3. Democrats are favored for the House, but redistricting caps the wave.</h3><p>The generic ballot and presidential approval environment favor Democrats. However, mid-decade redistricting, safe-seat sorting, and turnout uncertainty mean the most likely outcome is a narrow-to-medium Democratic majority, not automatic 2018 replay.</p></div></div>
+        <div class="card thesis"><div class="score">58<span>conf.</span></div><div><h3>4. Senate control is a knife fight, not a sure Democratic flip.</h3><p>The environment is bad for Republicans, and candidate quality is opening seats that should be safe. But Democrats need four seats, and the Senate map is structurally unforgiving. Treat Democratic Senate control as plausible, not favored with confidence.</p></div></div>
+        <div class="card thesis"><div class="score">80<span>conf.</span></div><div><h3>5. The Fed is boxed in.</h3><p>Inflation is too hot for aggressive cuts; consumer and labor risk are too soft for heroic hikes unless expectations worsen. A hold-longer regime is the base case, with cuts coming only after labor clearly cracks or energy normalizes.</p></div></div>
+        <div class="card thesis"><div class="score">77<span>conf.</span></div><div><h3>6. Fiscal risk is chronic before it is acute.</h3><p>CBO’s baseline deficit and debt path is unsustainable in the plain-English sense, but that does not mean a near-term Treasury crisis is the base case. The likelier path is higher term premium, more budget fights, and less policy flexibility.</p></div></div>
+        <div class="card thesis"><div class="score">68<span>conf.</span></div><div><h3>7. Housing remains frozen rather than crashing nationally.</h3><p>Mortgage rates above 6%, high prices, insurance pressure, and lock-in keep turnover weak. Inventory improves in some markets, but a national crash is not the base case unless unemployment rises sharply.</p></div></div>
+        <div class="card thesis"><div class="score">61<span>conf.</span></div><div><h3>8. AI investment supports GDP while worsening distribution politics.</h3><p>AI capex, data centers, power demand, semiconductors, and enterprise software can keep headline investment strong. But if gains accrue to asset owners and high-skill labor while households face price stress, AI becomes politically polarizing rather than broadly legitimizing.</p></div></div>
+        <div class="card thesis"><div class="score">71<span>conf.</span></div><div><h3>9. The far left remains locally viable but nationally constrained.</h3><p>Progressives and democratic socialists can win deep-blue districts and cities where affordability dominates. Nationally, swing-state math and anti-MAGA coalition management keep the Democratic center of gravity institutional center-left.</p></div></div>
+        <div class="card thesis"><div class="score">63<span>conf.</span></div><div><h3>10. 2028 is an attribution election.</h3><p>If voters still assign inflation, Iran, tariffs, and corruption to Trump/GOP, Democrats benefit. If pain becomes generalized “Washington failed,” the cleanup party gets punished. That attribution contest matters more than ideological manifestos.</p></div></div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Political Forecast, 2026–2030</h2>
+      <h3>2026 midterms: anti-incumbent wave risk</h3>
+      <p>The incumbent party is in a historically dangerous position: low presidential approval, a bad generic ballot, high cost-of-living anger, Iran-related gas shock, and internal candidate-quality problems. The core Republican problem is not just that Trump is unpopular; it is that Republican generic support appears to be falling closer to Trump approval itself. That means the party is losing room to separate local candidates from the national brand.</p>
+      <p><strong>House forecast:</strong> Democrats favored, <strong>72% probability</strong>. A narrow Democratic majority is the modal result. A larger wave becomes plausible if gasoline remains high, the generic ballot remains D+7 or better, and Republicans nominate more high-liability MAGA candidates. Republican retention is still possible if energy prices fall sharply, redistricting offsets enough seats, and Democratic turnout softens.</p>
+      <p><strong>Senate forecast:</strong> Democrats have a real path but not a clean one. They must defend everything and flip four. North Carolina is the clearest pickup lane; Ohio, Maine, Alaska, Texas, and other red-leaning opportunities become viable only in a wave or candidate-quality collapse. Probability of Democratic Senate control: <strong>43%</strong>.</p>
+      <div class="callout danger">
+        <strong>GOP danger zone:</strong> if Trump approval remains below 40 and the generic ballot remains D+6 or stronger after Labor Day, the House becomes hard to save and the Senate moves from “Republican lean” to “true toss-up.”
+      </div>
+
+      <h3>2027: oversight, gridlock, and cleanup politics</h3>
+      <p>If Democrats take the House, the next year becomes an oversight year: Iran war accountability, Epstein-document handling, tariff authority, immigration enforcement, energy-price response, anti-weaponization funding, Justice Department conduct, and executive-power boundaries. The odds of bipartisan fiscal repair are low. The odds of shutdown fights, debt-ceiling brinkmanship, and investigative trench warfare are high.</p>
+      <p>Policy output is likely to be narrow unless one party somehow wins both chambers in 2026. A Democratic House would not be able to force a full policy reset, but it could freeze parts of the Trump agenda, subpoena evidence, and reshape the 2028 frame.</p>
+
+      <h3>2028: open presidential election, but not a clean reset</h3>
+      <p>Trump is term-limited under the Twenty-Second Amendment if he has served two elected terms. The Republican contest therefore likely becomes a fight over succession: continuity MAGA versus post-Trump packaging. Early polling snapshots show J.D. Vance as the obvious GOP heir, but early presidential polling is soft clay. On the Democratic side, Kamala Harris and Gavin Newsom appear high in early name-recognition polling, but the nominee could shift if 2026 creates new stars or if the party decides it needs a governor/executive profile rather than a Biden/Harris continuity figure.</p>
+      <p><strong>Base probability:</strong> Democratic presidential win <strong>55%</strong>, Republican win <strong>45%</strong>. That is a lean, not a call. If inflation is still high and a Democratic Congress is seen as ineffective, the GOP can win with a cleaner MAGA-successor message. If Iran and tariffs remain legibly Trump/GOP failures, Democrats become clearer favorites.</p>
+
+      <h3>2029–2030: whoever governs inherits the bill</h3>
+      <p>The next administration inherits the same hard objects: high debt, aging entitlement costs, defense pressure, housing shortage, energy volatility, AI labor disruption, and voter impatience. If Democrats win in 2028, they risk becoming the cleanup crew blamed for slow repairs. If Republicans win, they face the difficulty of distancing themselves from Trump’s failures while preserving the Trump coalition.</p>
+      <p><strong>2030 midterm forecast:</strong> anti-incumbent pressure likely returns unless living standards visibly improve by 2029. The party that owns the presidency in 2029 enters the 2030 midterm with structural exposure. Confidence: <span class="confidence">66</span>.</p>
+    </section>
+
+    <section class="section card">
+      <h2>Economic Forecast, 2026–2030</h2>
+      <h3>Growth and recession risk</h3>
+      <p>The U.S. economy is slowing but not broken. Q1 real GDP rose 1.6% annualized, and real final sales to private domestic purchasers rose 2.4%, which means private demand still has a pulse. Labor is also not recessionary at headline level: unemployment is 4.3% and payrolls rose 115,000 in April. But underneath that, the household stress channel is worsening: savings are being drawn down, gas prices are elevated, real income pressure is visible, and sentiment is historically poor.</p>
+      <p><strong>Base-case GDP path:</strong> 2026 real growth roughly <strong>1.6–2.4%</strong>; 2027 slows to <strong>0.8–1.8%</strong> if Fed policy stays restrictive and energy remains elevated; 2028–2030 depend on whether inflation normalizes and whether AI/productivity gains become broad rather than capital-heavy.</p>
+      <p><strong>Recession probability:</strong> 35% by end-2027; 45% by end-2028. The risk is not one clean cliff; it is a squeeze: prices, rates, debt service, savings depletion, weaker confidence, and eventually weaker hiring.</p>
+
+      <h3>Inflation</h3>
+      <p>Inflation is the central forecast hinge. April CPI was 3.8% year-over-year, with energy up 17.9% and gasoline up 28.4%. This is not merely a demand-side inflation problem. It has supply/policy components: tariffs, energy disruption, insurance, shelter, immigration/labor constraints, electricity/data-center demand, and global fragmentation. That makes it harder for the Fed to solve without breaking something.</p>
+      <p><strong>Base case:</strong> CPI remains above 3% through much of 2026, falls toward the high-2s or low-3s in 2027 if energy normalizes, but struggles to return cleanly to 2% unless tariffs/energy/insurance/shelter pressures ease together. Sticky-inflation probability through 2027: <strong>60%</strong>.</p>
+
+      <h3>Federal Reserve and interest rates</h3>
+      <p>The Fed held the target range at 3.50–3.75% in April. The minutes show disagreement: one official preferred a cut, while several objected to an easing bias. IMF directors cautioned that there is little room to cut in 2026 unless labor weakens and inflation pressure declines. This creates a high-friction monetary regime: the Fed cannot easily rescue growth while inflation expectations are wobbling upward.</p>
+      <p><strong>Base case:</strong> hold-longer in 2026; modest cuts in 2027 if inflation cools or labor weakens; hike risk if oil stays high and inflation expectations keep rising. Aggressive 2026 easing probability: <strong>18%</strong>.</p>
+
+      <h3>Fiscal and debt</h3>
+      <p>The fiscal path is poor. CBO projects a $1.9T deficit in FY2026 and $3.1T by FY2036, with debt held by the public rising from 101% of GDP to 120%. The IMF’s U.S. Article IV is harsher on general government debt, projecting debt above 140% of GDP by 2031 under its broader measure. This is not an immediate default forecast. It is a narrowing-room forecast: higher interest costs crowd out policy options and raise the probability that markets demand more term premium.</p>
+      <p><strong>Base case:</strong> chronic fiscal stress, no grand bargain, more brinkmanship. Acute fiscal crisis before 2030: <strong>12%</strong>. Rising debt-risk premium by 2030: <strong>65%</strong>.</p>
+
+      <h3>Energy and Iran</h3>
+      <p>Energy is both economic and political. Reuters reports gasoline prices up more than 50% since the war began at the end of February, with 63% of Americans saying gas-price increases have hurt their household finances. A durable ceasefire would be the fastest path to political relief. But even a ceasefire does not instantly restore shipping confidence, refinery pricing, or household trust.</p>
+      <p><strong>Base case:</strong> partial de-escalation by late 2026, but energy risk premium remains. Durable Iran settlement by end-2026: <strong>45%</strong>. Renewed oil-shock scenario: <strong>25%</strong>.</p>
+
+      <h3>Housing</h3>
+      <p>Housing remains locked. Mortgage rates near 6.37%, high home prices, weak affordability, insurance pressure, and low turnover prevent a normal market. New home inventory is rising in some places, which gives buyers leverage, but high rates cap demand. The base case is regional divergence: price softness in overbuilt Sun Belt markets, resilience in supply-constrained coastal/tech regions, and national stagnation rather than collapse.</p>
+      <p><strong>Base case:</strong> low transaction volume, slow inventory normalization, modest nominal price growth or flat real prices. National housing crash probability before 2028: <strong>20%</strong>, rising only if unemployment moves materially above 5.5%.</p>
+
+      <h3>Markets, AI, and productivity</h3>
+      <p>The market economy and household economy can diverge. AI capex, cloud infrastructure, semiconductors, defense, and energy infrastructure can support profits and investment even when consumers feel awful. That is politically combustible: Wall Street can look rich while Main Street feels raided by prices. The upside case is real productivity growth by 2028–2030. The downside case is a capex bubble or overbuild that disappoints just as consumers weaken.</p>
+      <p><strong>Base case:</strong> AI investment remains a major support but broad productivity effects arrive unevenly. Visible macro productivity dividend by 2030: <strong>45%</strong>. AI capex disappointment/overbuild risk by 2030: <strong>30%</strong>.</p>
+    </section>
+
+    <section class="section card">
+      <h2>Scenario Matrix</h2>
+      <table>
+        <thead><tr><th>Scenario</th><th>Probability</th><th>Description</th><th>Political result</th><th>Economic result</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Stagflation-lite gridlock</strong></td><td><span class="confidence">35%</span></td><td>Inflation stays sticky, growth slows, labor bends but does not break.</td><td>Dems win House; Senate close; 2028 lean Dem but not locked.</td><td>Fed holds/cuts slowly; debt concerns rise; household stress persists.</td></tr>
+          <tr><td><strong>Ceasefire disinflation</strong></td><td><span class="confidence">25%</span></td><td>Iran stabilizes, oil falls, inflation expectations cool.</td><td>GOP limits 2026 damage; 2028 becomes pure candidate contest.</td><td>Growth stabilizes; Fed cuts modestly; housing improves slightly.</td></tr>
+          <tr><td><strong>Recession wave</strong></td><td><span class="confidence">20%</span></td><td>Consumer pullback and high rates trigger recession by 2027.</td><td>Major Democratic midterm/presidential advantage unless Democrats already own blame.</td><td>Unemployment rises; Fed cuts; deficits widen further.</td></tr>
+          <tr><td><strong>Oil/geopolitical shock</strong></td><td><span class="confidence">12%</span></td><td>Iran conflict re-escalates or shipping disruption persists.</td><td>Incumbent party damaged unless rally effect briefly masks pain.</td><td>Inflation jumps; Fed trapped; consumer spending weakens.</td></tr>
+          <tr><td><strong>AI productivity breakout</strong></td><td><span class="confidence">8%</span></td><td>AI-driven productivity arrives early and offsets labor/cost pressure.</td><td>Anti-incumbent pressure softens; politics remains culturally polarized.</td><td>Growth improves; inflation eases; fiscal ratios improve only modestly.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section card svg-card">
+      <svg viewBox="0 0 980 430" role="img" aria-label="Risk heat map">
+        <text x="20" y="32" class="charttitle">Risk map: probability × impact, May 2026 baseline</text>
+        <line x1="110" y1="360" x2="900" y2="360" class="axis" />
+        <line x1="110" y1="70" x2="110" y2="360" class="axis" />
+        <text x="420" y="405" class="charttext">Probability →</text>
+        <text x="16" y="210" class="charttext" transform="rotate(-90 16,210)">Impact →</text>
+        <g class="charttext"><text x="105" y="382">Low</text><text x="500" y="382">Medium</text><text x="860" y="382">High</text><text x="62" y="360">Low</text><text x="48" y="210">Med</text><text x="45" y="80">High</text></g>
+        <g opacity=".28"><rect x="110" y="70" width="263" height="97" fill="#fbbf24"/><rect x="373" y="70" width="263" height="97" fill="#fb923c"/><rect x="636" y="70" width="264" height="97" fill="#fb7185"/><rect x="110" y="167" width="263" height="97" fill="#34d399"/><rect x="373" y="167" width="263" height="97" fill="#fbbf24"/><rect x="636" y="167" width="264" height="97" fill="#fb923c"/><rect x="110" y="264" width="263" height="96" fill="#22c55e"/><rect x="373" y="264" width="263" height="96" fill="#34d399"/><rect x="636" y="264" width="264" height="96" fill="#fbbf24"/></g>
+        <g>
+          <circle cx="705" cy="125" r="14" fill="#fb7185"/><text x="725" y="130" class="charttext">sticky inflation</text>
+          <circle cx="660" cy="153" r="12" fill="#fb923c"/><text x="680" y="158" class="charttext">debt premium</text>
+          <circle cx="525" cy="155" r="12" fill="#fb923c"/><text x="545" y="160" class="charttext">Iran/oil shock</text>
+          <circle cx="520" cy="220" r="11" fill="#fbbf24"/><text x="540" y="225" class="charttext">recession</text>
+          <circle cx="430" cy="235" r="10" fill="#fbbf24"/><text x="450" y="240" class="charttext">housing freeze</text>
+          <circle cx="310" cy="185" r="9" fill="#fbbf24"/><text x="330" y="190" class="charttext">AI capex bust</text>
+          <circle cx="755" cy="238" r="11" fill="#fb923c"/><text x="775" y="243" class="charttext">institutional crisis</text>
+          <circle cx="300" cy="300" r="9" fill="#34d399"/><text x="320" y="305" class="charttext">soft landing</text>
+        </g>
+      </svg>
+    </section>
+
+    <section class="section card">
+      <h2>Year-by-Year Timeline</h2>
+      <div class="timeline">
+        <div class="item"><strong>H2 2026:</strong> Inflation, gasoline, Iran, and congressional candidate quality dominate. Democrats favored for House. Senate moves with NC/OH/ME/TX/AK. Fed likely holds unless inflation expectations cool or labor cracks.</div>
+        <div class="item"><strong>2027:</strong> If Democrats control the House, oversight and subpoena politics define Washington. Macro risk shifts from inflation shock to consumer exhaustion. Recession risk peaks if rates stay restrictive and energy prices remain elevated.</div>
+        <div class="item"><strong>2028:</strong> Presidential race becomes an attribution contest: are prices, Iran, and institutional damage still Trump/GOP-coded, or is it generalized anti-Washington anger? GOP succession fight tests whether MAGA can be repackaged without Trump.</div>
+        <div class="item"><strong>2029:</strong> New administration confronts fiscal limits, housing, entitlement math, defense needs, and AI labor disruption. Cleanup-party stigma risk begins.</div>
+        <div class="item"><strong>2030:</strong> Midterm electorate likely punishes whoever owns the presidency unless real incomes, energy prices, and housing affordability have visibly improved.</div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Indicators to Watch</h2>
+      <table>
+        <thead><tr><th>Indicator</th><th>Why it matters</th><th>Trigger level</th><th>Forecast implication</th></tr></thead>
+        <tbody>
+          <tr><td>Trump approval</td><td>National GOP brand ceiling/floor.</td><td>RCP &lt;38 or Reuters/YouGov &lt;34 sustained</td><td>House wave; Senate toss-up or worse for GOP.</td></tr>
+          <tr><td>Generic ballot</td><td>Best single House environment signal.</td><td>D +7 after Labor Day</td><td>Dem House very likely; GOP must rely on map/race quirks.</td></tr>
+          <tr><td>Gasoline prices</td><td>Visible inflation proxy.</td><td>National average near/above $4 for weeks</td><td>Incumbent damage accelerates.</td></tr>
+          <tr><td>Core inflation</td><td>Fed constraint.</td><td>Core CPI/PCE re-accelerates for 2–3 months</td><td>No cuts; hike risk returns.</td></tr>
+          <tr><td>Unemployment</td><td>Recession threshold.</td><td>5.0% and rising</td><td>Fed cuts; incumbent party punished; deficit worsens.</td></tr>
+          <tr><td>Consumer sentiment</td><td>Political recession signal.</td><td>Michigan stays below 55</td><td>Anti-incumbent mood remains intense even if GDP positive.</td></tr>
+          <tr><td>10-year Treasury / term premium</td><td>Fiscal-market stress gauge.</td><td>Sustained rise despite slowing growth</td><td>Debt sustainability becomes market narrative.</td></tr>
+          <tr><td>AI capex breadth</td><td>Productivity-vs-bubble test.</td><td>Capex shifts from hyperscalers into broad productivity</td><td>Upside growth scenario becomes more credible.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section card">
+      <h2>Conclusion: The Defensible Forecast</h2>
+      <p>The best single sentence forecast is this: <strong>the United States is entering a four-year period where inflation politics, debt gravity, energy/geopolitical shock, and anti-MAGA institutional backlash collide with still-resilient private investment and early AI productivity hopes.</strong></p>
+      <p>The likely result is not ideological revolution. It is rotating punishment. Republicans are first in the barrel because they own the presidency, Iran, tariffs, and current cost-of-living deterioration. Democrats then face cleanup-party risk if they gain power but cannot visibly improve prices, housing, and wages. The far left remains viable in urban strongholds but does not control the national coalition. The old center-right remains partly exiled from the GOP and partly absorbed into the anti-MAGA center-left coalition. The GOP remains electorally viable because U.S. polarization, geography, and institutional structure prevent permanent exile.</p>
+      <div class="callout success">
+        <strong>Most actionable thesis:</strong> watch gasoline, generic ballot, and inflation expectations together. If all three remain bad for Republicans into September 2026, the House is very likely gone and the Senate becomes a live Democratic target. If gasoline falls and inflation expectations cool by August, Republicans can contain losses even with Trump unpopular.
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Source Notes</h2>
+      <p>Key public sources used to ground the baseline. All forecasts and probabilities are SignalSmith analytic judgments derived from these indicators, not direct claims made by the cited institutions.</p>
+      <ol class="source-list">
+        <li>RealClearPolling, President Trump Job Approval: RCP average 39.7 approve / 58.2 disapprove / -18.5 net, accessed May 30, 2026. <a href="https://www.realclearpolling.com/polls/approval/donald-trump/approval-rating">realclearpolling.com</a></li>
+        <li>RealClearPolling, 2026 Generic Congressional Vote: D 48.8 / R 40.7 / D+8.1, accessed May 30, 2026. <a href="https://www.realclearpolling.com/polls/state-of-the-union/generic-congressional-vote">realclearpolling.com</a></li>
+        <li>Silver Bulletin, 2026 generic ballot tracker, May 22, 2026: D+6.6, compared with 2018 environment. <a href="https://www.natesilver.net/p/generic-ballot-average-2026-nate-silver-bulletin-congress-polls">natesilver.net</a></li>
+        <li>Reuters/Ipsos, May 11, 2026: Trump approval 36 after late-April 34 low; 66% said Trump had not clearly explained Iran war goals; 63% said gas-price increases hurt household finances. <a href="https://www.reuters.com/world/us/americans-dont-think-trump-has-explained-iran-war-goals-reutersipsos-poll-shows-2026-05-11/">reuters.com</a></li>
+        <li>Reuters, May 29, 2026: April inflation fastest in three years; gasoline prices up more than 50% since war began; saving rate down to 2.6%. <a href="https://www.reuters.com/markets/see-how-much-iran-war-is-driving-up-prices-2026-05-29/">reuters.com</a></li>
+        <li>Bureau of Economic Analysis, GDP second estimate, Q1 2026: real GDP +1.6% annualized, final sales to private domestic purchasers +2.4%, PCE price index +4.5%. <a href="https://www.bea.gov/news/2026/gdp-second-estimate-and-corporate-profits-1st-quarter-2026">bea.gov</a></li>
+        <li>Bureau of Labor Statistics, CPI April 2026: CPI-U +3.8% year-over-year; energy +17.9%; gasoline +28.4%; core CPI +2.8%. <a href="https://www.bls.gov/news.release/cpi.nr0.htm">bls.gov</a></li>
+        <li>Bureau of Labor Statistics, Employment Situation April 2026: unemployment 4.3%; nonfarm payrolls +115,000. <a href="https://www.bls.gov/news.release/empsit.nr0.htm">bls.gov</a></li>
+        <li>Federal Reserve, April 29, 2026 FOMC minutes: target range held at 3.50–3.75%, interest on reserve balances 3.65%, primary credit rate 3.75%. <a href="https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm">federalreserve.gov</a></li>
+        <li>CBO, Budget and Economic Outlook 2026–2036: FY2026 deficit $1.9T; deficit grows to $3.1T by 2036; debt held by public rises from 101% to 120% of GDP. <a href="https://www.cbo.gov/publication/62105">cbo.gov</a></li>
+        <li>IMF, April 2026 World Economic Outlook: global growth projected 3.1% in 2026 and 3.2% in 2027 under limited-conflict assumption; downside risks dominate. <a href="https://www.imf.org/en/publications/weo/issues/2026/04/14/world-economic-outlook-april-2026">imf.org</a></li>
+        <li>IMF, 2026 U.S. Article IV: U.S. growth projected 2.4% in 2026; unemployment near 4%; debt above 140% of GDP by 2031 under general-government measure; little room to cut rates in 2026 if energy/inflation risks persist. <a href="https://www.imf.org/en/news/articles/2026/04/01/pr-26102-usa-imf-executive-board-concludes-2026-article-iv-consult">imf.org</a></li>
+        <li>Cook Political Report public ratings summary: House solid seats D 189/R 185 and likely/lean seats D 23/R 21 as of March 12, 2026; Senate seats D 46/I 4/R 50 as of March 29, 2026. <a href="https://www.cookpolitical.com/ratings">cookpolitical.com</a></li>
+        <li>The Guardian, May 30, 2026 Senate battleground report: Democrats need to defend all seats and flip four; NC, OH, ME, AK, TX described as key targets or opportunities. <a href="https://www.theguardian.com/us-news/2026/may/30/democrats-senate-battleground-states-republicans">theguardian.com</a></li>
+        <li>Freddie Mac, May 7, 2026 PMMS: 30-year fixed-rate mortgage averaged 6.37%; 15-year averaged 5.72%. <a href="https://freddiemac.gcs-web.com/news-releases/news-release-details/mortgage-rates-average-637/">freddiemac.com</a></li>
+      </ol>
+      <p class="mini">Caveat: some political data are snapshots that update daily. Forecast should be refreshed after the June CPI release, June FOMC meeting, post-primary Senate ratings, and late-summer generic ballot shifts.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBM Memory Market Executive Report: Updated with Market Shock & Quantum Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        base: '#0f172a',
+                        surface: '#1e293b',
+                        primary: '#0d9488',
+                        accent: '#f43f5e',
+                        'text-muted': '#94a3b8'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; color: '#e8e8e8'; background-color: '#0f172a'; }
+        .chart-container { position: relative; height: 400px; width: 100%; }
+        @media print {
+            body { background: white; color: #1e293b; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-base">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <header class="bg-surface rounded-xl p-8 mb-8 border border-primary/20 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">High Bandwidth Memory (HBM) Market Executive Report</h1>
+            <h2 class="text-xl text-text-muted mb-4">Updated with Two-Front War Analysis & Quantum Computing Integration</h2>
+            <div class="flex flex-wrap justify-center gap-4 text-sm text-text-muted">
+                <span>Report Date: May 1, 2026</span>
+                <span>Analysis Period: 2015-2035</span>
+                <span>Investment Grade: Institutional Research</span>
+            </div>
+        </header>
+
+        <!-- Executive Summary -->
+        <section class="bg-surface/50 rounded-xl p-6 mb-8 border border-primary/20">
+            <h2 class="text-2xl font-bold text-primary mb-4">Executive Summary</h2>
+            <div class="space-y-4 text-text-muted">
+                <p><strong class="text-white">Core Thesis Updated:</strong> HBM's 2048-bit architecture provides inherent fault tolerance for autonomous vehicles, now amplified by AI chip demand (Nvidia H100/H200) and supply chain risks from Strait of Hormuz closure (60 days, oil +50%). Micron (MU) emerges as sole US memory provider with pricing power as Korean competitors (Samsung/SK Hynix) face helium/natural gas shortages.</p>
+                <p><strong class="text-white">Quantum Integration:</strong> Nvidia's IceQ software + photonic interconnects (IonQ) mark quantum computing's commercial entry, creating new HBM demand for hybrid CPU-GPU-QPU workloads. Quantum market CAGR 36% (2025-2035) outpaces AI market growth.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-surface p-4 rounded-lg border border-primary/30">
+                        <div class="text-3xl font-bold text-primary">$35B</div>
+                        <div class="text-sm text-text-muted mt-1">2025 HBM Market (+250% YoY)</div>
+                    </div>
+                    <div class="bg-surface p-4 rounded-lg border border-primary/30">
+                        <div class="text-3xl font-bold text-primary">32×</div>
+                        <div class="text-sm text-text-muted mt-1">Redundancy vs DDR5 (2048-bit vs 64-bit)</div>
+                    </div>
+                    <div class="bg-surface p-4 rounded-lg border border-accent/30">
+                        <div class="text-3xl font-bold text-accent">60 Days</div>
+                        <div class="text-sm text-text-muted mt-1">Strait of Hormuz Closed (Helium/ NatGas Risk)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Shock: Strait of Hormuz -->
+        <section class="bg-surface rounded-xl p-6 mb-8 border border-accent/20">
+            <h2 class="text-2xl font-bold text-accent mb-4">1. Supply Chain Shock: Strait of Hormuz Closed (60 Days)</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-4 text-text-muted">
+                    <p><strong class="text-white">Energy Dependence:</strong> Taiwan imports 97% of energy; TSMC holds 11 days LNG on-site, 1 week helium reserves. 30% global helium supply from Qatar (blockaded).</p>
+                    <p><strong class="text-white">Korean Exposure:</strong> Samsung/SK Hynix source 50%+ helium via Strait. Production slowdown benefits Micron (US-only memory maker) with pricing power.</p>
+                    <p><strong class="text-white">OpenAI Risk:</strong> $1.4T infrastructure commitments at risk if supply chain breaks. Nvidia (90% data center GPU share) directly exposed.</p>
+                    <div class="bg-base p-4 rounded-lg">
+                        <h4 class="font-bold text-white mb-2">Critical Timeline</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li>• May 11: Trump's 60-day window expires (escalate/withdraw/extend)</li>
+                            <li>• TSMC 11-day LNG buffer → allocation to highest-margin customers (Nvidia)</li>
+                            <li>• Micron forward P/E <8 (cheapest AI supply chain large-cap)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="supplyChainChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Global Producers Updated -->
+        <section class="bg-surface rounded-xl p-6 mb-8 border border-primary/20">
+            <h2 class="text-2xl font-bold text-primary mb-4">2. Global HBM Producers & Market Structure (Q3 2025)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-base">
+                            <th class="p-3 text-primary">Manufacturer</th>
+                            <th class="p-3 text-primary">Market Share</th>
+                            <th class="p-3 text-primary">Q-o-Q Change</th>
+                            <th class="p-3 text-primary">Stock Ticker</th>
+                            <th class="p-3 text-primary">Key Risk/Opportunity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-primary/10 hover:bg-base/50">
+                            <td class="p-3 text-white font-medium">SK Hynix</td>
+                            <td class="p-3 text-text-muted">62%</td>
+                            <td class="p-3 text-primary">↑ +8%</td>
+                            <td class="p-3 text-text-muted">000660.KS</td>
+                            <td class="p-3 text-accent">Korean helium exposure (Strait closure)</td>
+                        </tr>
+                        <tr class="border-b border-primary/10 hover:bg-base/50">
+                            <td class="p-3 text-white font-medium">Micron Technology</td>
+                            <td class="p-3 text-text-muted">21%</td>
+                            <td class="p-3 text-primary">↑ +10%</td>
+                            <td class="p-3 text-text-muted">MU (NASDAQ)</td>
+                            <td class="p-3 text-primary">US-based, pricing power, P/E <8</td>
+                        </tr>
+                        <tr class="border-b border-primary/10 hover:bg-base/50">
+                            <td class="p-3 text-white font-medium">Samsung Electronics</td>
+                            <td class="p-3 text-text-muted">17%</td>
+                            <td class="p-3 text-accent">↓ -18%</td>
+                            <td class="p-3 text-text-muted">005930.KS</td>
+                            <td class="p-3 text-accent">Thermal failures, qualification losses</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="chart-container mt-6">
+                <canvas id="marketShareChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Quantum Integration -->
+        <section class="bg-surface rounded-xl p-6 mb-8 border border-primary/20">
+            <h2 class="text-2xl font-bold text-primary mb-4">3. Quantum Computing Integration & HBM Demand</h2>
+            <div class="space-y-4 text-text-muted">
+                <p><strong class="text-white">Nvidia's Pivot:</strong> IceQ open-source software splits workloads between GPUs and quantum processors. Photonic interconnects (IonQ) link quantum chips, creating hybrid CPU-GPU-QPU systems requiring HBM for data throughput.</p>
+                <p><strong class="text-white">Quantum Market Growth:</strong> $2B (2025) → $250B (2035), 36% CAGR. Quantum computers need HBM for calibration, error correction, and hybrid workloads.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-base p-4 rounded-lg">
+                        <h4 class="font-bold text-white mb-2">IonQ (IONQ)</h4>
+                        <p class="text-sm">First photonic interconnect (2 chips linked). $370M backlog, $3.3B cash. Revenue +428% YoY.</p>
+                    </div>
+                    <div class="bg-base p-4 rounded-lg">
+                        <h4 class="font-bold text-white mb-2">Rigetti (RGTI)</h4>
+                        <p class="text-sm">108-qubit processor on AWS. Integrated with Nvidia NVQLink. $590M cash, 7.5-year runway.</p>
+                    </div>
+                    <div class="bg-base p-4 rounded-lg">
+                        <h4 class="font-bold text-white mb-2">D-Wave (QBTS)</h4>
+                        <p class="text-sm">Commercial quantum annealing + gate-based (acquired Quantum Circuits). $630M cash, 9-year runway.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container mt-6">
+                <canvas id="quantumGrowthChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-surface rounded-xl p-6 border border-primary/20 text-center text-sm text-text-muted">
+            <p>Updated HBM Assessment integrating Alex's YouTube transcripts (Market Shock Two-Front War, Quantum Computing Era)</p>
+            <p class="mt-2">Not financial advice. Data as of May 2026. Styling via frontend-design-masterclass skill (Tailwind CSS).</p>
+        </footer>
+    </div>
+
+    <script>
+        // Supply Chain Risk Chart
+        new Chart(document.getElementById('supplyChainChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Taiwan LNG (11 days)', 'Taiwan Helium (7 days)', 'Korean Helium (50% via Strait)', 'Qatar Helium (30% global)'],
+                datasets: [{
+                    label: 'Days/Percentage at Risk',
+                    data: [11, 7, 50, 30],
+                    backgroundColor: ['#f43f5e', '#f43f5e', '#f97316', '#eab308'],
+                    borderColor: '#0d9488',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#e8e8e8' } } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+                }
+            }
+        });
+
+        // Market Share Chart
+        new Chart(document.getElementById('marketShareChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['SK Hynix (62%)', 'Micron (21%)', 'Samsung (17%)'],
+                datasets: [{
+                    data: [62, 21, 17],
+                    backgroundColor: ['#0d9488', '#f43f5e', '#94a3b8'],
+                    borderColor: '#1e293b',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#e8e8e8' } } }
+            }
+        });
+
+        // Quantum Growth Chart
+        new Chart(document.getElementById('quantumGrowthChart'), {
+            type: 'line',
+            data: {
+                labels: ['2025', '2027', '2029', '2031', '2033', '2035'],
+                datasets: [{
+                    label: 'Quantum Market ($B)',
+                    data: [2, 8, 25, 60, 120, 250],
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'HBM Market ($B)',
+                    data: [35, 85, 150, 240, 380, 700],
+                    borderColor: '#f43f5e',
+                    backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#e8e8e8' } } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

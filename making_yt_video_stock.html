@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClipFoundry Shot Coverage Engine — PRD v0.2 (Spec-Driven)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0D11;
+    --bg-elevated: #12151B;
+    --bg-card: #181B23;
+    --bg-code: #0E1016;
+    --fg: #E8E6E1;
+    --fg-muted: #8A8D96;
+    --fg-dim: #555963;
+    --accent: #E0A526;
+    --accent-dim: rgba(224,165,38,0.12);
+    --accent-glow: rgba(224,165,38,0.06);
+    --green: #34D399;
+    --green-dim: rgba(52,211,153,0.10);
+    --red: #F87171;
+    --red-dim: rgba(248,113,113,0.10);
+    --orange: #FBBF24;
+    --orange-dim: rgba(251,191,36,0.10);
+    --yellow: #FDE68A;
+    --blue: #60A5FA;
+    --blue-dim: rgba(96,165,250,0.10);
+    --border: #22252E;
+    --border-accent: #2E313B;
+    --radius: 8px;
+    --radius-lg: 14px;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-serif: 'Source Serif 4', Georgia, serif;
+    --font-sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Ambient background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 900px 600px at 15% 10%, rgba(224,165,38,0.04), transparent),
+      radial-gradient(ellipse 700px 500px at 85% 80%, rgba(52,211,153,0.03), transparent),
+      radial-gradient(ellipse 500px 400px at 50% 50%, rgba(96,165,250,0.02), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* ── Metadata header ── */
+  .meta-header {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.5rem;
+    margin-bottom: 3rem;
+    background: var(--bg-elevated);
+    position: relative;
+    overflow: hidden;
+  }
+  .meta-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--green), var(--accent));
+  }
+  .meta-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+    color: var(--fg);
+  }
+  .meta-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 2rem;
+    font-size: 0.85rem;
+  }
+  .meta-grid dt { color: var(--fg-dim); font-weight: 500; }
+  .meta-grid dd { color: var(--fg-muted); margin-left: 0; }
+  .meta-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    letter-spacing: 0.03em;
+  }
+  .badge-draft { background: var(--orange-dim); color: var(--orange); }
+  .badge-spec { background: var(--accent-dim); color: var(--accent); }
+  .badge-ai { background: var(--blue-dim); color: var(--blue); }
+
+  /* ── TOC ── */
+  .toc {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+    background: var(--bg-elevated);
+  }
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .toc-list { list-style: none; columns: 2; column-gap: 1.5rem; }
+  .toc-list li { break-inside: avoid; margin-bottom: 0.3rem; }
+  .toc-list a {
+    font-size: 0.82rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--accent); }
+  .toc-list a .toc-num { color: var(--fg-dim); font-family: var(--font-mono); font-size: 0.72rem; margin-right: 0.4rem; }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 2rem;
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.4rem;
+  }
+  .section-heading {
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 1rem;
+    color: var(--fg);
+    line-height: 1.25;
+  }
+  .section-body p { margin-bottom: 1rem; color: var(--fg-muted); }
+  .section-body strong { color: var(--fg); font-weight: 600; }
+
+  /* ── Subsection ── */
+  .sub { margin-bottom: 2rem; }
+  .sub-heading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .sub p { color: var(--fg-muted); margin-bottom: 0.8rem; font-size: 0.92rem; }
+
+  /* ── Callout ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .callout-accent {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    color: var(--fg);
+  }
+  .callout-green {
+    background: var(--green-dim);
+    border-left: 3px solid var(--green);
+    color: var(--fg);
+  }
+  .callout-red {
+    background: var(--red-dim);
+    border-left: 3px solid var(--red);
+    color: var(--fg);
+  }
+  .callout-blue {
+    background: var(--blue-dim);
+    border-left: 3px solid var(--blue);
+    color: var(--fg);
+  }
+  .callout-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+  }
+  .callout-accent .callout-label { color: var(--accent); }
+  .callout-green .callout-label { color: var(--green); }
+  .callout-red .callout-label { color: var(--red); }
+  .callout-blue .callout-label { color: var(--blue); }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--fg-muted);
+    position: relative;
+  }
+  .code-block .lang-tag {
+    position: absolute;
+    top: 0.5rem; right: 0.75rem;
+    font-size: 0.62rem;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .code-block .key { color: var(--blue); }
+  .code-block .str { color: var(--green); }
+  .code-block .num { color: var(--orange); }
+  .code-block .comment { color: var(--fg-dim); font-style: italic; }
+  .code-block .const { color: var(--accent); }
+
+  /* ── Tables ── */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.84rem;
+  }
+  .spec-table th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-dim);
+    padding: 0.6rem 0.8rem;
+    border-bottom: 2px solid var(--border);
+    font-weight: 600;
+  }
+  .spec-table td {
+    padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--fg-muted);
+    vertical-align: top;
+  }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table .mono {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg);
+  }
+
+  /* ── Decision table ── */
+  .decision-table {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+  .decision-table table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .decision-table th {
+    background: var(--bg-card);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-dim);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .decision-table td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--fg-muted);
+  }
+  .decision-table tr:last-child td { border-bottom: none; }
+  .decision-table .condition { color: var(--fg); font-weight: 500; }
+
+  /* ── BDD blocks ── */
+  .bdd {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 0.8rem 0;
+    font-size: 0.84rem;
+  }
+  .bdd-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .bdd .given { color: var(--blue); }
+  .bdd .when { color: var(--green); }
+  .bdd .then { color: var(--accent); }
+  .bdd .and { color: var(--fg-dim); }
+
+  /* ── State machine ── */
+  .state-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1.5rem 0;
+    margin: 1rem 0;
+  }
+  .state-node {
+    flex-shrink: 0;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: 1.5px solid var(--border-accent);
+    background: var(--bg-card);
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+  .state-node.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .state-node.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+  .state-node.error { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+  .state-arrow {
+    flex-shrink: 0;
+    color: var(--fg-dim);
+    font-size: 1rem;
+    padding: 0 0.35rem;
+  }
+
+  /* ── Pool badges ── */
+  .pool { display: inline-block; padding: 0.12rem 0.5rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; }
+  .pool-green { background: var(--green-dim); color: var(--green); }
+  .pool-yellow { background: rgba(253,230,138,0.12); color: var(--yellow); }
+  .pool-orange { background: var(--orange-dim); color: var(--orange); }
+  .pool-red { background: var(--red-dim); color: var(--red); }
+
+  /* ── Inline code ── */
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ── Lists ── */
+  .section-body ul, .section-body ol {
+    margin: 0.5rem 0 1rem 1.5rem;
+    color: var(--fg-muted);
+    font-size: 0.92rem;
+  }
+  .section-body li { margin-bottom: 0.3rem; }
+  .section-body li::marker { color: var(--fg-dim); }
+
+  /* ── Improvement markers ── */
+  .improved {
+    border-left: 3px solid var(--accent);
+    padding-left: 1rem;
+    margin: 1rem 0;
+  }
+  .improved-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* ── Footer ── */
+  .doc-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    margin-top: 4rem;
+    font-size: 0.78rem;
+    color: var(--fg-dim);
+    font-family: var(--font-mono);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .page-wrapper { padding: 1.5rem 1rem 4rem; }
+    .meta-grid { grid-template-columns: 1fr; }
+    .toc-list { columns: 1; }
+    .meta-title { font-size: 1.5rem; }
+    .section-heading { font-size: 1.35rem; }
+    .state-flow { flex-wrap: wrap; }
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--fg-dim); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section { animation: fadeUp 0.5s ease both; }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.2s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- META HEADER                                      -->
+<!-- ════════════════════════════════════════════════ -->
+<header class="meta-header">
+  <div class="meta-title">ClipFoundry Shot Coverage Engine</div>
+  <div class="meta-subtitle">Product Requirements Document — Spec-Driven Edition</div>
+  <dl class="meta-grid">
+    <dt>Version</dt><dd>0.2 — Improved from v0.1</dd>
+    <dt>Status</dt><dd><span class="meta-badge badge-draft">Draft for Agent Refinement</span></dd>
+    <dt>Owner</dt><dd>Aaron Miller</dd>
+    <dt>Spec Style</dt><dd><span class="meta-badge badge-spec">Spec-Driven / AI-Executable</span></dd>
+    <dt>Stack</dt><dd>SvelteKit · Hono · Bun · PostgreSQL · pgvector · Object Store</dd>
+    <dt>Class</dt><dd><span class="meta-badge badge-ai">AI-Agent-Implementable</span></dd>
+    <dt>Created</dt><dd>2025-06-18</dd>
+    <dt>Modified</dt><dd>2025-06-18 — v0.2 spec-driven rewrite</dd>
+  </dl>
+</header>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS                                -->
+<!-- ════════════════════════════════════════════════ -->
+<nav class="toc" aria-label="Table of contents">
+  <div class="toc-title">Contents</div>
+  <ol class="toc-list">
+    <li><a href="#s0"><span class="toc-num">00</span>Improvement Rationale</a></li>
+    <li><a href="#s1"><span class="toc-num">01</span>Executive Summary</a></li>
+    <li><a href="#s2"><span class="toc-num">02</span>Problem Statement</a></li>
+    <li><a href="#s3"><span class="toc-num">03</span>Product Thesis</a></li>
+    <li><a href="#s4"><span class="toc-num">04</span>Goals &amp; Invariants</a></li>
+    <li><a href="#s5"><span class="toc-num">05</span>Non-Goals</a></li>
+    <li><a href="#s6"><span class="toc-num">06</span>Primary Users</a></li>
+    <li><a href="#s7"><span class="toc-num">07</span>Domain Vocabulary</a></li>
+    <li><a href="#s8"><span class="toc-num">08</span>Pipeline Architecture</a></li>
+    <li><a href="#s9"><span class="toc-num">09</span>Formal Data Model</a></li>
+    <li><a href="#s10"><span class="toc-num">10</span>Agent Specifications</a></li>
+    <li><a href="#s11"><span class="toc-num">11</span>Coverage Solver — Formal Spec</a></li>
+    <li><a href="#s12"><span class="toc-num">12</span>Scoring Model — Decision Table</a></li>
+    <li><a href="#s13"><span class="toc-num">13</span>API Contract</a></li>
+    <li><a href="#s14"><span class="toc-num">14</span>State Machine</a></li>
+    <li><a href="#s15"><span class="toc-num">15</span>Acceptance Criteria (BDD)</a></li>
+    <li><a href="#s16"><span class="toc-num">16</span>Safety &amp; Rights Formal Rules</a></li>
+    <li><a href="#s17"><span class="toc-num">17</span>Observability Specification</a></li>
+    <li><a href="#s18"><span class="toc-num">18</span>Non-Functional Requirements</a></li>
+    <li><a href="#s19"><span class="toc-num">19</span>UI Wireframe Specs</a></li>
+    <li><a href="#s20"><span class="toc-num">20</span>Build Phases</a></li>
+    <li><a href="#s21"><span class="toc-num">21</span>Success Metrics</a></li>
+    <li><a href="#s22"><span class="toc-num">22</span>Open Decisions (Resolved vs. Deferred)</a></li>
+    <li><a href="#s23"><span class="toc-num">23</span>Amendment Log</a></li>
+  </ol>
+</nav>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §0  IMPROVEMENT RATIONALE                        -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s0">
+  <div class="section-label">Section 00</div>
+  <h2 class="section-heading">Improvement Rationale</h2>
+  <div class="section-body">
+    <p>The original v0.1 PRD was well-structured as a <strong>human-readable product document</strong> but insufficient as an <strong>AI-executable specification</strong>. In a spec-driven design workflow where coding agents implement directly from PRDs, the document must eliminate ambiguity that a human would intuitively resolve but an agent cannot.</p>
+
+    <div class="improved">
+      <div class="improved-label">Changes Applied</div>
+      <p>The following structural improvements were applied, each grounded in June 2026 best practices for AI-spec-driven PRDs:</p>
+    </div>
+
+    <div class="decision-table">
+      <table>
+        <thead><tr><th>Deficiency in v0.1</th><th>Improvement in v0.2</th><th>Why It Matters for Agents</th></tr></thead>
+        <tbody>
+          <tr><td class="condition">Data model was flat field lists</td><td>Formal schema with types, constraints, invariants, foreign keys, and enums</td><td>Agents generate migrations and type definitions directly from schema</td></tr>
+          <tr><td class="condition">Scoring was a "suggested formula"</td><td>Formal decision table with explicit weight ranges, thresholds, and override rules</td><td>Agents implement exact logic without guessing parameter semantics</td></tr>
+          <tr><td class="condition">Agent roles were prose descriptions</td><td>Formal I/O contracts, error types, retry policies, timeout bounds, and handoff protocols</td><td>Agents implement each agent as an isolated, testable service</td></tr>
+          <tr><td class="condition">State machine was narrative text</td><td>Explicit transition table with guards, triggers, and side-effects</td><td>Agents implement state transitions as a verifiable state machine, not ad-hoc status updates</td></tr>
+          <tr><td class="condition">Acceptance criteria were prose bullets</td><td>Given/When/Then BDD format, traceable to requirements</td><td>Agents can generate test cases directly from acceptance criteria</td></tr>
+          <tr><td class="condition">No observability specification</td><td>Formal metrics, trace spans, log contracts, and SLIs/SLOs</td><td>Agents wire telemetry from the start instead of bolting it on later</td></tr>
+          <tr><td class="condition">No failure mode analysis</td><td>Per-agent failure taxonomy with escalation paths and circuit-breaker rules</td><td>Agents implement resilience patterns, not just happy paths</td></tr>
+          <tr><td class="condition">API was request/response sketches</td><td>Formal contract with idempotency keys, error codes, pagination, rate limits</td><td>Agents generate API handlers with correct edge-case handling</td></tr>
+          <tr><td class="condition">"Commercial-safe" was undefined</td><td>Formal safety predicate: a computable function over rights fields</td><td>Agents implement the exact predicate, not a vague heuristic</td></tr>
+          <tr><td class="condition">24 open questions unresolved</td><td>Each classified as "resolved by this spec" or "deferred with decision deadline"</td><td>Agents don't encounter decision paralysis mid-implementation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-accent">
+      <div class="callout-label">Principle</div>
+      Every section in this document is written so that a competent coding agent can implement it <strong>without asking clarifying questions</strong>. If a section still requires human judgment, it is explicitly flagged as <code>REQUIRES:HUMAN</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §1  EXECUTIVE SUMMARY                            -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-label">Section 01</div>
+  <h2 class="section-heading">Executive Summary</h2>
+  <div class="section-body">
+    <p>ClipFoundry Shot Coverage Engine is a <strong>provenance-first video-planning and asset-routing system</strong> that converts a natural-language video request into a structured, rights-safe shot coverage plan. For each shot in the requested video, the system determines the optimal source strategy:</p>
+    <ol>
+      <li><strong>Reuse</strong> an existing rights-cleared asset from the internal library</li>
+      <li><strong>Retrieve</strong> a new asset from approved external sources, verify its rights, and index it</li>
+      <li><strong>Generate</strong> a new asset via AI generation (reserved for shots that cannot be safely sourced)</li>
+      <li><strong>Route to review</strong> when rights confidence falls below threshold</li>
+      <li><strong>Omit or rewrite</strong> when no safe option exists</li>
+    </ol>
+    <p>The system is <strong>not</strong> a stock footage library. It is a <strong>shot coverage solver</strong>: given a video request, what shots are needed, what do we already have, what can we safely retrieve, what should be generated, what needs review, and what timeline can be assembled?</p>
+    <p>The system behaves like a <strong>caching compiler for video production</strong>. Each job grows the asset graph in the direction of actual demand, making future jobs cheaper and faster. The moat is the asset graph, rights ledger, shot taxonomy, retrieval quality, risk filtering, and coverage solver — not the footage itself.</p>
+
+    <div class="callout callout-red">
+      <div class="callout-label">Critical Invariant</div>
+      The system must <strong>never</strong> silently use assets with unknown rights in final customer outputs. This is a non-negotiable safety constraint, not a soft preference. Violation of this invariant is a critical bug.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §2  PROBLEM STATEMENT                             -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-label">Section 02</div>
+  <h2 class="section-heading">Problem Statement</h2>
+  <div class="section-body">
+    <p>AI video generation is expensive, inconsistent, and wasteful. A prompt like <em>"make a 90-second video about an Indian baker making cakes"</em> is not directly executable — it must become a structured beat sheet, shot list, asset search plan, rights plan, and edit plan.</p>
+    <p>Current generation-first systems burn compute on shots that could be cheaply retrieved or reused. They also produce random clips, low-quality continuity, overused generic imagery, and risky content involving faces, logos, stereotypes, or unlicensed footage.</p>
+    <p><strong>The Shot Coverage Engine solves this by:</strong></p>
+    <ul>
+      <li>Decomposing creative requests into discrete shot requirements with explicit constraints</li>
+      <li>Mapping each shot to the cheapest safe source via a formal coverage solver</li>
+      <li>Retaining all newly discovered usable assets for future jobs</li>
+      <li>Maintaining a rights ledger that makes every asset decision auditable</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §3  PRODUCT THESIS                               -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-label">Section 03</div>
+  <h2 class="section-heading">Product Thesis</h2>
+  <div class="section-body">
+    <p>The engine should become more valuable with each job. Its library grows in the direction of actual customer demand, not random internet abundance. The system pre-indexes evergreen categories but relies on just-in-time indexing for cache misses and emerging niches.</p>
+    <div class="callout callout-green">
+      <div class="callout-label">Economic Model</div>
+      First job for a niche: high retrieval + generation cost. Subsequent jobs for same niche: decreasing marginal cost as the asset graph accumulates. Break-even typically within 2–4 similar jobs depending on b-roll overlap.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §4  GOALS & INVARIANTS                           -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-label">Section 04</div>
+  <h2 class="section-heading">Goals &amp; Invariants</h2>
+  <div class="section-body">
+    <div class="sub">
+      <h3 class="sub-heading">Functional Goals</h3>
+      <table class="spec-table">
+        <thead><tr><th>ID</th><th>Goal</th><th>Verifiable By</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">G-01</td><td>Accept natural-language video request, produce structured shot coverage plan</td><td>API response contains all required plan fields per §13</td></tr>
+          <tr><td class="mono">G-02</td><td>Decompose request into scenes, beats, shot requirements</td><td>Beat count ≥ 1, shot count ≥ 1 per beat for non-trivial requests</td></tr>
+          <tr><td class="mono">G-03</td><td>Search internal green-pool assets before external retrieval or generation</td><td>Execution trace shows green-pool query precedes all other source queries</td></tr>
+          <tr><td class="mono">G-04</td><td>Assign each shot a source strategy from the enum in §7.6</td><td>Every ShotRequirement.source_strategy is non-null</td></tr>
+          <tr><td class="mono">G-05</td><td>Maintain persistent asset database with embeddings, rights, risk, usage history</td><td>Asset records survive job completion; queryable by all filter dimensions</td></tr>
+          <tr><td class="mono">G-06</td><td>JIT retrieval activates only when green-pool coverage is insufficient</td><td>JIT retrieval count ≤ uncovered shot count</td></tr>
+          <tr><td class="mono">G-07</td><td>Store newly cleared assets for future reuse</td><td>Asset count increases after JIT retrieval; new assets appear in subsequent searches</td></tr>
+          <tr><td class="mono">G-08</td><td>Generate rights manifest for every planned video</td><td>Export endpoint returns manifest with one entry per selected asset</td></tr>
+          <tr><td class="mono">G-09</td><td>Support human review checkpoints for risky/uncertain cases</td><td>Review queue contains all orange-pool selections; plan status blocks until resolved</td></tr>
+          <tr><td class="mono">G-10</td><td>Expose clear APIs for downstream integration</td><td>All endpoints documented per §13; response schemas validate</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sub">
+      <h3 class="sub-heading">System Invariants</h3>
+      <div class="callout callout-red">
+        <div class="callout-label">Inv-1: Rights Safety</div>
+        <code>∀ a ∈ SelectedAssets : a.pool_status = 'green' ∨ a.review_status = 'approved'</code><br>
+        No asset with pool_status <span class="pool pool-yellow">yellow</span>, <span class="pool pool-orange">orange</span>, or <span class="pool pool-red">red</span> may appear in a final export plan unless explicitly approved by a human reviewer.
+      </div>
+      <div class="callout callout-red">
+        <div class="callout-label">Inv-2: Reference Isolation</div>
+        <code>∀ a : a.source_type = 'reference_only' ⟹ a NOTIN SelectedAssets</code><br>
+        Reference-only records may influence search and generation but can never be selected as final output assets.
+      </div>
+      <div class="callout callout-red">
+        <div class="callout-label">Inv-3: Customer Privacy</div>
+        <code>∀ a : a.source_type = 'customer_upload' ⟹ a.pool_status ≠ 'green' UNLESS customer_grants_global_reuse</code><br>
+        Customer uploads are private by default and never enter the shared green pool without explicit permission.
+      </div>
+      <div class="callout callout-accent">
+        <div class="callout-label">Inv-4: Source Priority</div>
+        <code>∀ shot : green_pool_searched(shot) BEFORE external_retrieval(shot) BEFORE generation(shot)</code><br>
+        The system must exhaust cheaper, safer sources before escalating to more expensive or riskier ones.
+      </div>
+      <div class="callout callout-blue">
+        <div class="callout-label">Inv-5: Audit Trail</div>
+        <code>∀ decision ∈ PlanDecisions : ∃ trace(decision)</code><br>
+        Every selection, rejection, and routing decision must be logged with the reasoning, scores, and alternatives considered.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §5  NON-GOALS                                    -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-label">Section 05</div>
+  <h2 class="section-heading">Non-Goals</h2>
+  <div class="section-body">
+    <table class="spec-table">
+      <thead><tr><th>Non-Goal</th><th>Boundary Reason</th></tr></thead>
+      <tbody>
+        <tr><td>Render final videos</td><td>MVP outputs a plan; rendering is a separate downstream system</td></tr>
+        <tr><td>Scrape arbitrary YouTube/social media</td><td>Provenance-first design; only approved-source retrieval</td></tr>
+        <tr><td>Treat random AI-generated media as reusable</td><td>Must verify license and provenance per-asset</td></tr>
+        <tr><td>Support every license type</td><td>MVP license taxonomy: §7.10 enum — 11 types</td></tr>
+        <tr><td>Perfect legal judgment</td><td>Record uncertainty, route to review; legal is human responsibility</td></tr>
+        <tr><td>Autonomous publication to platforms</td><td>Out of scope; export only</td></tr>
+        <tr><td>Multi-user billing</td><td>Data model supports future billing; no billing logic in MVP</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §6  PRIMARY USERS                                -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-label">Section 06</div>
+  <h2 class="section-heading">Primary Users</h2>
+  <div class="section-body">
+    <table class="spec-table">
+      <thead><tr><th>Role</th><th>Goal</th><th>Primary Interface</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Video Customer</td><td>Get a finished video plan without writing production docs</td><td>Intake form → Export page</td></tr>
+        <tr><td class="mono">Video Operator</td><td>Supervise system, review risky shots, replace weak footage</td><td>Coverage Dashboard → Review Queue → Shot Detail</td></tr>
+        <tr><td class="mono">Asset Librarian</td><td>Ingest, tag, license, maintain reusable library</td><td>Asset ingest API → Library browser</td></tr>
+        <tr><td class="mono">Agent Developer</td><td>Implement system from clear APIs, schemas, state machines</td><td>This document + API contract</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §7  DOMAIN VOCABULARY                            -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="section-label">Section 07</div>
+  <h2 class="section-heading">Domain Vocabulary</h2>
+  <div class="section-body">
+
+    <div class="sub">
+      <h3 class="sub-heading">7.1 Video Request</h3>
+      <p>Natural-language request + optional structured settings. See <code>VideoJob</code> schema in §9 for exact fields.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.2 Beat</h3>
+      <p>Semantic unit in video structure. Corresponds to one idea in the script. Example: <em>"Show mixing"</em>.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.3 Shot Requirement</h3>
+      <p>Structured description of a specific visual need. Includes description, role, camera, mood, constraints, risk flags. See §9.4 for full schema.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.4 Asset</h3>
+      <p>An image, video clip, or generated render with full metadata. Types: <code>image</code>, <code>video_clip</code>.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.5 Coverage</h3>
+      <p>Composite score [0.0, 1.0] measuring how well an asset satisfies a shot requirement. Composed of sub-scores defined in §12.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.6 Source Strategy (Enum)</h3>
+      <div class="code-block"><span class="lang-tag">enum</span>
+<span class="key">source_strategy</span>:
+  - <span class="const">existing_asset</span>        <span class="comment"># From green pool</span>
+  - <span class="const">retrieved_asset</span>       <span class="comment"># JIT retrieval, newly cleared</span>
+  - <span class="const">generated_asset</span>       <span class="comment"># AI generation</span>
+  - <span class="const">customer_provided</span>     <span class="comment"># Customer upload</span>
+  - <span class="const">review_required</span>       <span class="comment"># Orange pool, needs human</span>
+  - <span class="const">reference_informed</span>    <span class="comment"># Ref-only used to guide generation</span>
+  - <span class="const">omit</span>                  <span class="comment"># No safe source; shot removed from plan</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.7 Rights Ledger</h3>
+      <p>Provenance and allowed-use record for every reusable asset. See <code>AssetRights</code> schema in §9.7.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.8 Reference-Only Record</h3>
+      <p>Metadata describing an online video (URL, timestamp, embedding, caption) that <strong>cannot</strong> be used as a final asset. Informative only. Enforced by Inv-2.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.9 Pool Status (Enum)</h3>
+      <div class="code-block"><span class="lang-tag">enum</span>
+<span class="key">pool_status</span>:
+  - <span class="const">green</span>    <span class="comment"># Approved for automatic use</span>
+  - <span class="const">yellow</span>   <span class="comment"># Reference-only; never selectable</span>
+  - <span class="const">orange</span>   <span class="comment"># Requires human review before use</span>
+  - <span class="const">red</span>      <span class="comment"># Blocked; must not be used</span></div>
+      <p><span class="pool pool-green">green</span> <span class="pool pool-yellow">yellow</span> <span class="pool pool-orange">orange</span> <span class="pool pool-red">red</span></p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.10 License Type (Enum)</h3>
+      <div class="code-block"><span class="lang-tag">enum</span>
+<span class="key">license_type</span>:
+  - <span class="const">owned</span>              <span class="comment"># We own it outright</span>
+  - <span class="const">generated_by_us</span>    <span class="comment"># We generated it</span>
+  - <span class="const">customer_provided</span>  <span class="comment"># Customer uploaded it</span>
+  - <span class="const">public_domain</span>      <span class="comment"># No rights restrictions</span>
+  - <span class="const">cc0</span>                <span class="comment"># Creative Commons Zero</span>
+  - <span class="const">cc_by</span>              <span class="comment"># CC-BY (attribution required)</span>
+  - <span class="const">paid_licensed</span>      <span class="comment"># Paid stock license</span>
+  - <span class="const">partner_licensed</span>   <span class="comment"># Partner agreement</span>
+  - <span class="const">reference_only</span>     <span class="comment"># Not reusable; metadata only</span>
+  - <span class="const">blocked</span>            <span class="comment"># Explicitly blocked</span>
+  - <span class="const">unknown</span>            <span class="comment"># Rights status undetermined</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.11 Commercial-Safe Predicate (Formal)</h3>
+      <div class="callout callout-accent">
+        <div class="callout-label">Definition</div>
+        <code>is_commercial_safe(asset) :=</code><br>
+        <code>&nbsp;&nbsp;asset.pool_status = 'green'</code><br>
+        <code>&nbsp;&nbsp;AND asset.rights.commercial_use_allowed = true</code><br>
+        <code>&nbsp;&nbsp;AND asset.rights.modification_allowed = true</code><br>
+        <code>&nbsp;&nbsp;AND asset.risk_score &lt; 0.3</code><br>
+        <code>&nbsp;&nbsp;AND asset.rights.model_release_status IN ('yes', 'n/a')</code><br>
+        <code>&nbsp;&nbsp;AND asset.rights.property_release_status IN ('yes', 'n/a')</code><br>
+        <code>&nbsp;&nbsp;AND NOT asset.detected_faces.any_recognizable UNLESS asset.rights.model_release_status = 'yes'</code><br>
+        <code>&nbsp;&nbsp;AND NOT asset.detected_logos.any_visible UNLESS explicitly_allowed</code>
+      </div>
+      <p>This predicate is <strong>computable</strong> — an agent can implement it as a single function. In v0.1, "commercial-safe" was used as an informal adjective. Now it is a formal boolean function over known fields.</p>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">7.12 Shot Role (Enum)</h3>
+      <div class="code-block"><span class="lang-tag">enum</span>
+<span class="key">shot_role</span>:
+  - <span class="const">a_roll</span>         <span class="comment"># Primary narrative; usually generated</span>
+  - <span class="const">b_roll</span>         <span class="comment"># Supporting visuals; prime reuse target</span>
+  - <span class="const">transition</span>     <span class="comment"># Scene transitions</span>
+  - <span class="const">insert</span>         <span class="comment"># Detail closeups</span>
+  - <span class="const">title</span>          <span class="comment"># Title cards</span>
+  - <span class="const">graphic</span>        <span class="comment"># Lower thirds, overlays</span>
+  - <span class="const">establishing</span>   <span class="comment"># Wide/establishing shots</span>
+  - <span class="const">hero</span>           <span class="comment"># Hero/key moment shots</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §8  PIPELINE ARCHITECTURE                        -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="section-label">Section 08</div>
+  <h2 class="section-heading">Pipeline Architecture</h2>
+  <div class="section-body">
+    <p>The system processes a video request through eight stages. Each stage has a defined input, output, agent, and failure mode.</p>
+
+    <div class="state-flow" aria-label="Pipeline stages">
+      <div class="state-node active">1. Intake</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">2. Plan</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">3. Retrieve</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">4. Solve</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">5. JIT</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">6. Generate</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">7. Review</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node done">8. Export</div>
+    </div>
+
+    <div class="decision-table">
+      <table>
+        <thead><tr><th>Stage</th><th>Agent</th><th>Input</th><th>Output</th><th>Failure →</th></tr></thead>
+        <tbody>
+          <tr><td class="condition">1. Intake</td><td>API (no agent)</td><td>VideoJob create request</td><td>VideoJob entity (status: <code>draft</code>)</td><td>400 if prompt empty</td></tr>
+          <tr><td class="condition">2. Plan</td><td>Planner Agent</td><td>VideoJob.prompt + settings</td><td>CreativeBrief, Beat[], ShotRequirement[]</td><td>→ <code>failed</code> with error</td></tr>
+          <tr><td class="condition">3. Retrieve</td><td>Retriever Agent</td><td>ShotRequirement[]</td><td>CandidateMatch[] per shot</td><td>Empty results → continue to Solve</td></tr>
+          <tr><td class="condition">4. Solve</td><td>Coverage Solver Agent</td><td>ShotRequirement[] + CandidateMatch[]</td><td>SelectedPlan + GapList</td><td>Partial coverage → continue to JIT</td></tr>
+          <tr><td class="condition">5. JIT</td><td>Source Scout + Indexer</td><td>GapList (uncovered shots)</td><td>New Asset[] + updated CandidateMatch[]</td><td>No results → escalate to Generate</td></tr>
+          <tr><td class="condition">6. Generate</td><td>Generation Agent</td><td>Uncovered ShotRequirement[]</td><td>GenerationRequest[] → Asset[]</td><td>Generation failure → mark <code>omit</code></td></tr>
+          <tr><td class="condition">7. Review</td><td>Review Agent (human)</td><td>Orange-pool selections</td><td>Approved/Rejected/ReferenceOnly decisions</td><td>→ blocks <code>ready</code> until resolved</td></tr>
+          <tr><td class="condition">8. Export</td><td>Export Service</td><td>Final SelectedPlan</td><td>Markdown + JSON + Rights Manifest</td><td>→ <code>ready</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-blue">
+      <div class="callout-label">Parallelism Note</div>
+      Stages 5 (JIT) and 6 (Generation) can run <strong>in parallel</strong> for different shots. The solver partitions uncovered shots into "retrieve candidates" and "must generate" groups. Both groups execute concurrently. Results merge before stage 7.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §9  FORMAL DATA MODEL                            -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s9">
+  <div class="section-label">Section 09</div>
+  <h2 class="section-heading">Formal Data Model</h2>
+  <div class="section-body">
+    <p>Each entity is defined with types, constraints, and relationships. An agent can generate SQL migrations, TypeScript interfaces, and Zod schemas directly from these definitions.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.1 Project</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">Project</span>:
+  <span class="key">id</span>:              <span class="const">uuid</span>        <span class="comment"># PK, auto-generated</span>
+  <span class="key">owner_id</span>:        <span class="const">uuid</span>        <span class="comment"># FK → users (future auth)</span>
+  <span class="key">name</span>:            <span class="str">string</span>      <span class="comment"># max 200 chars, NOT NULL</span>
+  <span class="key">description</span>:     <span class="str">string?</span>     <span class="comment"># max 2000 chars, nullable</span>
+  <span class="key">created_at</span>:      <span class="const">timestamptz</span> <span class="comment"># NOT NULL, DEFAULT now()</span>
+  <span class="key">updated_at</span>:      <span class="const">timestamptz</span> <span class="comment"># NOT NULL, auto-updated</span>
+
+<span class="comment">-- Constraints:</span>
+<span class="comment">-- name must be non-empty after trim</span>
+<span class="comment">-- one owner can have many projects</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.2 VideoJob</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">VideoJob</span>:
+  <span class="key">id</span>:                  <span class="const">uuid</span>        <span class="comment"># PK</span>
+  <span class="key">project_id</span>:          <span class="const">uuid</span>        <span class="comment"># FK → Project, NOT NULL</span>
+  <span class="key">prompt</span>:              <span class="str">string</span>      <span class="comment"># NOT NULL, max 5000 chars</span>
+  <span class="key">status</span>:              <span class="const">job_status</span>  <span class="comment"># NOT NULL, DEFAULT 'draft'</span>
+  <span class="key">duration_seconds</span>:    <span class="num">integer</span>     <span class="comment"># NOT NULL, DEFAULT 60, range [5, 600]</span>
+  <span class="key">platform</span>:            <span class="str">string</span>      <span class="comment"># DEFAULT 'web_social'</span>
+  <span class="key">aspect_ratio</span>:        <span class="str">string</span>      <span class="comment"># DEFAULT '16:9', enum: 16:9, 9:16, 1:1, 4:5</span>
+  <span class="key">tone</span>:                <span class="str">string?</span>     <span class="comment"># e.g. 'warm', 'moody', 'upbeat'</span>
+  <span class="key">audience</span>:            <span class="str">string?</span>
+  <span class="key">language</span>:            <span class="str">string</span>      <span class="comment"># DEFAULT 'en', BCP-47</span>
+  <span class="key">rights_strictness</span>:   <span class="const">rights_mode</span> <span class="comment"># DEFAULT 'commercial_safe'</span>
+  <span class="key">budget_mode</span>:         <span class="str">string</span>      <span class="comment"># DEFAULT 'balanced', enum: economy, balanced, premium</span>
+  <span class="key">created_at</span>:          <span class="const">timestamptz</span>
+  <span class="key">updated_at</span>:          <span class="const">timestamptz</span>
+
+<span class="key">job_status</span>: <span class="const">enum</span>
+  <span class="const">draft</span> → <span class="const">planning</span> → <span class="const">retrieving</span> → <span class="const">solving</span>
+  → <span class="const">retrieving_jit</span> | <span class="const">generating</span>
+  → <span class="const">review_required</span> → <span class="const">ready</span>
+  → <span class="const">failed</span> | <span class="const">archived</span>
+
+<span class="key">rights_mode</span>: <span class="const">enum</span>
+  <span class="const">commercial_safe</span>   <span class="comment"># Default; strictest</span>
+  <span class="const">editorial</span>          <span class="comment"># Allows some orange with review</span>
+  <span class="const">internal_only</span>      <span class="comment"># Relaxed; allows reference-informed</span>
+
+<span class="comment">-- Constraints:</span>
+<span class="comment">-- prompt must be non-empty after trim</span>
+<span class="comment">-- status transitions must follow state machine in §14</span>
+<span class="comment">-- DELETE cascades to Beat → ShotRequirement → CandidateMatch</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.3 Beat</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">Beat</span>:
+  <span class="key">id</span>:              <span class="const">uuid</span>        <span class="comment"># PK</span>
+  <span class="key">video_job_id</span>:    <span class="const">uuid</span>        <span class="comment"># FK → VideoJob, NOT NULL, ON DELETE CASCADE</span>
+  <span class="key">order_index</span>:     <span class="num">integer</span>     <span class="comment"># NOT NULL, ≥ 0, unique within job</span>
+  <span class="key">title</span>:           <span class="str">string</span>      <span class="comment"># NOT NULL, max 200</span>
+  <span class="key">description</span>:     <span class="str">string</span>      <span class="comment"># NOT NULL, max 1000</span>
+  <span class="key">script_text</span>:     <span class="str">string?</span>     <span class="comment"># Narration/script for this beat</span>
+  <span class="key">duration_seconds</span>: <span class="num">integer</span>     <span class="comment"># NOT NULL, ≥ 1</span>
+  <span class="key">visual_purpose</span>:  <span class="str">string?</span>     <span class="comment"># e.g. 'establish setting', 'show process'</span>
+
+<span class="comment">-- Index: (video_job_id, order_index) UNIQUE</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.4 ShotRequirement</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">ShotRequirement</span>:
+  <span class="key">id</span>:                   <span class="const">uuid</span>
+  <span class="key">video_job_id</span>:         <span class="const">uuid</span>        <span class="comment"># FK → VideoJob</span>
+  <span class="key">beat_id</span>:              <span class="const">uuid</span>        <span class="comment"># FK → Beat</span>
+  <span class="key">order_index</span>:           <span class="num">integer</span>     <span class="comment"># ≥ 0, unique within beat</span>
+  <span class="key">role</span>:                 <span class="const">shot_role</span>   <span class="comment"># NOT NULL (see §7.12)</span>
+  <span class="key">description</span>:          <span class="str">string</span>      <span class="comment"># NOT NULL, max 1000</span>
+  <span class="key">subject</span>:              <span class="str">string?</span>
+  <span class="key">setting</span>:              <span class="str">string?</span>
+  <span class="key">action</span>:               <span class="str">string?</span>
+  <span class="key">camera_framing</span>:       <span class="str">string?</span>     <span class="comment"># e.g. 'close_up', 'wide', 'medium'</span>
+  <span class="key">camera_motion</span>:        <span class="str">string?</span>     <span class="comment"># e.g. 'static', 'pan', 'dolly', 'handheld'</span>
+  <span class="key">style</span>:                <span class="str">string?</span>
+  <span class="key">mood</span>:                 <span class="str">string?</span>
+  <span class="key">duration_seconds</span>:     <span class="num">integer</span>     <span class="comment"># ≥ 1</span>
+  <span class="key">aspect_ratio</span>:         <span class="str">string</span>      <span class="comment"># Inherited from job if null</span>
+  <span class="key">importance</span>:           <span class="str">string</span>      <span class="comment"># enum: critical, high, medium, low</span>
+  <span class="key">continuity_group</span>:     <span class="str">string?</span>     <span class="comment"># Shots in same group must be visually consistent</span>
+  <span class="key">rights_constraints</span>:   <span class="str">jsonb</span>       <span class="comment"># Structured constraints, e.g. {"no_faces": true}</span>
+  <span class="key">negative_constraints</span>: <span class="str">string[]</span>    <span class="comment"># e.g. ['logos', 'watermarks', 'stereotypes']</span>
+  <span class="key">risk_flags</span>:           <span class="str">string[]</span>    <span class="comment"># e.g. ['cultural_sensitivity']</span>
+  <span class="key">fallback_strategy</span>:    <span class="const">source_strategy</span> <span class="comment"># Default fallback if no asset found</span>
+  <span class="key">source_strategy</span>:      <span class="const">source_strategy?</span> <span class="comment"># Assigned by solver; null until solved</span>
+  <span class="key">status</span>:               <span class="const">shot_status</span> <span class="comment"># NOT NULL, DEFAULT 'unsearched'</span>
+
+<span class="key">shot_status</span>: <span class="const">enum</span>
+  <span class="const">unsearched</span> → <span class="const">covered</span> | <span class="const">partial</span> | <span class="const">needs_retrieval</span>
+  | <span class="const">needs_generation</span> | <span class="const">needs_review</span> | <span class="const">omitted</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.5 Asset</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">Asset</span>:
+  <span class="key">id</span>:                    <span class="const">uuid</span>
+  <span class="key">asset_type</span>:            <span class="const">asset_type</span>  <span class="comment"># enum: image, video_clip</span>
+  <span class="key">storage_uri</span>:           <span class="str">string</span>      <span class="comment"># NOT NULL, object store path</span>
+  <span class="key">preview_uri</span>:           <span class="str">string?</span>     <span class="comment"># Thumbnail or preview</span>
+  <span class="key">source_type</span>:           <span class="const">source_type</span> <span class="comment"># NOT NULL (see §7.10)</span>
+  <span class="key">source_url</span>:            <span class="str">string?</span>     <span class="comment"># Original URL if retrieved</span>
+  <span class="key">source_name</span>:           <span class="str">string?</span>
+  <span class="key">creator_name</span>:          <span class="str">string?</span>
+  <span class="key">license_type</span>:          <span class="const">license_type</span><span class="comment"># NOT NULL</span>
+  <span class="key">rights_status</span>:         <span class="str">string</span>      <span class="comment"># Computed from AssetRights</span>
+  <span class="key">pool_status</span>:           <span class="const">pool_status</span> <span class="comment"># NOT NULL, DEFAULT 'orange'</span>
+  <span class="key">duration_seconds</span>:      <span class="num">integer?</span>    <span class="comment"># Null for images</span>
+  <span class="key">aspect_ratio</span>:          <span class="str">string?</span>
+  <span class="key">resolution_width</span>:      <span class="num">integer?</span>
+  <span class="key">resolution_height</span>:     <span class="num">integer?</span>
+  <span class="key">caption</span>:               <span class="str">string?</span>     <span class="comment"># Auto-generated or manual</span>
+  <span class="key">tags</span>:                  <span class="str">string[]</span>    <span class="comment"># Array of tags</span>
+  <span class="key">quality_score</span>:         <span class="num">float</span>       <span class="comment"># [0.0, 1.0], DEFAULT 0.5</span>
+  <span class="key">risk_score</span>:            <span class="num">float</span>       <span class="comment"># [0.0, 1.0], DEFAULT 0.5</span>
+  <span class="key">detected_faces</span>:        <span class="str">jsonb?</span>     <span class="comment"># {count, any_recognizable: bool}</span>
+  <span class="key">detected_logos</span>:        <span class="str">jsonb?</span>     <span class="comment"># {count, any_visible: bool, brands: string[]}</span>
+  <span class="key">detected_text</span>:         <span class="str">jsonb?</span>     <span class="comment"># {count, any_watermark: bool}</span>
+  <span class="key">usage_count</span>:           <span class="num">integer</span>     <span class="comment"># DEFAULT 0, incremented on selection</span>
+  <span class="key">last_used_at</span>:          <span class="const">timestamptz?</span>
+  <span class="key">created_at</span>:            <span class="const">timestamptz</span>
+  <span class="key">updated_at</span>:            <span class="const">timestamptz</span>
+
+<span class="comment">-- Indexes:</span>
+<span class="comment">-- GIN index on tags</span>
+<span class="comment">-- Index on (pool_status, asset_type)</span>
+<span class="comment">-- Index on quality_score, risk_score</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.6 AssetEmbedding</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">AssetEmbedding</span>:
+  <span class="key">id</span>:            <span class="const">uuid</span>
+  <span class="key">asset_id</span>:      <span class="const">uuid</span>        <span class="comment"># FK → Asset, ON DELETE CASCADE</span>
+  <span class="key">model_name</span>:    <span class="str">string</span>      <span class="comment"># e.g. 'clip-vit-base-patch32'</span>
+  <span class="key">embedding_type</span>: <span class="const">embedding_type</span> <span class="comment"># enum: visual, text, multimodal</span>
+  <span class="key">vector</span>:        <span class="const">vector(512)</span>  <span class="comment"># pgvector; dimension depends on model</span>
+  <span class="key">created_at</span>:    <span class="const">timestamptz</span>
+
+<span class="comment">-- Index: ivfflat or hnsw on vector column</span>
+<span class="comment">-- Unique: (asset_id, model_name, embedding_type)</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.7 AssetRights</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">AssetRights</span>:
+  <span class="key">id</span>:                        <span class="const">uuid</span>
+  <span class="key">asset_id</span>:                  <span class="const">uuid</span>        <span class="comment"># FK → Asset, 1:1</span>
+  <span class="key">license_type</span>:              <span class="const">license_type</span>
+  <span class="key">license_url</span>:               <span class="str">string?</span>
+  <span class="key">attribution_required</span>:      <span class="num">boolean</span>     <span class="comment"># NOT NULL, DEFAULT false</span>
+  <span class="key">attribution_text</span>:          <span class="str">string?</span>
+  <span class="key">commercial_use_allowed</span>:    <span class="num">boolean</span>     <span class="comment"># NOT NULL, DEFAULT false</span>
+  <span class="key">modification_allowed</span>:      <span class="num">boolean</span>     <span class="comment"># NOT NULL, DEFAULT false</span>
+  <span class="key">redistribution_allowed</span>:    <span class="num">boolean</span>     <span class="comment"># NOT NULL, DEFAULT false</span>
+  <span class="key">model_release_status</span>:      <span class="str">string</span>      <span class="comment"># enum: yes, no, n/a, unknown</span>
+  <span class="key">property_release_status</span>:   <span class="str">string</span>      <span class="comment"># enum: yes, no, n/a, unknown</span>
+  <span class="key">terms_snapshot_date</span>:       <span class="const">timestamptz?</span>
+  <span class="key">rights_confidence</span>:         <span class="num">float</span>       <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">review_status</span>:             <span class="str">string</span>      <span class="comment"># enum: pending, approved, rejected, reference_only</span>
+  <span class="key">reviewer_notes</span>:            <span class="str">string?</span>
+
+<span class="comment">-- Constraint: UNIQUE(asset_id)</span>
+<span class="comment">-- Every Asset MUST have exactly one AssetRights record</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.8 CandidateMatch</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">CandidateMatch</span>:
+  <span class="key">id</span>:                    <span class="const">uuid</span>
+  <span class="key">shot_requirement_id</span>:  <span class="const">uuid</span>    <span class="comment"># FK → ShotRequirement</span>
+  <span class="key">asset_id</span>:              <span class="const">uuid</span>    <span class="comment"># FK → Asset</span>
+  <span class="key">visual_match_score</span>:    <span class="num">float</span>   <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">text_match_score</span>:      <span class="num">float</span>   <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">license_safety_score</span>:  <span class="num">float</span>   <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">quality_score</span>:         <span class="num">float</span>   <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">continuity_fit_score</span>:  <span class="num">float</span>   <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">edit_fit_score</span>:        <span class="num">float</span>   <span class="comment"># [0.0, 1.0]</span>
+  <span class="key">risk_score</span>:            <span class="num">float</span>   <span class="comment"># [0.0, 1.0]; lower = safer</span>
+  <span class="key">cost_score</span>:            <span class="num">float</span>   <span class="comment"># [0.0, 1.0]; higher = cheaper</span>
+  <span class="key">diversity_penalty</span>:     <span class="num">float</span>   <span class="comment"># [0.0, 1.0]; 0 = no penalty</span>
+  <span class="key">final_score</span>:           <span class="num">float</span>   <span class="comment"># Computed per §12</span>
+  <span class="key">selection_status</span>:      <span class="const">selection_status</span> <span class="comment"># DEFAULT 'candidate'</span>
+
+<span class="key">selection_status</span>: <span class="const">enum</span>
+  <span class="const">candidate</span> | <span class="const">selected</span> | <span class="const">rejected</span> | <span class="const">needs_review</span>
+
+<span class="comment">-- Unique: (shot_requirement_id, asset_id)</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.9 GenerationRequest</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">GenerationRequest</span>:
+  <span class="key">id</span>:                      <span class="const">uuid</span>
+  <span class="key">shot_requirement_id</span>:    <span class="const">uuid</span>    <span class="comment"># FK → ShotRequirement</span>
+  <span class="key">provider</span>:                <span class="str">string?</span> <span class="comment"># e.g. 'runway', 'kling', 'internal'</span>
+  <span class="key">prompt</span>:                  <span class="str">string</span>  <span class="comment"># NOT NULL</span>
+  <span class="key">negative_prompt</span>:         <span class="str">string?</span>
+  <span class="key">aspect_ratio</span>:            <span class="str">string</span>
+  <span class="key">duration_seconds</span>:        <span class="num">integer</span>
+  <span class="key">style_reference_asset_id</span>: <span class="const">uuid?</span>  <span class="comment"># FK → Asset</span>
+  <span class="key">status</span>:                  <span class="const">gen_status</span> <span class="comment"># DEFAULT 'pending'</span>
+  <span class="key">cost_estimate</span>:           <span class="num">float?</span>
+  <span class="key">actual_cost</span>:             <span class="num">float?</span>
+  <span class="key">retry_count</span>:             <span class="num">integer</span>  <span class="comment"># DEFAULT 0, max 3</span>
+  <span class="key">result_asset_id</span>:         <span class="const">uuid?</span>  <span class="comment"># FK → Asset (generated output)</span>
+  <span class="key">created_at</span>:              <span class="const">timestamptz</span>
+
+<span class="key">gen_status</span>: <span class="const">enum</span>
+  <span class="const">pending</span> → <span class="const">processing</span> → <span class="const">completed</span> | <span class="const">failed</span> | <span class="const">cancelled</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.10 ReviewItem</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">ReviewItem</span>:
+  <span class="key">id</span>:            <span class="const">uuid</span>
+  <span class="key">entity_type</span>:   <span class="str">string</span>    <span class="comment"># enum: asset, shot_decision, generation_output</span>
+  <span class="key">entity_id</span>:     <span class="const">uuid</span>      <span class="comment"># FK to relevant table</span>
+  <span class="key">reason</span>:        <span class="str">string</span>    <span class="comment"># NOT NULL, max 500</span>
+  <span class="key">severity</span>:      <span class="str">string</span>    <span class="comment"># enum: low, medium, high, critical</span>
+  <span class="key">status</span>:        <span class="str">string</span>    <span class="comment"># enum: pending, approved, rejected, reference_only</span>
+  <span class="key">reviewer_id</span>:   <span class="const">uuid?</span>     <span class="comment"># FK → users</span>
+  <span class="key">decision</span>:      <span class="str">string?</span>
+  <span class="key">notes</span>:         <span class="str">string?</span>
+  <span class="key">created_at</span>:    <span class="const">timestamptz</span>
+  <span class="key">updated_at</span>:    <span class="const">timestamptz</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">9.11 AuditTrail</h3>
+      <div class="code-block"><span class="lang-tag">schema</span>
+<span class="key">AuditTrail</span>:
+  <span class="key">id</span>:            <span class="const">uuid</span>
+  <span class="key">job_id</span>:        <span class="const">uuid</span>      <span class="comment"># FK → VideoJob</span>
+  <span class="key">stage</span>:         <span class="str">string</span>    <span class="comment"># Pipeline stage name</span>
+  <span class="key">agent</span>:         <span class="str">string</span>    <span class="comment"># Agent that made the decision</span>
+  <span class="key">action</span>:        <span class="str">string</span>    <span class="comment"># e.g. 'asset_selected', 'shot_omitted'</span>
+  <span class="key">entity_type</span>:   <span class="str">string</span>
+  <span class="key">entity_id</span>:     <span class="const">uuid</span>
+  <span class="key">reasoning</span>:     <span class="str">string?</span>   <span class="comment"># LLM reasoning or rule output</span>
+  <span class="key">scores</span>:        <span class="str">jsonb?</span>    <span class="comment"># Relevant scores at decision time</span>
+  <span class="key">alternatives</span>:  <span class="str">jsonb?</span>    <span class="comment"># Other options considered</span>
+  <span class="key">created_at</span>:    <span class="const">timestamptz</span> <span class="comment"># DEFAULT now()</span>
+
+<span class="comment">-- This table is append-only. No updates, no deletes.</span>
+<span class="comment">-- Enforces Inv-5: every decision is traceable.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §10 AGENT SPECIFICATIONS                         -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s10">
+  <div class="section-label">Section 10</div>
+  <h2 class="section-heading">Agent Specifications</h2>
+  <div class="section-body">
+    <p>Each agent is specified as an isolated service with formal I/O, error taxonomy, retry policy, and timeout. An agent developer can implement each one independently.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.1 Planner Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>{ prompt: string, duration_seconds: int, platform: string, aspect_ratio: string, tone?: string, audience?: string, rights_strictness: rights_mode }</code></td></tr>
+            <tr><td class="condition">Output</td><td><code>{ creative_brief: CreativeBrief, beats: Beat[], shot_requirements: ShotRequirement[] }</code></td></tr>
+            <tr><td class="condition">Implementation</td><td>LLM call with structured output schema (JSON mode or function calling)</td></tr>
+            <tr><td class="condition">Timeout</td><td>30 seconds</td></tr>
+            <tr><td class="condition">Retry</td><td>2 retries with exponential backoff (2s, 6s)</td></tr>
+            <tr><td class="condition">Error Types</td><td><code>PLANNER_TIMEOUT</code>, <code>PLANNER_SCHEMA_INVALID</code>, <code>PLANNER_LLM_ERROR</code>, <code>PLANNER_EMPTY_OUTPUT</code></td></tr>
+            <tr><td class="condition">Validation</td><td>Output must have ≥ 1 beat, ≥ 1 shot per beat, all required fields non-null. Reject and retry if validation fails.</td></tr>
+            <tr><td class="condition">Behavioral Rule</td><td>Must label a-roll vs b-roll. Must add negative_constraints for commercial-safe requests: ['logos', 'watermarks', 'recognizable_faces', 'copyrighted_characters'].</td></tr>
+            <tr><td class="condition">Logging</td><td>Emit trace span: <code>planner.execute</code> with input prompt hash, output beat count, shot count, latency.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.2 Retriever Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>ShotRequirement[]</code> + filter context (rights_mode, aspect_ratio)</td></tr>
+            <tr><td class="condition">Output</td><td><code>CandidateMatch[]</code> per shot (max 20 candidates per shot)</td></tr>
+            <tr><td class="condition">Search Strategy</td><td>Hybrid: pgvector cosine similarity (weight 0.6) + full-text tsvector match (weight 0.3) + tag overlap (weight 0.1)</td></tr>
+            <tr><td class="condition">Filter Pipeline</td><td>pool_status = 'green' → asset_type matches → aspect_ratio compatible → duration within tolerance → quality_score ≥ 0.3 → risk_score ≤ threshold (depends on rights_mode)</td></tr>
+            <tr><td class="condition">Timeout</td><td>15 seconds per shot, 45 seconds total (parallelized)</td></tr>
+            <tr><td class="condition">Error Types</td><td><code>RETRIEVER_DB_ERROR</code>, <code>RETRIEVER_TIMEOUT</code>, <code>RETRIEVER_EMBEDDING_ERROR</code></td></tr>
+            <tr><td class="condition">Fallback</td><td>If vector search fails, fall back to text-only search. If both fail, return empty candidates (not an error — solver handles gaps).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.3 Coverage Solver Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>ShotRequirement[]</code> + <code>CandidateMatch[]</code></td></tr>
+            <tr><td class="condition">Output</td><td><code>{ selections: CandidateMatch[], gaps: ShotRequirement[], generation_recs: ShotRequirement[], review_items: ReviewItem[], cost_estimate: float }</code></td></tr>
+            <tr><td class="condition">Algorithm</td><td>Greedy with global diversity constraint. Per shot: rank by final_score (§12). Select top candidate if final_score ≥ coverage_threshold(shot.importance). Apply diversity penalty: if selected asset's source_url or visual_hash appears in prior selections, apply penalty_factor = 0.7.</td></tr>
+            <tr><td class="condition">Global Constraints</td><td>No single source provides > 40% of b-roll shots. Total estimated cost ≤ budget_mode ceiling.</td></tr>
+            <tr><td class="condition">Timeout</td><td>10 seconds</td></tr>
+            <tr><td class="condition">Error Types</td><td><code>SOLVER_NO_VALID_PLAN</code> (if > 50% shots uncovered and all are critical importance)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.4 Source Scout Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>ShotRequirement[]</code> (uncovered) + approved source list</td></tr>
+            <tr><td class="condition">Output</td><td><code>{ new_assets: Asset[], reference_records: Asset[] }</code></td></tr>
+            <tr><td class="condition">Approved Sources (MVP)</td><td>Internal DB, customer uploads, partner libraries, Pexels API, Pixabay API, Wikimedia Commons (verified CC), generated cache</td></tr>
+            <tr><td class="condition">Blocked Sources (hard)</td><td>YouTube, TikTok, Instagram, any social media, any source without clear license, watermarked previews</td></tr>
+            <tr><td class="condition">Timeout</td><td>120 seconds per source, 300 seconds total</td></tr>
+            <tr><td class="condition">Error Types</td><td><code>SCOUT_SOURCE_UNREACHABLE</code>, <code>SCOUT_RATE_LIMITED</code>, <code>SCOUT_NO_RESULTS</code></td></tr>
+            <tr><td class="condition">Retry</td><td>1 retry per source after 10s backoff. Rate-limited sources: respect Retry-After header.</td></tr>
+            <tr><td class="condition">Circuit Breaker</td><td>If a source fails 3 consecutive times, disable it for 30 minutes. Log circuit break event.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.5 Indexer Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>Asset</code> (raw, post-download)</td></tr>
+            <tr><td class="condition">Output</td><td>Fully indexed <code>Asset</code> with: caption, tags, embeddings (visual + text), detected_faces, detected_logos, detected_text, quality_score, risk_score, pool_status</td></tr>
+            <tr><td class="condition">Pipeline Steps</td><td>1. Generate thumbnail → 2. Detect faces/logos/text (vision model) → 3. Generate caption (vision-language model) → 4. Generate tags → 5. Generate embeddings → 6. Score quality → 7. Score risk → 8. Deduplicate (visual hash + embedding similarity > 0.95) → 9. Assign pool_status</td></tr>
+            <tr><td class="condition">Timeout</td><td>60 seconds per asset</td></tr>
+            <tr><td class="condition">Error Handling</td><td>If any step fails, set pool_status = 'orange' and create ReviewItem with reason. Do not block the pipeline.</td></tr>
+            <tr><td class="condition">Dedup Rule</td><td>If existing asset has embedding cosine similarity > 0.95 with new asset AND same aspect_ratio AND same duration ± 1s → mark as duplicate, do not insert.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.6 Rights Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>Asset</code> metadata (source_type, source_url, source_name)</td></tr>
+            <tr><td class="condition">Output</td><td><code>AssetRights</code> record + initial pool_status recommendation</td></tr>
+            <tr><td class="condition">Classification Rules</td><td>source_type='owned' → pool='green', confidence=1.0. source_type='cc0' → pool='green', confidence=0.95. source_type='cc_by' → pool='green', confidence=0.85. source_type='paid_stock' → pool='green' if license verified, else 'orange'. source_type='unknown' → pool='red'. source_type='reference_only' → pool='yellow' (always).</td></tr>
+            <tr><td class="condition">REQUIRES:HUMAN</td><td>If source_type is not in the rule table above, create ReviewItem with severity='high' and set pool='orange'.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.7 Generation Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>ShotRequirement</code> + optional style reference</td></tr>
+            <tr><td class="condition">Output</td><td><code>GenerationRequest</code> → polled until <code>completed</code> or <code>failed</code> → resulting <code>Asset</code></td></tr>
+            <tr><td class="condition">Prompt Construction</td><td>Base: shot.description + shot.subject + shot.setting + shot.action + shot.camera_framing + shot.mood + shot.style. Negative: shot.negative_constraints joined with ', '. Context: beat.script_text for continuity.</td></tr>
+            <tr><td class="condition">Retry Policy</td><td>Max 3 retries per shot. If quality_score of output < 0.4, auto-retry. If all retries fail, set shot status to 'omitted' and log.</td></tr>
+            <tr><td class="condition">Timeout</td><td>180 seconds per generation request</td></tr>
+            <tr><td class="condition">Post-Generation</td><td>Run generated asset through Indexer Agent. If pool_status ends as 'green', mark as reusable. Store in asset library.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.8 Quality Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>Asset</code> (image or video frame sample)</td></tr>
+            <tr><td class="condition">Output</td><td><code>quality_score: float</code> + <code>rejection_reasons: string[]</code></td></tr>
+            <tr><td class="condition">Detection Rules</td><td>Check for: compression artifacts (high JPEG noise), broken anatomy (if people present), poor framing (subject too small/edge-cropped), unusable text overlays, watermarks, extremely low resolution (&lt; 480p), extreme aspect ratio distortion, black/blank frames.</td></tr>
+            <tr><td class="condition">Scoring</td><td>Each detected issue subtracts from base score of 1.0. Watermark: -0.4. Low resolution: -0.3. Artifacts: -0.2. Poor framing: -0.15. Other: -0.1 each. Floor at 0.0.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.9 Risk Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td><code>Asset</code> + <code>ShotRequirement</code> context</td></tr>
+            <tr><td class="condition">Output</td><td><code>risk_score: float</code> + <code>risk_flags: string[]</code></td></tr>
+            <tr><td class="condition">Flag Taxonomy</td><td><code>visible_brand</code>, <code>recognizable_face</code>, <code>public_figure</code>, <code>copyrighted_character</code>, <code>cultural_stereotype</code>, <code>unsafe_content</code>, <code>visible_watermark</code>, <code>text_overlay_unreadable</code>, <code>explicit_content</code></td></tr>
+            <tr><td class="condition">Scoring</td><td>Base 0.0. Each flag adds: recognizable_face: +0.3, public_figure: +0.5, visible_brand: +0.2, cultural_stereotype: +0.4, unsafe_content: +0.8, visible_watermark: +0.3, explicit_content: +1.0 (auto-red). Ceiling at 1.0.</td></tr>
+            <tr><td class="condition">Auto-Red Rule</td><td>If risk_score ≥ 0.8 OR flag 'unsafe_content' OR flag 'explicit_content' → pool_status = 'red' immediately, no review allowed.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">10.10 Review Agent</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Property</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Input</td><td>Orange-pool <code>CandidateMatch</code> selections + <code>ReviewItem[]</code></td></tr>
+            <tr><td class="condition">Output</td><td>Human-readable review queue. Does NOT make decisions — presents context to human.</td></tr>
+            <tr><td class="condition">Queue Entry Includes</td><td>Asset preview, shot requirement, all scores, risk flags, rights metadata, reason for review, recommended action (approve/reject/reference-only) with confidence.</td></tr>
+            <tr><td class="condition">REQUIRES:HUMAN</td><td>This agent is purely a presentation layer. All decisions come from human reviewers via API.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §11 COVERAGE SOLVER — FORMAL SPEC                -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s11">
+  <div class="section-label">Section 11</div>
+  <h2 class="section-heading">Coverage Solver — Formal Specification</h2>
+  <div class="section-body">
+    <p>The solver is the core algorithmic component. It must be implementable as a deterministic function (with configurable weights) without requiring LLM calls.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">Coverage Thresholds by Importance</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Shot Importance</th><th>Strong Coverage</th><th>Usable Coverage</th><th>Partial Coverage</th><th>Uncovered</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">critical</td><td>≥ 0.90</td><td>0.80–0.89</td><td>0.60–0.79</td><td>&lt; 0.60</td></tr>
+            <tr><td class="condition">high</td><td>≥ 0.85</td><td>0.75–0.84</td><td>0.55–0.74</td><td>&lt; 0.55</td></tr>
+            <tr><td class="condition">medium</td><td>≥ 0.80</td><td>0.70–0.79</td><td>0.50–0.69</td><td>&lt; 0.50</td></tr>
+            <tr><td class="condition">low</td><td>≥ 0.70</td><td>0.55–0.69</td><td>0.40–0.54</td><td>&lt; 0.40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">Solver Decision Logic</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Condition</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Best candidate final_score ≥ strong_threshold AND pool = green</td><td>Select asset. Shot status → <code>covered</code>.</td></tr>
+            <tr><td class="condition">Best candidate final_score ≥ usable_threshold AND pool = green</td><td>Select asset. Shot status → <code>covered</code>. Flag for optional review if score &lt; strong.</td></tr>
+            <tr><td class="condition">Best candidate final_score ≥ partial_threshold AND pool = green</td><td>Select asset. Shot status → <code>partial</code>. Add to gap list for potential JIT retrieval.</td></tr>
+            <tr><td class="condition">Best candidate pool = orange AND importance ≥ high</td><td>Add to ReviewItem. Shot status → <code>needs_review</code>.</td></tr>
+            <tr><td class="condition">No candidate ≥ partial_threshold</td><td>Shot status → <code>needs_retrieval</code> if b-roll/establishing/insert. Shot status → <code>needs_generation</code> if a-roll/hero.</td></tr>
+            <tr><td class="condition">Shot role = a_roll OR hero</td><td>Skip retrieval. Go directly to <code>needs_generation</code>. (A-roll is almost never available as stock.)</td></tr>
+            <tr><td class="condition">Diversity constraint violated (same source > 40% b-roll)</td><td>Deprioritize repeated source. Apply 0.7× penalty to candidates from overrepresented source.</td></tr>
+            <tr><td class="condition">All retrieval + generation options exhausted</td><td>Shot status → <code>omitted</code>. Log with reasoning. Include in export as "removed from plan."</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §12 SCORING MODEL — DECISION TABLE               -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s12">
+  <div class="section-label">Section 12</div>
+  <h2 class="section-heading">Scoring Model — Decision Table</h2>
+  <div class="section-body">
+    <p>The v0.1 "suggested formula" is replaced with a formal, configurable scoring specification. All weights have defined ranges and defaults.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">Final Score Computation</h3>
+      <div class="code-block"><span class="lang-tag">formula</span>
+<span class="comment">// Configurable weights with valid ranges and defaults</span>
+<span class="key">weights</span>:
+  visual_match:     { <span class="key">default</span>: <span class="num">0.25</span>, <span class="key">min</span>: <span class="num">0.10</span>, <span class="key">max</span>: <span class="num">0.40</span> }
+  text_match:       { <span class="key">default</span>: <span class="num">0.15</span>, <span class="key">min</span>: <span class="num">0.05</span>, <span class="key">max</span>: <span class="num">0.25</span> }
+  license_safety:   { <span class="key">default</span>: <span class="num">0.25</span>, <span class="key">min</span>: <span class="num">0.15</span>, <span class="key">max</span>: <span class="num">0.40</span> }
+  quality:          { <span class="key">default</span>: <span class="num">0.15</span>, <span class="key">min</span>: <span class="num">0.05</span>, <span class="key">max</span>: <span class="num">0.25</span> }
+  continuity_fit:   { <span class="key">default</span>: <span class="num">0.10</span>, <span class="key">min</span>: <span class="num">0.00</span>, <span class="key">max</span>: <span class="num">0.20</span> }
+  edit_fit:         { <span class="key">default</span>: <span class="num">0.05</span>, <span class="key">min</span>: <span class="num">0.00</span>, <span class="key">max</span>: <span class="num">0.15</span> }
+  cost:             { <span class="key">default</span>: <span class="num">0.05</span>, <span class="key">min</span>: <span class="num">0.00</span>, <span class="key">max</span>: <span class="num">0.15</span> }
+
+<span class="comment">// Risk is a penalty, not a weight</span>
+<span class="key">risk_penalty_factor</span>: { <span class="key">default</span>: <span class="num">0.30</span>, <span class="key">min</span>: <span class="num">0.10</span>, <span class="key">max</span>: <span class="num">0.50</span> }
+
+<span class="comment">// Diversity is a post-hoc penalty</span>
+<span class="key">diversity_penalty_factor</span>: { <span class="key">default</span>: <span class="num">0.10</span>, <span class="key">min</span>: <span class="num">0.00</span>, <span class="key">max</span>: <span class="num">0.30</span> }
+
+<span class="key">final_score</span> =
+  (visual_match × w.visual_match
+  + text_match × w.text_match
+  + license_safety × w.license_safety
+  + quality × w.quality
+  + continuity_fit × w.continuity_fit
+  + edit_fit × w.edit_fit
+  + cost × w.cost)
+  × (<span class="num">1.0</span> - risk_score × risk_penalty_factor)
+  × (<span class="num">1.0</span> - diversity_penalty × diversity_penalty_factor)
+
+<span class="comment">// Invariant: weights must sum to 1.0 (validated at config load)</span>
+<span class="comment">// Invariant: final_score is always in [0.0, 1.0]</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">Sub-Score Computation Rules</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Sub-Score</th><th>Computed By</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">visual_match</td><td>1.0 - cosine_distance(shot_embedding, asset_visual_embedding)</td><td>Shot embedding generated from description; asset from frame sample</td></tr>
+            <tr><td class="condition">text_match</td><td>ts_rank_cd(asset.caption_tsvector, shot_description_query)</td><td>PostgreSQL full-text search rank, normalized to [0,1]</td></tr>
+            <tr><td class="condition">license_safety</td><td>Mapping: green→1.0, orange→0.3, yellow→0.0, red→0.0. Modified by rights_confidence.</td><td>Orange assets get 0.3 base, multiplied by rights_confidence</td></tr>
+            <tr><td class="condition">quality</td><td>Asset.quality_score (from Quality Agent)</td><td>Direct pass-through</td></tr>
+            <tr><td class="condition">continuity_fit</td><td>If shot.continuity_group is null → 1.0. Else: 1.0 - visual_distance to other selected shots in same group.</td><td>Encourages visual consistency within continuity groups</td></tr>
+            <tr><td class="condition">edit_fit</td><td>Composite: aspect_ratio_match (0.5) + duration_adequacy (0.3) + transition_suitability (0.2)</td><td>Can asset be edited to fit the shot's timing and framing needs?</td></tr>
+            <tr><td class="condition">cost</td><td>Mapping: owned/cc0/public_domain→1.0, cc_by→0.9, partner→0.8, paid_stock→0.6, generated→0.4, reference_only→0.0</td><td>Higher = cheaper/free</td></tr>
+            <tr><td class="condition">risk_score</td><td>Asset.risk_score (from Risk Agent)</td><td>Used as penalty multiplier, not additive weight</td></tr>
+            <tr><td class="condition">diversity_penalty</td><td>0.0 if asset is first from its source. 0.5 if source already used once. 1.0 if source already used ≥ 2 times.</td><td>Applied post-hoc after initial ranking</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout callout-accent">
+      <div class="callout-label">Key Difference from v0.1</div>
+      v0.1 added risk_score as a positive weight (0.30), which meant <em>higher risk increased the score</em>. v0.2 correctly treats risk as a <strong>penalty multiplier</strong>: higher risk reduces the final score. This is a critical correctness fix.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §13 API CONTRACT                                 -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s13">
+  <div class="section-label">Section 13</div>
+  <h2 class="section-heading">API Contract</h2>
+  <div class="section-body">
+    <p>All endpoints use JSON. All mutations accept an optional <code>Idempotency-Key</code> header for safe retries. All lists support <code>?page=1&limit=50</code> pagination.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">Error Response Schema</h3>
+      <div class="code-block"><span class="lang-tag">json</span>
+{
+  <span class="key">"error"</span>: {
+    <span class="key">"code"</span>:    <span class="str">"PLANNER_TIMEOUT"</span>,
+    <span class="key">"message"</span>: <span class="str">"Planner agent timed out after 30s"</span>,
+    <span class="key">"details"</span>: { <span class="key">"job_id"</span>: <span class="str">"uuid-here"</span>, <span class="key">"attempt"</span>: <span class="num">3</span> },
+    <span class="key">"retryable"</span>: <span class="num">false</span>
+  }
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/video-jobs</h3>
+      <div class="code-block"><span class="lang-tag">request</span>
+{
+  <span class="key">"prompt"</span>: <span class="str">"Make a 90-second video about..."</span>,        <span class="comment">// required, 1–5000 chars</span>
+  <span class="key">"duration_seconds"</span>: <span class="num">90</span>,                         <span class="comment">// optional, default 60, [5, 600]</span>
+  <span class="key">"platform"</span>: <span class="str">"youtube_shorts"</span>,                  <span class="comment">// optional, default "web_social"</span>
+  <span class="key">"aspect_ratio"</span>: <span class="str">"9:16"</span>,                        <span class="comment">// optional, default "16:9"</span>
+  <span class="key">"tone"</span>: <span class="str">"warm"</span>,                               <span class="comment">// optional</span>
+  <span class="key">"rights_strictness"</span>: <span class="str">"commercial_safe"</span>,         <span class="comment">// optional, default "commercial_safe"</span>
+  <span class="key">"budget_mode"</span>: <span class="str">"balanced"</span>                     <span class="comment">// optional, default "balanced"</span>
+}
+
+<span class="comment">// Response: 201 Created</span>
+{
+  <span class="key">"id"</span>: <span class="str">"uuid"</span>,
+  <span class="key">"status"</span>: <span class="str">"draft"</span>,
+  <span class="key">"created_at"</span>: <span class="str">"ISO-8601"</span>
+}
+
+<span class="comment">// Errors: 400 (empty prompt, invalid fields)</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/video-jobs/:id/plan</h3>
+      <div class="code-block"><span class="lang-tag">response</span>
+<span class="comment">// 200 OK (triggers Planner Agent, may take up to 30s)</span>
+{
+  <span class="key">"job_id"</span>: <span class="str">"uuid"</span>,
+  <span class="key">"status"</span>: <span class="str">"retrieving"</span>,
+  <span class="key">"creative_brief"</span>: {
+    <span class="key">"title"</span>: <span class="str">"..."</span>,
+    <span class="key">"target_audience"</span>: <span class="str">"..."</span>,
+    <span class="key">"visual_style"</span>: <span class="str">"..."</span>,
+    <span class="key">"cultural_notes"</span>: <span class="str">"..."</span>
+  },
+  <span class="key">"beats"</span>: [ { <span class="key">"id"</span>, <span class="key">"order_index"</span>, <span class="key">"title"</span>, <span class="key">"description"</span>, <span class="key">"script_text"</span>, <span class="key">"duration_seconds"</span> } ],
+  <span class="key">"shot_requirements"</span>: [ { <span class="comment">/* full ShotRequirement schema */</span> } ]
+}
+
+<span class="comment">// Errors: 404 (job not found), 409 (job not in draft/planning state),</span>
+<span class="comment">//         502 (planner timeout), 503 (planner LLM error)</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/video-jobs/:id/retrieve</h3>
+      <div class="code-block"><span class="lang-tag">response</span>
+<span class="comment">// 200 OK</span>
+{
+  <span class="key">"job_id"</span>: <span class="str">"uuid"</span>,
+  <span class="key">"coverage_summary"</span>: {
+    <span class="key">"total_shots"</span>: <span class="num">12</span>,
+    <span class="key">"covered"</span>: <span class="num">5</span>,
+    <span class="key">"partial"</span>: <span class="num">3</span>,
+    <span class="key">"uncovered"</span>: <span class="num">4</span>,
+    <span class="key">"needs_review"</span>: <span class="num">0</span>,
+    <span class="key">"coverage_percentage"</span>: <span class="num">0.42</span>
+  },
+  <span class="key">"candidates"</span>: [ { <span class="comment">/* CandidateMatch[] grouped by shot */</span> } ]
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/video-jobs/:id/solve</h3>
+      <div class="code-block"><span class="lang-tag">response</span>
+<span class="comment">// 200 OK</span>
+{
+  <span class="key">"selected_plan"</span>: [ { <span class="key">"shot_id"</span>, <span class="key">"asset_id"</span>, <span class="key">"final_score"</span>, <span class="key">"source_strategy"</span> } ],
+  <span class="key">"gaps"</span>: [ { <span class="key">"shot_id"</span>, <span class="key">"reason"</span>, <span class="key">"recommended_action"</span> } ],
+  <span class="key">"generation_recommendations"</span>: [ { <span class="key">"shot_id"</span>, <span class="key">"reason"</span> } ],
+  <span class="key">"retrieval_recommendations"</span>: [ { <span class="key">"shot_id"</span>, <span class="key">"reason"</span> } ],
+  <span class="key">"review_items"</span>: [ { <span class="comment">/* ReviewItem[] */</span> } ],
+  <span class="key">"cost_estimate"</span>: <span class="num">4.50</span>,
+  <span class="key">"job_status"</span>: <span class="str">"retrieving_jit"</span> <span class="comment">// or "generating" or "review_required" or "ready"</span>
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/video-jobs/:id/jit-retrieve</h3>
+      <div class="code-block"><span class="lang-tag">response</span>
+<span class="comment">// 202 Accepted (runs async)</span>
+{
+  <span class="key">"job_id"</span>: <span class="str">"uuid"</span>,
+  <span class="key">"status"</span>: <span class="str">"retrieving_jit"</span>,
+  <span class="key">"shots_being_retrieved"</span>: <span class="num">4</span>,
+  <span class="key">"poll_url"</span>: <span class="str">"/api/video-jobs/:id/status"</span>
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/video-jobs/:id/generate-plan</h3>
+      <div class="code-block"><span class="lang-tag">response</span>
+<span class="comment">// 200 OK</span>
+{
+  <span class="key">"generation_requests"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"uuid"</span>,
+      <span class="key">"shot_id"</span>: <span class="str">"uuid"</span>,
+      <span class="key">"prompt"</span>: <span class="str">"Close-up of hands sprinkling saffron threads..."</span>,
+      <span class="key">"negative_prompt"</span>: <span class="str">"logos, watermarks, faces, text overlay..."</span>,
+      <span class="key">"aspect_ratio"</span>: <span class="str">"9:16"</span>,
+      <span class="key">"duration_seconds"</span>: <span class="num">3</span>,
+      <span class="key">"status"</span>: <span class="str">"pending"</span>
+    }
+  ]
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">GET /api/video-jobs/:id/export</h3>
+      <div class="code-block"><span class="lang-tag">response</span>
+<span class="comment">// 200 OK</span>
+{
+  <span class="key">"format"</span>: <span class="str">"json"</span>,  <span class="comment">// or ?format=markdown</span>
+  <span class="key">"shot_plan"</span>: { <span class="comment">/* Full plan with selections */</span> },
+  <span class="key">"rights_manifest"</span>: [
+    {
+      <span class="key">"shot_id"</span>: <span class="str">"uuid"</span>,
+      <span class="key">"asset_id"</span>: <span class="str">"uuid"</span>,
+      <span class="key">"source"</span>: <span class="str">"Pexels"</span>,
+      <span class="key">"license"</span>: <span class="str">"cc0"</span>,
+      <span class="key">"attribution"</span>: <span class="num">null</span>,
+      <span class="key">"commercial_use"</span>: <span class="num">true</span>,
+      <span class="key">"is_generated"</span>: <span class="num">false</span>,
+      <span class="key">"risk_notes"</span>: <span class="num">null</span>
+    }
+  ],
+  <span class="key">"generation_prompts"</span>: [ { <span class="comment">/* For shots requiring generation */</span> } ],
+  <span class="key">"review_queue_items"</span>: [ { <span class="comment">/* Unresolved review items */</span> } ]
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">POST /api/assets/ingest</h3>
+      <div class="code-block"><span class="lang-tag">request</span>
+<span class="comment">// multipart/form-data</span>
+<span class="key">file</span>:          <span class="str">(binary)</span>
+<span class="key">source_type</span>:   <span class="str">"customer_upload"</span>
+<span class="key">license_type</span>:  <span class="str">"owned"</span>
+<span class="key">tags</span>:          <span class="str">"bakery,cake,closeup"</span>  <span class="comment">// comma-separated</span>
+<span class="key">caption</span>:       <span class="str">"Hands mixing cake batter"</span>  <span class="comment">// optional; auto-generated if omitted</span>
+
+<span class="comment">// Response: 202 Accepted (runs indexing async)</span>
+{
+  <span class="key">"asset_id"</span>: <span class="str">"uuid"</span>,
+  <span class="key">"status"</span>: <span class="str">"indexing"</span>,
+  <span class="key">"poll_url"</span>: <span class="str">"/api/assets/:id"</span>
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">GET /api/review-items &amp; POST /api/review-items/:id/decision</h3>
+      <div class="code-block"><span class="lang-tag">decision request</span>
+{
+  <span class="key">"decision"</span>: <span class="str">"approved"</span>,    <span class="comment">// enum: approved, rejected, reference_only</span>
+  <span class="key">"notes"</span>: <span class="str">"No recognizable faces. License verified."</span>
+}
+
+<span class="comment">// Response: 200 OK</span>
+{
+  <span class="key">"review_item_id"</span>: <span class="str">"uuid"</span>,
+  <span class="key">"status"</span>: <span class="str">"approved"</span>,
+  <span class="comment">// Side effect: updates asset pool_status and shot status accordingly</span>
+}</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">Rate Limits</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>Endpoint</th><th>Limit</th><th>Scope</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">POST /api/video-jobs</td><td>10/min</td><td>Per project</td></tr>
+            <tr><td class="condition">POST /api/video-jobs/:id/plan</td><td>5/min</td><td>Per project</td></tr>
+            <tr><td class="condition">POST /api/assets/ingest</td><td>20/min</td><td>Per project</td></tr>
+            <tr><td class="condition">GET /*</td><td>60/min</td><td>Per project</td></tr>
+            <tr><td class="condition">All endpoints</td><td>200/min</td><td>Per IP (global cap)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §14 STATE MACHINE                                -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s14">
+  <div class="section-label">Section 14</div>
+  <h2 class="section-heading">State Machine</h2>
+  <div class="section-body">
+    <div class="state-flow" aria-label="Job state machine">
+      <div class="state-node">draft</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">planning</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">retrieving</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">solving</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">retrieving_jit</div>
+      <div class="state-arrow">/</div>
+      <div class="state-node active">generating</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node active">review_required</div>
+      <div class="state-arrow">→</div>
+      <div class="state-node done">ready</div>
+      <div class="state-arrow">|</div>
+      <div class="state-node error">failed</div>
+    </div>
+
+    <div class="decision-table">
+      <table>
+        <thead><tr><th>From</th><th>To</th><th>Trigger</th><th>Guard</th><th>Side-Effect</th></tr></thead>
+        <tbody>
+          <tr><td class="condition">draft</td><td>planning</td><td>POST /plan</td><td>Job exists</td><td>Create AuditTrail entry</td></tr>
+          <tr><td class="condition">planning</td><td>retrieving</td><td>Planner completes</td><td>≥ 1 beat, ≥ 1 shot</td><td>Store beats + shots</td></tr>
+          <tr><td class="condition">planning</td><td>failed</td><td>Planner fails all retries</td><td>—</td><td>Store error in AuditTrail</td></tr>
+          <tr><td class="condition">retrieving</td><td>solving</td><td>Retriever completes</td><td>—</td><td>Store CandidateMatch[]</td></tr>
+          <tr><td class="condition">solving</td><td>ready</td><td>Solver: all shots covered</td><td>0 gaps, 0 review items</td><td>Mark all shots 'covered'</td></tr>
+          <tr><td class="condition">solving</td><td>retrieving_jit</td><td>Solver: gaps exist, b-roll</td><td>≥ 1 gap with role ∈ {b_roll, establishing, insert}</td><td>Create retrieval tasks</td></tr>
+          <tr><td class="condition">solving</td><td>generating</td><td>Solver: gaps exist, a-roll/hero</td><td>≥ 1 gap with role ∈ {a_roll, hero}</td><td>Create generation requests</td></tr>
+          <tr><td class="condition">solving</td><td>review_required</td><td>Solver: orange selections</td><td>≥ 1 selected asset pool=orange</td><td>Create ReviewItem[]</td></tr>
+          <tr><td class="condition">retrieving_jit</td><td>solving</td><td>JIT completes</td><td>—</td><td>Re-run solver with new candidates</td></tr>
+          <tr><td class="condition">generating</td><td>solving</td><td>Generation completes</td><td>—</td><td>Re-run solver with generated assets</td></tr>
+          <tr><td class="condition">review_required</td><td>ready</td><td>All ReviewItems resolved</td><td>0 pending review items</td><td>Update pool statuses, shot statuses</td></tr>
+          <tr><td class="condition">ready</td><td>archived</td><td>POST /archive</td><td>—</td><td>—</td></tr>
+          <tr><td class="condition">any</td><td>failed</td><td>Unrecoverable error</td><td>—</td><td>Store error, notify if configured</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-red">
+      <div class="callout-label">State Machine Invariant</div>
+      No transition may skip a state. No transition may go backwards (except <code>retrieving_jit</code> → <code>solving</code> and <code>generating</code> → <code>solving</code> which are explicit re-entry loops). The <code>failed</code> state is terminal (except manual reset to <code>draft</code> by operator).
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §15 ACCEPTANCE CRITERIA (BDD)                    -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s15">
+  <div class="section-label">Section 15</div>
+  <h2 class="section-heading">Acceptance Criteria (BDD)</h2>
+  <div class="section-body">
+    <p>Each user story from v0.1 is formalized as testable Given/When/Then scenarios. A coding agent can convert these directly into test cases.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-01: Customer Creates Video Request</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Prompt with minimal input</div>
+        <div class="given">Given a user submits POST /api/video-jobs with prompt="Make a 60s video about baking"</div>
+        <div class="and">And no other fields are provided</div>
+        <div class="when">When the request is processed</div>
+        <div class="then">Then the response status is 201</div>
+        <div class="and">And the job duration_seconds is 60</div>
+        <div class="and">And the job aspect_ratio is "16:9"</div>
+        <div class="and">And the job rights_strictness is "commercial_safe"</div>
+        <div class="and">And the job status is "draft"</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-02: Commercial-Safe Default</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: System avoids risky assets by default</div>
+        <div class="given">Given a job with rights_strictness="commercial_safe"</div>
+        <div class="and">And the asset library contains an asset with pool_status="orange" that is a perfect visual match</div>
+        <div class="and">And the asset library contains an asset with pool_status="green" that is a moderate visual match</div>
+        <div class="when">When the retriever searches for a shot</div>
+        <div class="then">Then the green asset appears in candidates</div>
+        <div class="and">And the orange asset does NOT appear in candidates (filtered out before scoring)</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-03: Library Searched First</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Green pool exhausted before external retrieval</div>
+        <div class="given">Given a job has 10 shot requirements</div>
+        <div class="and">And 7 shots have green-pool candidates with score ≥ 0.85</div>
+        <div class="and">And 3 shots have no green-pool candidates</div>
+        <div class="when">When the solver runs</div>
+        <div class="then">Then 7 shots are marked "covered" with source_strategy="existing_asset"</div>
+        <div class="and">And 3 shots are marked "needs_retrieval" or "needs_generation"</div>
+        <div class="and">And the AuditTrail contains entries proving green-pool was queried before JIT</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-04: Reference-Only Isolation</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Reference-only records never selected</div>
+        <div class="given">Given the asset library contains 5 reference-only records</div>
+        <div class="when">When any job runs retrieval</div>
+        <div class="then">Then zero reference-only records appear in CandidateMatch[]</div>
+        <div class="and">And zero reference-only records appear in the final export plan</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-05: Rights Manifest Completeness</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Every selected asset has rights documentation</div>
+        <div class="given">Given a job is in "ready" status with 8 selected assets</div>
+        <div class="when">When GET /api/video-jobs/:id/export is called</div>
+        <div class="then">Then the rights_manifest array has exactly 8 entries</div>
+        <div class="and">And each entry has non-null: source, license, commercial_use, is_generated</div>
+        <div class="and">And each entry with attribution_required=true has non-null attribution text</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-06: Review Blocks Export</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Unresolved review items prevent ready status</div>
+        <div class="given">Given a job has 2 pending ReviewItems</div>
+        <div class="when">When GET /api/video-jobs/:id/export is called</div>
+        <div class="then">Then the response status is 409</div>
+        <div class="and">And the error code is "REVIEW_PENDING"</div>
+        <div class="and">And the error details include the count of pending items</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-07: A-Roll Skips Retrieval</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: A-roll shots go directly to generation</div>
+        <div class="given">Given a shot requirement with role="a_roll"</div>
+        <div class="and">And no green-pool candidates exist</div>
+        <div class="when">When the solver runs</div>
+        <div class="then">Then the shot status is "needs_generation"</div>
+        <div class="and">And the shot status is NOT "needs_retrieval"</div>
+        <div class="and">And the AuditTrail records the decision with reason="a_roll_requires_generation"</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-08: Customer Privacy Default</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Customer uploads are private by default</div>
+        <div class="given">Given a customer uploads an asset via POST /api/assets/ingest with source_type="customer_upload"</div>
+        <div class="when">When the asset is indexed</div>
+        <div class="then">Then the asset pool_status is "orange" (not "green")</div>
+        <div class="and">And the asset does not appear in searches for other projects</div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">AC-09: Scoring Risk Penalty Correctness</h3>
+      <div class="bdd">
+        <div class="bdd-title">Scenario: Higher risk reduces final score</div>
+        <div class="given">Given two candidates with identical sub-scores except risk_score</div>
+        <div class="and">And candidate A has risk_score=0.1</div>
+        <div class="and">And candidate B has risk_score=0.6</div>
+        <div class="when">When final_score is computed with default weights</div>
+        <div class="then">Then A.final_score > B.final_score</div>
+        <div class="and">And the difference equals (0.6 - 0.1) × 0.30 × base_score</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §16 SAFETY & RIGHTS FORMAL RULES                 -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s16">
+  <div class="section-label">Section 16</div>
+  <h2 class="section-heading">Safety &amp; Rights Formal Rules</h2>
+  <div class="section-body">
+    <div class="decision-table">
+      <table>
+        <thead><tr><th>Rule ID</th><th>Rule</th><th>Enforcement</th><th>Violation Severity</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">SR-01</td><td>Never auto-use assets with pool_status=red in any output</td><td>Filter in Retriever Agent; assertion in Export Service</td><td>Critical (Inv-1)</td></tr>
+          <tr><td class="mono">SR-02</td><td>Never auto-use assets with pool_status=yellow in any output</td><td>Filter in Retriever Agent; assertion in Export Service</td><td>Critical (Inv-2)</td></tr>
+          <tr><td class="mono">SR-03</td><td>Never auto-use assets with pool_status=orange without human approval</td><td>Solver routes to review_required; Export blocks if pending</td><td>Critical (Inv-1)</td></tr>
+          <tr><td class="mono">SR-04</td><td>Never download from unapproved sources</td><td>Source Scout agent has hardcoded allowed list; blocked list enforced at HTTP client level</td><td>Critical</td></tr>
+          <tr><td class="mono">SR-05</td><td>Auto-red: risk_score ≥ 0.8 → pool=red, no review override</td><td>Risk Agent sets pool; no ReviewItem created for auto-red assets</td><td>Critical</td></tr>
+          <tr><td class="mono">SR-06</td><td>Customer uploads default to private (pool=orange)</td><td>Indexer Agent; rights_mode check</td><td>High (Inv-3)</td></tr>
+          <tr><td class="mono">SR-07</td><td>Generated content must be identified as generated in all exports</td><td>Export Service: is_generated=true for all generated assets</td><td>High</td></tr>
+          <tr><td class="mono">SR-08</td><td>Visible brand logos trigger risk flag; block unless explicitly allowed</td><td>Risk Agent detects logos; solver applies flag; review if needed</td><td>Medium</td></tr>
+          <tr><td class="mono">SR-09</td><td>Recognizable faces in commercial-safe mode require model release</td><td>is_commercial_safe predicate checks model_release_status</td><td>High</td></tr>
+          <tr><td class="mono">SR-10</td><td>Cultural stereotype flags route to review, never auto-approve</td><td>Risk Agent flags; solver routes to review_required regardless of score</td><td>High</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §17 OBSERVABILITY SPECIFICATION                  -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s17">
+  <div class="section-label">Section 17</div>
+  <h2 class="section-heading">Observability Specification</h2>
+  <div class="section-body">
+    <p>This section did not exist in v0.1. It is added because agents implementing without observability specs produce systems that are undebuggable in production.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">Metrics (Counter + Histogram)</h3>
+      <table class="spec-table">
+        <thead><tr><th>Metric Name</th><th>Type</th><th>Labels</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">job_created_total</td><td>Counter</td><td>platform, rights_mode</td><td>Demand tracking</td></tr>
+          <tr><td class="mono">job_duration_seconds</td><td>Histogram</td><td>status, platform</td><td>Latency SLO monitoring</td></tr>
+          <tr><td class="mono">agent_execution_duration</td><td>Histogram</td><td>agent_name, outcome</td><td>Per-agent performance</td></tr>
+          <tr><td class="mono">agent_retries_total</td><td>Counter</td><td>agent_name, error_code</td><td>Reliability monitoring</td></tr>
+          <tr><td class="mono">shots_covered_by_green</td><td>Counter</td><td>job_id</td><td>Core value metric</td></tr>
+          <tr><td class="mono">shots_needing_generation</td><td>Counter</td><td>job_id, shot_role</td><td>Cost driver</td></tr>
+          <tr><td class="mono">coverage_score_distribution</td><td>Histogram</td><td>shot_role, importance</td><td>Quality tracking</td></tr>
+          <tr><td class="mono">review_items_created</td><td>Counter</td><td>severity, reason</td><td>Review burden</td></tr>
+          <tr><td class="mono">review_items_resolved</td><td>Counter</td><td>decision</td><td>Review throughput</td></tr>
+          <tr><td class="mono">assets_indexed_total</td><td>Counter</td><td>source_type, pool_status</td><td>Library growth</td></tr>
+          <tr><td class="mono">asset_dedup_skipped</td><td>Counter</td><td>source_type</td><td>Dedup effectiveness</td></tr>
+          <tr><td class="mono">generation_cost_total</td><td>Counter</td><td>provider, shot_role</td><td>Cost tracking</td></tr>
+          <tr><td class="mono">invariant_violation_total</td><td>Counter</td><td>invariant_id</td><td>Safety monitoring</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">Trace Spans</h3>
+      <p>Every agent execution emits an OpenTelemetry trace span:</p>
+      <div class="code-block"><span class="lang-tag">spans</span>
+<span class="key">job_pipeline</span>                           <span class="comment">// Root span</span>
+  ├── <span class="key">planner.execute</span>                    <span class="comment">{ prompt_length, beat_count, shot_count }</span>
+  ├── <span class="key">retriever.search</span>                   <span class="comment">{ shot_count, candidates_per_shot, search_method }</span>
+  ├── <span class="key">solver.execute</span>                     <span class="comment">{ shots_covered, shots_gapped, cost_estimate }</span>
+  ├── <span class="key">scout.retrieve</span>                     <span class="comment">{ sources_queried, assets_found, reference_count }</span>
+  │   └── <span class="key">scout.source_query</span>              <span class="comment">{ source_name, result_count, latency }</span>
+  ├── <span class="key">indexer.process</span>                    <span class="comment">{ asset_id, steps_completed, pool_assigned }</span>
+  ├── <span class="key">generator.execute</span>                  <span class="comment">{ shot_id, provider, retry_count, success }</span>
+  └── <span class="key">export.build</span>                       <span class="comment">{ format, asset_count, review_pending }</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">SLIs / SLOs</h3>
+      <div class="decision-table">
+        <table>
+          <thead><tr><th>SLI</th><th>SLO (MVP)</th><th>Measurement</th></tr></thead>
+          <tbody>
+            <tr><td class="condition">Plan generation latency (no JIT)</td><td>p95 &lt; 60s</td><td><code>job_duration_seconds</code> where status=ready AND no JIT retrieval</td></tr>
+            <tr><td class="condition">Retrieever latency per shot</td><td>p95 &lt; 15s</td><td><code>agent_execution_duration</code> where agent=retriever</td></tr>
+            <tr><td class="condition">Planner success rate</td><td>≥ 95%</td><td>jobs where planner succeeds / total jobs</td></tr>
+            <tr><td class="condition">Invariant violation rate</td><td>0</td><td><code>invariant_violation_total</code> — must always be 0</td></tr>
+            <tr><td class="condition">Green pool coverage rate</td><td>Track only (no SLO yet)</td><td><code>shots_covered_by_green</code> / total shots</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §18 NON-FUNCTIONAL REQUIREMENTS                  -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s18">
+  <div class="section-label">Section 18</div>
+  <h2 class="section-heading">Non-Functional Requirements</h2>
+  <div class="section-body">
+    <table class="spec-table">
+      <thead><tr><th>ID</th><th>Category</th><th>Requirement</th><th>Verifiable By</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">NFR-01</td><td>Reliability</td><td>Never silently use unknown-rights assets (Inv-1)</td><td>Assertion in Export; invariant_violation metric</td></tr>
+        <tr><td class="mono">NFR-02</td><td>Auditability</td><td>Every selection traceable to source, license, scores, alternatives (Inv-5)</td><td>AuditTrail query for any selected asset returns non-empty</td></tr>
+        <tr><td class="mono">NFR-03</td><td>Cost Awareness</td><td>Track estimated and actual cost per shot and per job</td><td>GenerationRequest.actual_cost populated; export includes cost_estimate</td></tr>
+        <tr><td class="mono">NFR-04</td><td>Extensibility</td><td>New stock providers, generation providers, embedding models addable without schema changes</td><td>Provider config is data, not code; enum values for source_type are extensible via migration</td></tr>
+        <tr><td class="mono">NFR-05</td><td>Performance</td><td>60–90s video: initial plan (no JIT) in &lt; 60s</td><td>SLI measurement per §17</td></tr>
+        <tr><td class="mono">NFR-06</td><td>Async Safety</td><td>JIT and generation run async; initial coverage report returns synchronously</td><td>POST /solve returns immediately; poll for async completion</td></tr>
+        <tr><td class="mono">NFR-07</td><td>Safety</td><td>Block restricted/illegal/high-risk content per policy config</td><td>SR-05 auto-red rule; test with known-bad inputs</td></tr>
+        <tr><td class="mono">NFR-08</td><td>Privacy</td><td>Customer uploads private by default (Inv-3)</td><td>AC-08 test case</td></tr>
+        <tr><td class="mono">NFR-09</td><td>Idempotency</td><td>All POST endpoints support Idempotency-Key header</td><td>Same key + same body → same response, no duplicate side effects</td></tr>
+        <tr><td class="mono">NFR-10</td><td>Data Integrity</td><td>Every Asset has exactly one AssetRights record</td><td>DB constraint + application-level assertion on ingest</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §19 UI WIREFRAME SPECS                           -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s19">
+  <div class="section-label">Section 19</div>
+  <h2 class="section-heading">UI Wireframe Specs</h2>
+  <div class="section-body">
+    <p>Each page is specified as a component tree with data bindings. An agent can implement these directly in SvelteKit.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">19.1 Video Job Intake</h3>
+      <div class="code-block"><span class="lang-tag">component</span>
+<span class="key">IntakePage</span>
+  <span class="key">PromptInput</span>:          textarea, required, max 5000, placeholder examples
+  <span class="key">DurationSelect</span>:        number input, [5, 600], default 60, unit "seconds"
+  <span class="key">PlatformSelect</span>:        dropdown: web_social, youtube_shorts, youtube_long, tiktok, instagram_reel
+  <span class="key">AspectRatioSelect</span>:     dropdown: 16:9, 9:16, 1:1, 4:5
+  <span class="key">ToneInput</span>:            text input, optional
+  <span class="key">RightsModeSelect</span>:     dropdown: commercial_safe, editorial, internal_only
+  <span class="key">BudgetModeSelect</span>:     dropdown: economy, balanced, premium
+  <span class="key">SubmitButton</span>:         disabled until prompt non-empty
+  <span class="comment">// On submit: POST /api/video-jobs → redirect to /jobs/:id/plan</span></div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">19.2 Coverage Dashboard</h3>
+      <div class="code-block"><span class="lang-tag">component</span>
+<span class="key">CoverageDashboard</span>
+  <span class="key">CoverageRing</span>:         circular progress, percentage = covered/total
+  <span class="key">BreakdownBar</span>:         horizontal stacked bar: green(covered) | yellow(partial) | orange(needs_action) | red(uncovered)
+  <span class="key">StatsGrid</span>:
+    - "Existing assets used": count
+    - "JIT retrieval needed": count
+    - "Generation needed": count
+    - "Review required": count
+    - "Estimated cost": $X.XX
+    - "Estimated risk level": low/medium/high
+  <span class="key">ShotList</span>:            sortable table: #, beat, role, description, status badge, source strategy, score
+    - Row click → opens ShotDetailPanel
+  <span class="key">ActionButtons</span>:
+    - "Run JIT Retrieval" (disabled if 0 gaps)
+    - "Generate Missing Shots" (disabled if 0 generation recs)
+    - "View Review Queue" (badge with count)
+    - "Export Plan" (disabled if status ≠ ready)</div>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">19.3 Asset Review Queue</h3>
+      <div class="code-block"><span class="lang-tag">component</span>
+<span class="key">ReviewQueue</span>
+  <span class="key">FilterBar</span>:            severity: all | high | medium | low | critical
+  <span class="key">ReviewCard</span> (repeat for each item):
+    - <span class="key">AssetPreview</span>:     video thumbnail or image preview
+    - <span class="key">ShotContext</span>:      beat title, shot description, role badge
+    - <span class="key">ScoresPanel</span>:     visual: 0.85 | license: 0.30 | quality: 0.90 | risk: 0.45
+    - <span class="key">RightsInfo</span>:       source, license, attribution, commercial_use
+    - <span class="key">RiskFlags</span>:        list of flagged items with severity badges
+    - <span class="key">ReasonForReview</span>:  human-readable explanation
+    - <span class="key">RecommendedAction</span>: "Approve" (green) | "Reject" (red) | "Reference Only" (yellow)
+    - <span class="key">NotesInput</span>:      textarea for reviewer notes
+    - <span class="key">DecisionButtons</span>:  Approve | Reject | Mark Reference-Only
+  <span class="comment">// On decision: POST /api/review-items/:id/decision → refresh queue</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §20 BUILD PHASES                                 -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s20">
+  <div class="section-label">Section 20</div>
+  <h2 class="section-heading">Build Phases</h2>
+  <div class="section-body">
+    <div class="decision-table">
+      <table>
+        <thead><tr><th>Phase</th><th>Scope</th><th>Deliverables</th><th>Depends On</th><th>Estimated Effort</th></tr></thead>
+        <tbody>
+          <tr><td class="condition">1. Foundation</td><td>DB schema, API scaffold, job lifecycle</td><td>Migrations, Hono routes, state machine, error types, AuditTrail table</td><td>Nothing</td><td>3–4 days</td></tr>
+          <tr><td class="condition">2. Planner</td><td>Intake + Planner Agent</td><td>Intake UI, planner prompt engineering, beat/shot output validation</td><td>Phase 1</td><td>2–3 days</td></tr>
+          <tr><td class="condition">3. Asset Library</td><td>Asset DB, manual ingest, indexing pipeline</td><td>Ingest API, Indexer Agent (caption, tags, embeddings, face/logo detection), pool assignment</td><td>Phase 1</td><td>4–5 days</td></tr>
+          <tr><td class="condition">4. Retrieval + Scoring</td><td>Retriever Agent, scoring model</td><td>Hybrid search (vector + text + tags), candidate scoring, scoring config</td><td>Phase 3</td><td>3–4 days</td></tr>
+          <tr><td class="condition">5. Coverage Solver</td><td>Solver Agent, gap detection</td><td>Solver algorithm, diversity constraint, coverage thresholds, decision logging</td><td>Phase 4</td><td>3–4 days</td></tr>
+          <tr><td class="condition">6. Rights + Review</td><td>Rights Agent, review UI</td><td>Rights classification rules, review queue, decision API, review blocks export</td><td>Phase 5</td><td>2–3 days</td></tr>
+          <tr><td class="condition">7. JIT Retrieval</td><td>Source Scout, approved source connectors</td><td>Pexels/Pixabay connectors, circuit breakers, async retrieval flow</td><td>Phase 5</td><td>3–4 days</td></tr>
+          <tr><td class="condition">8. Generation Planning</td><td>Generation Agent, prompt construction</td><td>Shot-to-prompt converter, generation request storage, retry logic</td><td>Phase 5</td><td>2–3 days</td></tr>
+          <tr><td class="condition">9. Export</td><td>Export service, manifest generation</td><td>Markdown export, JSON export, rights manifest, generation prompt bundle</td><td>Phase 6</td><td>1–2 days</td></tr>
+          <tr><td class="condition">10. Observability</td><td>Metrics, traces, health checks</td><td>OpenTelemetry integration, metrics endpoint, trace spans per §17</td><td>Phase 1+</td><td>2–3 days</td></tr>
+          <tr><td class="condition">11. Polish</td><td>UI refinement, error states, loading states, edge cases</td><td>Full error handling in UI, loading skeletons, empty states, responsive fixes</td><td>All</td><td>3–4 days</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-accent">
+      <div class="callout-label">Total Estimate</div>
+      ~28–39 working days for a single developer or agent. Phases 2–3 can run in parallel. Phases 7–8 can run in parallel. Phase 10 should be started in Phase 1 and extended throughout.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §21 SUCCESS METRICS                              -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s21">
+  <div class="section-label">Section 21</div>
+  <h2 class="section-heading">Success Metrics</h2>
+  <div class="section-body">
+    <table class="spec-table">
+      <thead><tr><th>Metric</th><th>Target (MVP)</th><th>Measurement</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Green pool coverage rate</td><td>≥ 30% of shots from existing assets (initially)</td><td>shots_covered_by_green / total_shots, averaged across jobs</td></tr>
+        <tr><td class="mono">Green pool growth</td><td>≥ 5% improvement per 10 similar jobs</td><td>Compare coverage rate for job N vs job N-10 in same niche</td></tr>
+        <tr><td class="mono">Generation reduction</td><td>≥ 20% fewer generated seconds vs generation-first baseline</td><td>Compare actual generation cost to theoretical all-generation cost</td></tr>
+        <tr><td class="mono">Plan latency</td><td>p95 &lt; 60s for non-JIT plans</td><td>SLI per §17</td></tr>
+        <tr><td class="mono">Review rate</td><td>&lt; 15% of shots require human review</td><td>review_items_created / total_shots</td></tr>
+        <tr><td class="mono">Review throughput</td><td>Median review resolution &lt; 5 minutes</td><td>Time from review_created to review_resolved</td></tr>
+        <tr><td class="mono">License uncertainty rate</td><td>&lt; 5% of ingested assets land in orange/red</td><td>assets with pool ∈ {orange, red} / total ingested</td></tr>
+        <tr><td class="mono">Asset reuse rate</td><td>≥ 50% of green assets used in ≥ 2 jobs within 30 days</td><td>assets with usage_count ≥ 2 / total green assets</td></tr>
+        <tr><td class="mono">Invariant violations</td><td>0 in production</td><td>invariant_violation_total metric</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §22 OPEN DECISIONS                               -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s22">
+  <div class="section-label">Section 22</div>
+  <h2 class="section-heading">Open Decisions</h2>
+  <div class="section-body">
+    <p>v0.1 had 24 open questions. This spec resolves most of them and defers the rest with explicit deadlines.</p>
+
+    <div class="sub">
+      <h3 class="sub-heading">Resolved by This Spec</h3>
+      <table class="spec-table">
+        <thead><tr><th>Question</th><th>Resolution</th><th>Reference</th></tr></thead>
+        <tbody>
+          <tr><td>Which sources for MVP?</td><td>Pexels, Pixabay, Wikimedia Commons (verified CC), internal, customer uploads, generated cache</td><td>§10.4</td></tr>
+          <tr><td>Video clips, still images, or both?</td><td>Both. Asset.asset_type enum: image, video_clip</td><td>§9.5</td></tr>
+          <tr><td>Are generated assets globally reusable?</td><td>Yes, if generation provider terms allow. Stored as source_type='generated_by_us', pool='green' after quality check.</td><td>§10.7</td></tr>
+          <tr><td>What rights strictness modes?</td><td>Three: commercial_safe, editorial, internal_only</td><td>§9.2</td></tr>
+          <tr><td>Should customers opt into CC-BY?</td><td>Yes, via rights_mode='editorial' or 'internal_only'. commercial_safe avoids CC-BY by default.</td><td>§7.11</td></tr>
+          <tr><td>Minimum coverage for auto-assembly?</td><td>Defined per importance level in §11 thresholds. No single global minimum.</td><td>§11</td></tr>
+          <tr><td>What is "commercial-safe"?</td><td>Formal predicate defined in §7.11</td><td>§7.11</td></tr>
+          <tr><td>How much human review is acceptable?</td><td>Target &lt; 15% of shots (§21). Not a hard cap for MVP, but tracked.</td><td>§21</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub">
+      <h3 class="sub-heading">Deferred with Deadline</h3>
+      <table class="spec-table">
+        <thead><tr><th>Question</th><th>Decision Deadline</th><th>Blocking Phase</th><th>Default if Not Decided</th></tr></thead>
+        <tbody>
+          <tr><td>Paid stock APIs in MVP?</td><td>Before Phase 7</td><td>Phase 7 (JIT)</td><td>No paid stock in MVP; add as post-MVP connector</td></tr>
+          <tr><td>Which generation provider first?</td><td>Before Phase 8</td><td>Phase 8 (Generation)</td><td>Generate prompts only; no actual provider integration in MVP</td></tr>
+          <tr><td>Marketplace later?</td><td>Post-MVP</td><td>None</td><td>No marketplace; internal production only</td></tr>
+          <tr><td>Which embedding model?</td><td>Before Phase 3</td><td>Phase 3 (Indexing)</td><td>clip-vit-base-patch32 (512d); configurable via model_name field</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- §23 AMENDMENT LOG                                -->
+<!-- ════════════════════════════════════════════════ -->
+<section class="section" id="s23">
+  <div class="section-label">Section 23</div>
+  <h2 class="section-heading">Amendment Log</h2>
+  <div class="section-body">
+    <table class="spec-table">
+      <thead><tr><th>Date</th><th>Author</th><th>Summary</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>2025-06-18</td>
+          <td>Spec-Driven Rewrite</td>
+          <td>
+            Complete restructure from v0.1 prose PRD to v0.2 spec-driven PRD. Key changes:
+            (1) Added formal data model with types, constraints, FKs, indexes (§9)
+            (2) Added formal state machine with transition table (§14)
+            (3) Added BDD acceptance criteria (§15)
+            (4) Fixed scoring model: risk is now a penalty multiplier, not an additive weight (§12)
+            (5) Added agent I/O contracts with timeouts, retries, error taxonomy (§10)
+            (6) Added formal "commercial-safe" predicate (§7.11)
+            (7) Added system invariants as first-class requirements (§4)
+            (8) Added observability specification with metrics, traces, SLIs/SLOs (§17)
+            (9) Added safety rules as formal decision table (§16)
+            (10) Added AuditTrail entity for decision traceability (§9.11)
+            (11) Resolved 8 of 24 open questions; deferred 4 with deadlines (§22)
+            (12) Added API error schema, idempotency keys, rate limits (§13)
+            (13) Added coverage thresholds by shot importance (§11)
+            (14) Added UI component tree specs (§19)
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- FOOTER                                           -->
+<!-- ════════════════════════════════════════════════ -->
+<footer class="doc-footer">
+  <p>ClipFoundry Shot Coverage Engine — PRD v0.2</p>
+  <p>Spec-Driven Edition · AI-Agent-Implementable · 2025-06-18</p>
+  <p style="margin-top: 0.5rem; color: var(--fg-dim);">This document is structured for direct agent consumption. Every section targets zero-ambiguity implementation readiness.</p>
+</footer>
+
+</div>
+</body>
+</html>

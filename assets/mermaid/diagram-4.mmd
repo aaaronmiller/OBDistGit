@@ -1,0 +1,29 @@
+%%{init: {'theme': 'dark', 'sequence': {'showSequenceNumbers': true, 'mirrorActors': false, 'rightAngles': true}, 'themeVariables': {'actorBkg': '#101827', 'actorBorder': '#6ee7ff', 'actorTextColor': '#eef6ff', 'signalColor': '#93c5fd', 'signalTextColor': '#eef6ff', 'activationBkgColor': '#1d1530', 'activationBorderColor': '#a78bfa', 'noteBkgColor': '#2a1a12', 'noteTextColor': '#fff7ed', 'fontFamily': 'Inter, ui-sans-serif, system-ui'}}}%%
+sequenceDiagram
+  autonumber
+  participant H as Human
+  participant I as Intent Layer
+  participant R as Requirements
+  participant D as Design
+  participant T as Tasks
+  participant A as Agent Executor
+  participant V as Verification
+  participant M as Archive Memory
+
+  H->>I: State goal, constraints, non-goals
+  activate I
+  I-->>H: Return intent brief and failure modes
+  deactivate I
+  H->>R: Approve observable requirements
+  R->>D: Pass traceable contract clauses
+  D-->>H: Present architecture tradeoffs
+  H->>D: Approve design direction
+  D->>T: Generate implementation slices
+  T->>A: Hand off scoped work packet
+  activate A
+  A-->>V: Submit implementation evidence
+  deactivate A
+  V-->>H: Report pass, fail, or incomplete
+  V->>M: Archive result, deltas, decisions
+  M-->>I: Prime the next change with history
+  Note over H,V: The loop only advances when evidence matches the approved spec.

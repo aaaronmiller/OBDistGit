@@ -1,0 +1,45 @@
+%%{init: {'theme': 'dark', 'flowchart': {'curve': 'basis', 'htmlLabels': true}, 'themeVariables': {'background': '#070a12', 'primaryColor': '#101827', 'primaryTextColor': '#eef6ff', 'primaryBorderColor': '#6ee7ff', 'lineColor': '#93c5fd', 'fontFamily': 'Inter, ui-sans-serif, system-ui'}}}%%
+flowchart LR
+  classDef source fill:#101827,stroke:#38bdf8,stroke-width:2px,color:#eff6ff
+  classDef core fill:#1d1530,stroke:#a78bfa,stroke-width:3px,color:#faf5ff
+  classDef output fill:#10251c,stroke:#34d399,stroke-width:2px,color:#ecfdf5
+  classDef guard fill:#2a1a12,stroke:#f59e0b,stroke-width:2px,color:#fff7ed
+
+  subgraph Inputs[Best borrowed components]
+    direction TB
+    S[Strata<br/>deliberative gates]:::source
+    P[Spec Kit<br/>artifact spine]:::source
+    O[OpenSpec<br/>proposal archive]:::source
+    K[Kiro<br/>IDE and CLI cadence]:::source
+    G[Ghost AI<br/>architecture canvas]:::source
+  end
+
+  subgraph Core[StrataSpec runtime]
+    direction TB
+    B((Better SDD kernel)):::core
+    C[Single project state model]:::core
+    D[Trace ledger]:::core
+    E[Human approval gates]:::guard
+    F[Agent handoff packets]:::core
+    B --> C --> D --> E --> F
+  end
+
+  subgraph Outputs[Operational artifacts]
+    direction TB
+    R[requirements.md]:::output
+    DS[design.md]:::output
+    T[tasks.md]:::output
+    V[evidence.md]:::output
+    A[archive/]:::output
+  end
+
+  S --> B
+  P --> B
+  O --> C
+  K --> E
+  G --> DS
+  F --> R
+  F --> DS
+  F --> T
+  E --> V
+  V --> A
